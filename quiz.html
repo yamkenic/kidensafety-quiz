@@ -1,0 +1,5265 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>機電安全必携 学習クイズ</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --panel: #ffffff;
+    --panel-alt: #f7f9fc;
+    --border: #e3e8ef;
+    --text: #1f2937;
+    --muted: #64748b;
+    --primary: #1e6feb;
+    --primary-hover: #1856b8;
+    --accent: #0ea371;
+    --danger: #d92d20;
+    --warn: #b54708;
+    --shadow: 0 1px 2px rgba(16, 24, 40, 0.05), 0 1px 3px rgba(16, 24, 40, 0.06);
+    --radius: 10px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); font-family: "Segoe UI", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", Meiryo, sans-serif; line-height: 1.55; }
+  a { color: var(--primary); }
+
+  header.app-header {
+    background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 18px 24px;
+  }
+  header.app-header h1 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  header.app-header h1::before {
+    content: "";
+    width: 6px; height: 22px;
+    background: var(--primary);
+    border-radius: 3px;
+  }
+  header.app-header .sub {
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin-top: 4px;
+  }
+
+  main { max-width: 1100px; margin: 0 auto; padding: 24px 16px 80px; }
+
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .card h2 {
+    margin: 0 0 14px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #0f172a;
+    border-left: 4px solid var(--primary);
+    padding-left: 10px;
+  }
+  .card h3 {
+    margin: 14px 0 8px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #334155;
+  }
+
+  .filter-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+  }
+  @media (max-width: 720px) { .filter-grid { grid-template-columns: 1fr; } }
+
+  .field label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 4px;
+    font-weight: 600;
+  }
+  .field select, .field input {
+    width: 100%;
+    padding: 9px 10px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: #fff;
+    font-size: 0.95rem;
+    color: var(--text);
+  }
+  .field select:focus, .field input:focus { outline: 2px solid #bfdbfe; border-color: var(--primary); }
+
+  .btn {
+    appearance: none;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    cursor: pointer;
+    background: #fff;
+    color: var(--text);
+    transition: background .15s, color .15s, border-color .15s;
+  }
+  .btn-primary { background: var(--primary); color: #fff; }
+  .btn-primary:hover { background: var(--primary-hover); }
+  .btn-outline { border-color: var(--border); color: #334155; }
+  .btn-outline:hover { background: var(--panel-alt); }
+  .btn-ghost { background: transparent; color: var(--primary); }
+  .btn-ghost:hover { background: #eff6ff; }
+  .btn-danger { background: var(--danger); color: #fff; }
+  .btn-danger:hover { background: #b42318; }
+
+  .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+
+  .cat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 10px;
+  }
+  .cat-btn {
+    text-align: left;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--panel-alt);
+    cursor: pointer;
+    transition: background .15s, border-color .15s;
+  }
+  .cat-btn:hover { background: #eef4ff; border-color: #bfdbfe; }
+  .cat-btn .cat-name { font-weight: 700; color: #0f172a; display: block; }
+  .cat-btn .cat-meta { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+
+  /* Quiz screen */
+  .quiz-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+  .progress-wrap { flex: 1; min-width: 200px; }
+  .progress-bar {
+    height: 8px;
+    background: #eef2f7;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .progress-bar > span {
+    display: block;
+    height: 100%;
+    background: linear-gradient(90deg, #1e6feb, #38bdf8);
+    width: 0%;
+    transition: width .3s ease;
+  }
+  .progress-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+  .score-pill {
+    background: var(--panel-alt);
+    border: 1px solid var(--border);
+    color: #0f172a;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    white-space: nowrap;
+  }
+  .exam-pill {
+    background: #0f172a;
+    border-color: #0f172a;
+    color: #fff;
+  }
+
+  .badges { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    border: 1px solid var(--border);
+    background: #fff;
+    color: #334155;
+    letter-spacing: 0.02em;
+  }
+  .badge.cat { background: #eef4ff; color: #1d4ed8; border-color: #bfdbfe; }
+  .badge.page { background: #f1f5f9; color: #475569; }
+  .badge.page.reference { background: #f8fafc; color: #64748b; border-color: #cbd5e1; border-style: dashed; }
+  .badge.page.clickable {
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    text-underline-offset: 2px;
+  }
+  .badge.page.reference.clickable:hover { background: #e2e8f0; color: #334155; }
+  .page-link {
+    color: #0369a1;
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    text-underline-offset: 2px;
+    cursor: pointer;
+    background: none;
+    border: 0;
+    padding: 0;
+    font: inherit;
+  }
+  .page-link:hover { color: #0c4a6e; }
+  .page-ref-reference { color: #64748b; }
+  .badge.level-初級 { background: #ecfdf5; color: #047857; border-color: #a7f3d0; }
+  .badge.level-中級 { background: #fffbeb; color: #92400e; border-color: #fde68a; }
+  .badge.level-上級 { background: #fef2f2; color: #b91c1c; border-color: #fecaca; }
+  .badge.important { background: var(--danger); color: #fff; border-color: var(--danger); }
+
+  .question {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #0f172a;
+    margin: 6px 0 16px;
+    white-space: pre-wrap;
+  }
+
+  .choices { display: grid; gap: 8px; }
+  .choice {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: #fff;
+    cursor: pointer;
+    text-align: left;
+    width: 100%;
+    font-size: 0.96rem;
+    color: var(--text);
+    transition: background .15s, border-color .15s, box-shadow .15s;
+  }
+  .choice:hover:not(:disabled) { background: var(--panel-alt); border-color: #cbd5e1; }
+  .choice .idx {
+    width: 24px; height: 24px;
+    flex-shrink: 0;
+    background: #eef2f7;
+    color: #334155;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.82rem;
+  }
+  .choice.correct {
+    background: #ecfdf5;
+    border-color: #6ee7b7;
+  }
+  .choice.correct .idx { background: var(--accent); color: #fff; }
+  .choice.wrong {
+    background: #fef2f2;
+    border-color: #fca5a5;
+  }
+  .choice.wrong .idx { background: var(--danger); color: #fff; }
+  .choice.selected {
+    background: #eef4ff;
+    border-color: #93c5fd;
+  }
+  .choice:disabled { cursor: default; }
+
+  .feedback {
+    margin-top: 14px;
+    padding: 12px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--panel-alt);
+    font-size: 0.92rem;
+  }
+  .feedback.ok { border-color: #6ee7b7; background: #ecfdf5; color: #065f46; }
+  .feedback.ng { border-color: #fca5a5; background: #fef2f2; color: #991b1b; }
+  .feedback .label { font-weight: 700; margin-right: 6px; }
+  .feedback .explain { color: #1f2937; margin-top: 6px; }
+  .feedback .feedback-source { margin-top: 10px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .feedback .feedback-source-label { font-weight: 700; }
+
+  .nav-row { display: flex; justify-content: space-between; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+
+  /* Result screen */
+  .result-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 12px;
+  }
+  @media (max-width: 720px) { .result-grid { grid-template-columns: 1fr; } }
+  .stat {
+    background: var(--panel-alt);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px;
+    text-align: center;
+  }
+  .stat .num { font-size: 1.6rem; font-weight: 700; color: #0f172a; }
+  .stat .label { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
+  .exam-result {
+    margin: 0 0 14px;
+    padding: 12px 14px;
+    border-radius: 8px;
+    font-weight: 700;
+    border: 1px solid var(--border);
+  }
+  .exam-result.ok { background: #ecfdf5; color: #065f46; border-color: #6ee7b7; }
+  .exam-result.ng { background: #fef2f2; color: #991b1b; border-color: #fca5a5; }
+
+  table.weak {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    margin-top: 8px;
+  }
+  table.weak th, table.weak td {
+    border-bottom: 1px solid var(--border);
+    padding: 8px 10px;
+    text-align: left;
+  }
+  table.weak th { background: var(--panel-alt); color: #334155; font-weight: 700; }
+  table.weak td.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+  .review {
+    margin-top: 14px;
+    border-top: 1px solid var(--border);
+    padding-top: 14px;
+  }
+  .review-item {
+    padding: 10px 0;
+    border-bottom: 1px dashed var(--border);
+  }
+  .review-item:last-child { border-bottom: none; }
+  .review-item .q { font-weight: 600; color: #0f172a; }
+  .review-item .meta { font-size: 0.78rem; color: var(--muted); margin: 2px 0 4px; }
+  .review-item .a-line { font-size: 0.88rem; }
+  .review-item .a-line .ok { color: #047857; font-weight: 700; }
+  .review-item .a-line .ng { color: #b91c1c; font-weight: 700; }
+
+  .hint { font-size: 0.8rem; color: var(--muted); }
+  .center { text-align: center; }
+  .hidden { display: none !important; }
+
+  /* PDF モーダル */
+  .pdf-modal {
+    position: fixed; inset: 0; z-index: 1000;
+    background: rgba(15, 23, 42, 0.6);
+    display: flex; align-items: center; justify-content: center;
+    padding: 16px;
+  }
+  .pdf-modal__panel {
+    background: #fff;
+    width: min(1100px, 100%);
+    height: min(90vh, 900px);
+    border-radius: 10px;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+  }
+  .pdf-modal__head {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    background: #f8fafc;
+  }
+  .pdf-modal__title { font-weight: 700; font-size: 0.95rem; color: #0f172a; flex: 1; }
+  .pdf-modal__head a { font-size: 0.82rem; color: #0369a1; text-decoration: underline; }
+  .pdf-modal__close {
+    background: #e2e8f0;
+    border: 0;
+    border-radius: 6px;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-weight: 700;
+    color: #334155;
+  }
+  .pdf-modal__close:hover { background: #cbd5e1; }
+  .pdf-modal__body { flex: 1; background: #475569; min-height: 0; position: relative; }
+  .pdf-modal__body iframe { width: 100%; height: 100%; border: 0; background: #fff; }
+  .pdf-source-viewer {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    padding: 18px;
+    background: #475569;
+  }
+  .pdf-source-page {
+    position: relative;
+    width: min(820px, 100%);
+    margin: 0 auto;
+    background: #fff;
+    box-shadow: 0 12px 34px rgba(15, 23, 42, 0.35);
+  }
+  .pdf-source-page img { display: block; width: 100%; height: auto; }
+  .source-highlight {
+    position: absolute;
+    border: 3px solid #e11d48;
+    background: rgba(225, 29, 72, 0.08);
+    box-shadow: 0 0 0 9999px rgba(15, 23, 42, 0.12), 0 0 0 2px rgba(255, 255, 255, 0.9) inset;
+    pointer-events: none;
+  }
+  .source-highlight::after {
+    content: "";
+    position: absolute;
+    left: 8px; right: 8px; bottom: 6px;
+    border-bottom: 3px solid #e11d48;
+  }
+</style>
+</head>
+<body>
+<header class="app-header">
+  <h1>機電安全必携 学習クイズ</h1>
+  <div class="sub">機械・電気の現場安全を 4 択で学ぶ業務用学習ツール</div>
+</header>
+
+<main>
+  <!-- セットアップ画面 -->
+  <section id="setup">
+    <div class="card">
+      <h2>出題設定</h2>
+      <div class="filter-grid">
+        <div class="field">
+          <label for="f-level">難易度</label>
+          <select id="f-level">
+            <option value="all">すべて</option>
+            <option value="初級">初級</option>
+            <option value="中級">中級</option>
+            <option value="上級">上級</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="f-count">問題数</label>
+          <select id="f-count">
+            <option value="10">10 問</option>
+            <option value="20" selected>20 問</option>
+            <option value="30">30 問</option>
+            <option value="40">40 問</option>
+            <option value="50">50 問</option>
+            <option value="80">80 問</option>
+            <option value="100">100 問</option>
+            <option value="all">全問</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="f-mode">出題モード</label>
+          <select id="f-mode">
+            <option value="random">ランダム</option>
+            <option value="category">カテゴリ順</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="f-exam-mode">試験モード</label>
+          <select id="f-exam-mode">
+            <option value="normal">通常</option>
+            <option value="expert">超上級</option>
+          </select>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-primary" id="btn-start">学習を開始</button>
+        <span class="hint" id="pool-info"></span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>カテゴリ別ミニテスト（各 5 問）</h2>
+      <p class="hint">カテゴリを選ぶと、そのカテゴリからランダムに 5 問出題します（5 問未満のカテゴリは全問）。</p>
+      <div class="cat-grid" id="cat-grid"></div>
+    </div>
+  </section>
+
+  <!-- クイズ画面 -->
+  <section id="quiz" class="hidden">
+    <div class="card">
+      <div class="quiz-header">
+        <div class="progress-wrap">
+          <div class="progress-bar"><span id="bar"></span></div>
+          <div class="progress-meta">
+            <span id="prog-text">1 / 20</span>
+            <span id="mode-text"></span>
+          </div>
+        </div>
+        <div class="score-pill" id="score-pill">スコア 0 / 0</div>
+        <div class="score-pill exam-pill hidden" id="timer-pill">残り 00:00</div>
+      </div>
+
+      <div class="badges" id="badges"></div>
+      <div class="question" id="q-text"></div>
+      <div class="choices" id="choices"></div>
+      <div class="feedback hidden" id="feedback"></div>
+
+      <div class="nav-row">
+        <button class="btn btn-outline" id="btn-abort">中断して設定に戻る</button>
+        <button class="btn btn-primary hidden" id="btn-next">次の問題へ</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 結果画面 -->
+  <section id="result" class="hidden">
+    <div class="card">
+      <h2>結果サマリー</h2>
+      <div class="result-grid">
+        <div class="stat"><div class="num" id="r-correct">0</div><div class="label">正答数</div></div>
+        <div class="stat"><div class="num" id="r-total">0</div><div class="label">出題数</div></div>
+        <div class="stat"><div class="num" id="r-rate">0%</div><div class="label">正答率</div></div>
+      </div>
+      <div class="exam-result hidden" id="exam-result"></div>
+
+      <h3>誤答が多いカテゴリ</h3>
+      <table class="weak">
+        <thead><tr><th>カテゴリ</th><th class="num">誤答</th><th class="num">出題</th><th class="num">正答率</th></tr></thead>
+        <tbody id="weak-body"></tbody>
+      </table>
+
+      <div class="actions">
+        <button class="btn btn-danger" id="btn-redo-wrong">誤答のみ再出題</button>
+        <button class="btn btn-primary" id="btn-redo-same">同じ設定で再挑戦</button>
+        <button class="btn btn-outline" id="btn-redo-config">設定を変えてやり直す</button>
+      </div>
+
+      <div class="review" id="review"></div>
+    </div>
+  </section>
+</main>
+
+<script>
+/* =========================================================
+  旧AI生成問題データ（非出題・退避用）
+   各問題: { id, category, page, important, level, question, choices[4], answer(0..3), explanation }
+  PDF本文準拠が確認できていないため、出題対象から外す。
+   ========================================================= */
+const LEGACY_AI_QUESTIONS = [
+  /* --- 機電安全責任者の任務 (10) --- */
+  {id:1, category:"機電安全責任者の任務", page:"P.1", important:true, level:"初級",
+    question:"機電安全責任者の任務として「最も中核的」なものはどれか。",
+    choices:[
+      "機械・電気設備のリスクを把握し、災害防止対策を計画・推進する",
+      "機械設備の生産能力向上計画を立案し、KPI を経営層へ報告する",
+      "設備投資の予算配分について経営判断として最終決定する",
+      "製品品質のばらつきを管理し、出荷可否を判定する"
+    ],
+    answer:0, explanation:"機電安全責任者の中核任務は機械・電気設備のリスク把握と災害防止対策の計画・推進。生産性、品質判定、予算決定は他の責任者の役割です。"},
+  {id:2, category:"機電安全責任者の任務", page:"P.2", important:false, level:"初級",
+    question:"日常業務として「適切でない」ものはどれか。",
+    choices:[
+      "巡視結果を記録し、是正措置の進捗を追跡する",
+      "設備の異常傾向を点検記録から把握する",
+      "設備の改造内容を記録に残さず口頭のみで指示する",
+      "関係作業者へ KY ミーティングの実施を指導する"
+    ],
+    answer:2, explanation:"設備改造は変更管理の対象。記録と関係者への周知が必須で、口頭のみの指示は変更管理上不可です。"},
+  {id:3, category:"機電安全責任者の任務", page:"P.1", important:true, level:"中級",
+    question:"作業者への指導内容として「誤っている」ものはどれか。",
+    choices:[
+      "作業手順から外れる場合は事前に責任者の承認を得る",
+      "保護具の選定はリスクに基づき責任者が指定し、勝手な代替を認めない",
+      "異常時はまず停止・退避し、責任者へ報告する",
+      "保護具の選定は現場の判断を優先し、作業者個人の好みに完全に委ねる"
+    ],
+    answer:3, explanation:"保護具はリスクアセスメント結果に基づき責任者が指定するもので、個人の好みに完全委任することは適切ではありません。"},
+  {id:4, category:"機電安全責任者の任務", page:"P.60", important:false, level:"中級",
+    question:"設備改造前のリスクアセスメントの基本手順として正しい順序はどれか。",
+    choices:[
+      "低減措置の決定 → 危険源の特定 → 評価 → 見積り",
+      "危険源の特定 → リスクの見積り → 評価 → 低減措置の検討",
+      "見積り → 危険源の特定 → 低減措置 → 評価",
+      "評価 → 見積り → 低減措置 → 危険源の特定"
+    ],
+    answer:1, explanation:"ISO 12100 のリスクアセスメントは「危険源特定 → 見積り → 評価 → 低減措置」の順。"},
+  {id:5, category:"機電安全責任者の任務", page:"P.86", important:true, level:"上級",
+    question:"常時 50 人以上の事業場で、労働安全衛生法上「選任義務がない」ものはどれか。",
+    choices:[
+      "衛生管理者",
+      "産業医",
+      "安全管理者（一定業種）",
+      "産業カウンセラー"
+    ],
+    answer:3, explanation:"50 人以上の事業場では衛生管理者・産業医、業種・規模により総括安全衛生管理者・安全管理者の選任が必要。産業カウンセラーは法定の選任ではありません。"},
+  {id:6, category:"機電安全責任者の任務", page:"P.1", important:false, level:"中級",
+    question:"異常発生時の初動として「最も適切」なものはどれか。",
+    choices:[
+      "原因が判明するまで運転を継続してデータを取得し、事後検証する",
+      "即時停止し、関係者の退避と二次災害防止措置を講じたうえで報告する",
+      "異常表示をリセットして再起動し、再現性の有無を確認する",
+      "現場保存のみ行い、当該設備の責任者の出社を待ってから対応する"
+    ],
+    answer:1, explanation:"異常時は即時停止 → 退避 → 二次災害防止 → 報告が原則。継続運転による検証は被害拡大を招きます。"},
+  {id:7, category:"機電安全責任者の任務", page:"P.109", important:false, level:"初級",
+    question:"災害・ヒヤリハット記録の活用目的として「最も適切でない」ものはどれか。",
+    choices:[
+      "同種災害の再発防止策の検討",
+      "他職場への水平展開と教訓共有",
+      "設備改善の優先順位付け",
+      "当事者の人事処分の根拠資料として最優先に使用する"
+    ],
+    answer:3, explanation:"記録は再発防止が主目的。処分根拠としての最優先利用は当事者の報告意欲を損ない、安全文化を毀損します。"},
+  {id:8, category:"機電安全責任者の任務", page:"P.19", important:true, level:"中級",
+    question:"構内請負作業に対する元方事業者の機電安全責任者の措置として「不適切」なものはどれか。",
+    choices:[
+      "危険有害情報を文書で周知する",
+      "作業間の連絡調整を実施する",
+      "請負業者の作業手順書作成に一切関与せず完全に任せる",
+      "必要に応じ合同 KY を実施する"
+    ],
+    answer:2, explanation:"危険有害情報の周知や作業手順の整合性確認は元方の責務。完全な任せきりは混在災害の温床です。"},
+  {id:9, category:"機電安全責任者の任務", page:"P.7", important:false, level:"上級",
+    question:"教育訓練計画立案で考慮すべき要素として「該当しない」ものはどれか。",
+    choices:[
+      "雇入れ時・作業内容変更時の法定教育（安衛則 35 条）",
+      "特別教育・技能講習等の有資格要件",
+      "経験年数・職位に応じた段階的能力開発",
+      "教育受講者の社内人気投票の結果"
+    ],
+    answer:3, explanation:"教育計画は法定要件と能力開発が軸。人気投票は教育計画の根拠になりません。"},
+  {id:10, category:"機電安全責任者の任務", page:"P.1", important:false, level:"初級",
+    question:"5S のうち「躾」の意味として最も適切なものはどれか。",
+    choices:[
+      "不要物を捨てる",
+      "必要なものを取り出しやすく置く",
+      "決められたルールを習慣として守る",
+      "ゴミやほこりを取り除く"
+    ],
+    answer:2, explanation:"5S は整理・整頓・清掃・清潔・躾。躾は「ルールを習慣化する」こと。"},
+
+  /* --- 機械作業計画・指示 (10) --- */
+  {id:11, category:"機械作業計画・指示", page:"P.9", important:true, level:"初級",
+    question:"機械作業計画書の必須記載事項に「含まれない」ものはどれか。",
+    choices:[
+      "作業手順と作業分担",
+      "想定される危険要因と低減措置",
+      "必要な保護具・安全装置",
+      "作業に直接関係しない部署の人員名簿"
+    ],
+    answer:3, explanation:"計画書は手順・危険要因・低減措置・保護具・分担等を記載。関係しない部署の名簿は必要ありません。"},
+  {id:12, category:"機械作業計画・指示", page:"P.25", important:false, level:"初級",
+    question:"指差呼称の効果として最も適切なものはどれか。",
+    choices:[
+      "視覚・聴覚・運動を連動させ、認知エラー率を低減する",
+      "周囲に作業開始を音圧で警告する",
+      "作業時間を短縮する目的で行う",
+      "機械の運転音を抑制する"
+    ],
+    answer:0, explanation:"指差呼称はマルチモーダルな認知行動でエラー率を約 1/6 に低減するとされる手法です。"},
+  {id:13, category:"機械作業計画・指示", page:"P.21", important:true, level:"中級",
+    question:"非定常作業（清掃・修理・点検等）を計画する際に「最も優先」すべき事項はどれか。",
+    choices:[
+      "過去の同種非定常作業のトラブル事例と再発防止策の織り込み",
+      "作業時間短縮のための工程の簡素化",
+      "交代要員の人選と勤務シフト調整",
+      "完了後の表彰準備"
+    ],
+    answer:0, explanation:"非定常作業は災害比率が高く、過去事例の教訓を計画に織り込むことが最重要です。"},
+  {id:14, category:"機械作業計画・指示", page:"P.27", important:false, level:"中級",
+    question:"KY ミーティングの実施方法として「不適切」なものはどれか。",
+    choices:[
+      "全員が発言できる少人数で実施する",
+      "「現象 → 原因 → 対策 → 行動目標」の手順で進める",
+      "危険ポイントの抽出は職長のみが行い、他は復唱だけする",
+      "指差呼称項目を具体化して共有する"
+    ],
+    answer:2, explanation:"KY は全員参加で危険を抽出することに意味があります。職長単独抽出では気付きが偏ります。"},
+  {id:15, category:"機械作業計画・指示", page:"P.27", important:true, level:"上級",
+    question:"混在作業における作業間連絡調整について、元方事業者の「措置義務」に該当するものはどれか。",
+    choices:[
+      "関係請負人間の作業時間帯・作業区域の調整",
+      "関係請負人の労働者への賃金支払",
+      "関係請負人の従業員に対する全教育の代行実施",
+      "関係請負人の労働契約の締結代行"
+    ],
+    answer:0, explanation:"安衛法 30 条に基づき、元方事業者は作業間連絡調整・区域や時間帯の調整等を行う義務があります。"},
+  {id:16, category:"機械作業計画・指示", page:"P.27", important:false, level:"初級",
+    question:"作業手順書に「最低限」記載すべき項目に該当しないものはどれか。",
+    choices:[
+      "作業の急所と理由",
+      "使用工具・材料",
+      "安全上の注意",
+      "担当者の血液型と緊急連絡先の家族の趣味"
+    ],
+    answer:3, explanation:"手順書は急所・理由・工具・安全注意を記す。個人情報の家族の趣味は記載対象外です。"},
+  {id:17, category:"機械作業計画・指示", page:"P.9", important:false, level:"中級",
+    question:"作業計画変更時の対応として「最も適切」なものはどれか。",
+    choices:[
+      "関係者全員への周知＋影響範囲のリスク再評価＋手順書改訂",
+      "担当職長への口頭連絡のみで足りる",
+      "翌日の朝礼で報告すれば事後対応で問題ない",
+      "変更内容が小規模なら記録は不要"
+    ],
+    answer:0, explanation:"計画変更は変更管理の対象。周知・リスク再評価・手順書改訂の三点が原則です。"},
+  {id:18, category:"機械作業計画・指示", page:"P.47", important:true, level:"中級",
+    question:"高さ 2m 以上で作業床を設けられない高所作業の措置として「最も適切」なものはどれか。",
+    choices:[
+      "フルハーネス型墜落制止用器具の使用と取付設備の整備",
+      "経験者のみで実施し、器具は省略する",
+      "短時間で終わるなら器具は不要",
+      "胴ベルト型のみ可、フルハーネスは禁止"
+    ],
+    answer:0, explanation:"作業床が設けられない 2m 以上の場合は墜落制止用器具を使用し、取付設備の整備が必要です。胴ベルト型は原則 6.75m 以下の例外的使用に限定。"},
+  {id:19, category:"機械作業計画・指示", page:"P.27", important:false, level:"上級",
+    question:"作業指示者が「作業開始前」に確認すべき事項として、最も重要度が低いものはどれか。",
+    choices:[
+      "作業者の体調（睡眠・疲労・服薬の有無）",
+      "保護具の装着状態",
+      "危険源と緊急時退避経路",
+      "作業者の自宅から会社までの通勤経路の混雑状況"
+    ],
+    answer:3, explanation:"作業前に確認すべきは作業安全に直接影響する要素。通勤路の混雑は作業安全に直結しません。"},
+  {id:20, category:"機械作業計画・指示", page:"P.27", important:false, level:"初級",
+    question:"作業計画書の保管に関する一般的扱いとして「最も適切」なものはどれか。",
+    choices:[
+      "完了後は速やかに破棄する",
+      "社内規程に定める期間、トレーサビリティを確保して保管",
+      "当該作業者の私物として個人保管させる",
+      "法定外文書なので保管は不要"
+    ],
+    answer:1, explanation:"作業計画書は再発防止や監査のため、社内規程に基づき所定期間保管します。"},
+
+  /* --- 作業開始前点検 (10) --- */
+  {id:21, category:"作業開始前点検", page:"P.15", important:true, level:"初級",
+    question:"作業開始前点検の目的として「最も適切」なものはどれか。",
+    choices:[
+      "異常の早期発見と災害の未然防止",
+      "当日の出勤者数を把握するための名簿管理",
+      "当日の生産目標を関係者へ周知するため",
+      "残業発生の事前承認手続きのため"
+    ],
+    answer:0, explanation:"作業開始前点検は労安則上、異常の早期発見・是正による災害未然防止が目的です。"},
+  {id:22, category:"作業開始前点検", page:"P.15", important:false, level:"初級",
+    question:"点検で異常を確認した場合の対応として「最も適切」なものはどれか。",
+    choices:[
+      "当該設備の運転を停止し、表示・施錠のうえ責任者へ報告する",
+      "異常箇所をテープで覆い、当日のみ運転する",
+      "異音や振動を観察しながら運転を継続する",
+      "翌日の点検時にあらためて確認する"
+    ],
+    answer:0, explanation:"異常時は運転停止 → 表示・施錠 → 報告・補修が原則。継続使用は被害拡大を招きます。"},
+  {id:23, category:"作業開始前点検", page:"P.35", important:true, level:"中級",
+    question:"フォークリフトの作業開始前点検項目（労安則 151 条の 25）に「含まれない」ものはどれか。",
+    choices:[
+      "制動装置・操縦装置の機能",
+      "荷役装置および油圧装置の機能",
+      "車輪の異常の有無",
+      "タイヤの製造年月日の確認"
+    ],
+    answer:3, explanation:"労安則ではブレーキ・操縦・荷役・油圧装置、車輪の異常、前照灯・後照灯・方向指示器・警報装置の機能を点検。製造年月日確認は法定項目ではありません。"},
+  {id:24, category:"作業開始前点検", page:"P.44", important:false, level:"中級",
+    question:"クレーンの作業開始前点検（クレ等則 36 条）の項目として正しいものはどれか。",
+    choices:[
+      "巻過防止装置、ブレーキ、クラッチ、コントローラの機能、ランウェイの上の状態など",
+      "安全弁の開放圧力の調整",
+      "定格荷重の上方修正の確認",
+      "主索の張力増加の調整"
+    ],
+    answer:0, explanation:"クレ等則 36 条では巻過防止装置・ブレーキ・クラッチ・コントローラの機能、ランウェイの上の状態等を点検します。"},
+  {id:25, category:"作業開始前点検", page:"P.94", important:true, level:"上級",
+    question:"動力プレス機械の作業開始前点検項目として「該当しない」ものはどれか。",
+    choices:[
+      "クラッチおよびブレーキの機能",
+      "1 行程 1 停止機構・急停止機構・非常停止装置の機能",
+      "安全装置の機能",
+      "金型の生産ロット番号の照合"
+    ],
+    answer:3, explanation:"プレスの作業開始前点検はクラッチ・ブレーキ、1 行程 1 停止機構、安全装置等の機能確認。ロット番号照合は安全点検項目ではありません。"},
+  {id:26, category:"作業開始前点検", page:"P.32", important:false, level:"初級",
+    question:"点検記録の管理について「最も適切」なものはどれか。",
+    choices:[
+      "改ざん防止と所定の保存期間（一般に 3 年等）を確保して保管",
+      "個人別の PC ローカルへ保存し他者から見えなくする",
+      "法定保存義務がないため随時破棄してよい",
+      "異常時のみ記録し、正常時は記録しない"
+    ],
+    answer:0, explanation:"点検記録は改ざん防止と保存期間（多くは 3 年）の確保が原則。常時記録することで傾向管理が可能になります。"},
+  {id:27, category:"作業開始前点検", page:"P.80", important:false, level:"中級",
+    question:"研削盤の作業開始前点検として正しいものはどれか。",
+    choices:[
+      "といしの最高使用周速度の確認と、作業開始前 1 分以上・取替時 3 分以上の試運転",
+      "といしの色合いの均一性チェック",
+      "といし軸の銘板書体の確認",
+      "作業者の利き手の確認"
+    ],
+    answer:0, explanation:"研削といしは作業開始前 1 分以上、取替時は 3 分以上の試運転を行い、最高使用周速度を超えない使用とする必要があります。"},
+  {id:28, category:"作業開始前点検", page:"P.70", important:false, level:"初級",
+    question:"溶接作業前の火災防止対策として「不適切」なものはどれか。",
+    choices:[
+      "概ね 5m 以内の可燃物の除去または不燃シートでの養生",
+      "消火器の準備と火災監視人の配置",
+      "換気の実施",
+      "作業終了後の冷却・残火確認を省略する"
+    ],
+    answer:3, explanation:"残火による火災は溶接後 30 分以上後に発火する例もあり、終了後の冷却・残火確認は省略してはいけません。"},
+  {id:29, category:"作業開始前点検", page:"P.77", important:true, level:"中級",
+    question:"移動式電動工具の使用前点検として「必須」なものはどれか。",
+    choices:[
+      "外被・コード・プラグの損傷確認、接地、漏電遮断器の作動試験",
+      "メーカーの株価確認",
+      "工具本体の塗装の艶確認",
+      "工具の質量計測"
+    ],
+    answer:0, explanation:"電動工具の感電災害防止には外被・コード損傷、接地、漏電遮断器の動作試験が必須です。"},
+  {id:30, category:"作業開始前点検", page:"P.70", important:false, level:"上級",
+    question:"ガス溶接・溶断作業前の確認事項として「不適切」なものはどれか。",
+    choices:[
+      "ホース・接続部のガス漏れチェック（漏れ検知液等）",
+      "逆火防止器・乾式安全器の取付確認",
+      "酸素・アセチレン圧力調整器の指示確認",
+      "ボンベを製造番号順に並べ替える"
+    ],
+    answer:3, explanation:"ガス漏れ・逆火防止器・調整器の確認が安全上の必須項目。製造番号順の整列は安全とは無関係です。"},
+
+  /* --- 作業関連連絡調整会議 (5) --- */
+  {id:31, category:"作業関連連絡調整会議", page:"P.27", important:true, level:"初級",
+    question:"作業関連連絡調整会議の主たる目的として「最も適切」なものはどれか。",
+    choices:[
+      "混在作業による連絡・調整不足から生じる災害の防止",
+      "各社の月次売上情報の共有による発注調整",
+      "出退勤時刻の打刻管理と勤怠是正",
+      "食堂の混雑緩和策の検討"
+    ],
+    answer:0, explanation:"複数業者・部門による混在作業では連絡・調整不足が災害の主要因となるため、これを防ぐことが目的です。"},
+  {id:32, category:"作業関連連絡調整会議", page:"P.27", important:true, level:"中級",
+    question:"作業関連連絡調整会議の招集・主催者として「最も適切」なのは誰か。",
+    choices:[
+      "元方事業者（発注者側）の機電安全責任者または統括安全衛生責任者",
+      "関係請負人の中で最も小規模な事業者",
+      "構内警備会社の警備責任者",
+      "構内食堂の運営事業者"
+    ],
+    answer:0, explanation:"安衛法 30 条等に基づき、構内作業の連絡調整は元方事業者（統括安全衛生責任者等）が主催します。"},
+  {id:33, category:"作業関連連絡調整会議", page:"P.27", important:false, level:"中級",
+    question:"作業関連連絡調整会議の議題として「含めるべきでない」ものはどれか。",
+    choices:[
+      "各社の作業内容・作業区域・時間帯",
+      "危険有害情報（火気・高所・電気・有害物等）",
+      "クレーン・通路・電源等の共用設備の使用調整",
+      "各社の経営計画や新規受注見込み額"
+    ],
+    answer:3, explanation:"会議は安全確保のための情報共有と調整が目的。経営計画等の機密情報の共有は趣旨に反します。"},
+  {id:34, category:"作業関連連絡調整会議", page:"P.27", important:false, level:"初級",
+    question:"作業関連連絡調整会議の開催頻度として「最も適切」なものはどれか。",
+    choices:[
+      "作業開始前および計画変更時、定期（例：毎日／週次）",
+      "災害が発生した時のみ",
+      "年 1 回の年初会議のみ",
+      "各社が個別に必要と判断したときのみ"
+    ],
+    answer:0, explanation:"作業開始前・計画変更時に加え、毎日もしくは週次等の定期開催が一般的です。"},
+  {id:35, category:"作業関連連絡調整会議", page:"P.27", important:true, level:"上級",
+    question:"会議で決定した事項の周知方法として「不十分」なものはどれか。",
+    choices:[
+      "議事録を全関係請負人と職長へ配布し、署名・確認を得る",
+      "朝礼・KY 等の場で具体的に作業者へ伝達する",
+      "掲示板への掲示と作業手順書への反映",
+      "元方事業者の安全担当者のみが内容を把握しておく"
+    ],
+    answer:3, explanation:"元方の担当者だけが把握しても現場の作業者には伝わらず、混在災害の防止になりません。"},
+
+  /* --- 届出・書類 (8) --- */
+  {id:36, category:"届出・書類", page:"P.30", important:true, level:"中級",
+    question:"労働安全衛生法に基づく機械等設置届の提出先と提出時期の組合せとして正しいものはどれか。",
+    choices:[
+      "所轄労働基準監督署長、工事開始の 30 日前まで",
+      "所轄労働局長、工事完了後 30 日以内",
+      "所轄消防長、工事開始前日まで",
+      "厚生労働大臣、工事開始の 60 日前まで"
+    ],
+    answer:0, explanation:"安衛法 88 条 1 項に基づく機械等設置届は所轄労働基準監督署長に、工事開始の 30 日前までに提出します。"},
+  {id:37, category:"届出・書類", page:"P.30", important:false, level:"中級",
+    question:"労働安全衛生法に基づく計画届（機械等設置届）の対象に「該当しない」ものはどれか。",
+    choices:[
+      "吊上荷重 3t 以上のクレーン",
+      "積載荷重 1t 以上のエレベーター",
+      "小型ボイラーを除くボイラー",
+      "汎用の卓上ボール盤"
+    ],
+    answer:3, explanation:"特定機械（クレーン、エレベーター、ボイラー等の所定規模以上）は計画届対象。汎用卓上ボール盤は対象外です。"},
+  {id:38, category:"届出・書類", page:"P.109", important:true, level:"上級",
+    question:"労働者死傷病報告の提出区分として正しい組合せはどれか。",
+    choices:[
+      "休業 4 日以上は遅滞なく、休業 1～3 日は四半期ごと取りまとめ",
+      "休業 4 日以上は四半期ごと、休業 1～3 日は遅滞なく",
+      "休業の有無に関わらず年 1 回まとめて提出",
+      "死亡災害のみ提出義務がある"
+    ],
+    answer:0, explanation:"安衛則 97 条で、休業 4 日以上は遅滞なく（様式 23 号）、1～3 日は四半期ごと（様式 24 号）に取りまとめて提出します。"},
+  {id:39, category:"届出・書類", page:"P.109", important:false, level:"中級",
+    question:"労働者死傷病報告の提出対象に「該当しない」ものはどれか。",
+    choices:[
+      "業務上の負傷で休業 1 日となった災害",
+      "業務上の腰痛で休業 4 日となった事案",
+      "業務上の負傷で死亡した災害",
+      "通勤途上の交通事故（業務上ではない）で休業 5 日となった事案"
+    ],
+    answer:3, explanation:"労働者死傷病報告は業務災害が対象。通勤災害（業務上ではないもの）はこの報告の対象外です。"},
+  {id:40, category:"届出・書類", page:"P.91", important:false, level:"初級",
+    question:"特定機械の検査証の交付者として「正しい」ものはどれか。",
+    choices:[
+      "所轄労働基準監督署長または登録製造時等検査機関",
+      "都道府県知事",
+      "経済産業大臣",
+      "一般社団法人日本機械工業会"
+    ],
+    answer:0, explanation:"特定機械の検査証は所轄労働基準監督署長または登録製造時等検査機関が交付します。"},
+  {id:41, category:"届出・書類", page:"P.32", important:false, level:"中級",
+    question:"安全衛生関係記録の一般的な保存期間として「最も適切」なものはどれか。",
+    choices:[
+      "多くは 3 年。健康診断個人票や特殊健診結果等は 5 年以上のものもある",
+      "全て 1 年間で統一されている",
+      "法令上の規定はなく任意",
+      "永久保存が義務付けられている"
+    ],
+    answer:0, explanation:"安全衛生関係記録は多くが 3 年保存。特殊健診の個人票等は 5 年（一部は 30 年・40 年）保存対象もあります。"},
+  {id:42, category:"届出・書類", page:"P.26", important:true, level:"上級",
+    question:"消防法に基づく危険物製造所等の設置許可申請の許可権者として「正しい」ものはどれか。",
+    choices:[
+      "市町村長（消防本部・消防署を置かない場合は都道府県知事）",
+      "厚生労働大臣",
+      "所轄労働基準監督署長",
+      "経済産業大臣"
+    ],
+    answer:0, explanation:"消防法 11 条に基づき、危険物製造所等の設置許可は市町村長等が行います。"},
+  {id:43, category:"届出・書類", page:"P.100", important:false, level:"初級",
+    question:"作業主任者選任に関する事業者の措置として「不適切」なものはどれか。",
+    choices:[
+      "氏名およびその者に行わせる事項を作業場の見やすい箇所に掲示",
+      "選任の事実を記録に残し、変更時は速やかに更新",
+      "選任を変更したときは関係者に周知する",
+      "当該作業主任者が休暇のときは無資格者に代行させる"
+    ],
+    answer:3, explanation:"作業主任者は技能講習修了者等から選任することが要件。無資格者による代行は法令違反です。"},
+
+  /* --- 定期自主検査 (8) --- */
+  {id:44, category:"定期自主検査", page:"P.97", important:true, level:"初級",
+    question:"フォークリフトの年次定期自主検査（特定自主検査）の正しい組合せはどれか。",
+    choices:[
+      "1 年以内ごとに 1 回、有資格者または登録検査業者が実施",
+      "2 年以内ごとに 1 回、運転者本人が実施",
+      "5 年に 1 回、メーカーのみ可",
+      "必要に応じて随時実施で足りる"
+    ],
+    answer:0, explanation:"フォークリフトの年次特定自主検査は 1 年以内ごとに 1 回、有資格者または登録検査業者により実施します。"},
+  {id:45, category:"定期自主検査", page:"P.97", important:true, level:"中級",
+    question:"フォークリフトの定期自主検査の周期について「誤り」はどれか。",
+    choices:[
+      "月例：1 月以内ごとに 1 回",
+      "年次：1 年以内ごとに 1 回",
+      "年次は特定自主検査で、有資格者または登録検査業者による",
+      "月例は 6 月以内ごとに 1 回で足りる"
+    ],
+    answer:3, explanation:"フォークリフトの月例自主検査は 1 月以内ごとに 1 回。6 月では誤りです。"},
+  {id:46, category:"定期自主検査", page:"P.97", important:false, level:"中級",
+    question:"クレーン（吊上荷重 3t 以上）の検査と周期の組合せで「誤り」はどれか。",
+    choices:[
+      "年次自主検査：1 年以内ごとに 1 回",
+      "月例自主検査：1 月以内ごとに 1 回",
+      "性能検査：原則 2 年以内ごとに 1 回（労働基準監督署長等）",
+      "作業開始前点検：3 月以内ごとに 1 回でよい"
+    ],
+    answer:3, explanation:"クレーンの作業開始前点検は「その日の作業を開始する前」に毎日実施します。"},
+  {id:47, category:"定期自主検査", page:"P.97", important:false, level:"上級",
+    question:"動力プレス機械の特定自主検査について「正しい」ものはどれか。",
+    choices:[
+      "1 年以内ごとに 1 回、有資格者（特定自主検査者）または登録検査業者が実施",
+      "3 年以内ごとに 1 回でよい",
+      "検査結果の標章貼付は任意",
+      "操作者本人が独自基準で実施できる"
+    ],
+    answer:0, explanation:"動力プレスの特定自主検査は 1 年以内ごとに 1 回、有資格者または登録検査業者が実施し、検査標章を貼付します。"},
+  {id:48, category:"定期自主検査", page:"P.97", important:true, level:"上級",
+    question:"定期自主検査記録の保存期間として「正しい」ものはどれか。",
+    choices:[
+      "3 年間",
+      "6 月",
+      "10 年",
+      "永久"
+    ],
+    answer:0, explanation:"労安則 151 条の 23 等で定期自主検査記録は 3 年間保存と定められています。"},
+  {id:49, category:"定期自主検査", page:"P.97", important:false, level:"初級",
+    question:"定期自主検査で異常を発見した場合の対応として「最も適切」なものはどれか。",
+    choices:[
+      "直ちに補修等の措置を行うまで使用しない",
+      "次回検査時にまとめて補修する",
+      "記録のみ残しそのまま使用する",
+      "当該設備の責任者の判断のみで報告は省略する"
+    ],
+    answer:0, explanation:"異常があれば直ちに補修等の措置を講じ、それまで使用しないことが原則です。"},
+  {id:50, category:"定期自主検査", page:"P.97", important:false, level:"中級",
+    question:"ゴンドラの定期自主検査の周期として「正しい」組合せはどれか。",
+    choices:[
+      "月例：1 月以内ごとに 1 回／年次：1 年以内ごとに 1 回",
+      "月例：3 月ごと／年次：3 年ごと",
+      "年次のみ：2 年ごと",
+      "検査義務なし"
+    ],
+    answer:0, explanation:"ゴンドラ安全規則では月例（1 月以内）と年次（1 年以内）の定期自主検査が義務付けられています。"},
+  {id:51, category:"定期自主検査", page:"P.97", important:false, level:"中級",
+    question:"局所排気装置・除じん装置・プッシュプル型換気装置の定期自主検査の周期として「正しい」ものはどれか。",
+    choices:[
+      "1 年以内ごとに 1 回",
+      "6 月以内ごとに 1 回",
+      "3 年以内ごとに 1 回",
+      "5 年以内ごとに 1 回"
+    ],
+    answer:0, explanation:"局所排気装置等は 1 年以内ごとに 1 回の定期自主検査が義務付けられています（記録は 3 年保存）。"},
+
+  /* --- 機械の管理ポイント (10) --- */
+  {id:52, category:"機械の管理ポイント", page:"P.60", important:true, level:"初級",
+    question:"機械安全における対策の優先順位として「最上位」となるものはどれか。",
+    choices:[
+      "本質的安全設計方策（危険源の除去・低減）",
+      "安全防護および付加保護方策（ガード等）",
+      "使用上の情報（警告ラベル・取扱説明書等）",
+      "個人用保護具の使用"
+    ],
+    answer:0, explanation:"ISO 12100 の 3-step method では「本質安全 → 安全防護・付加保護 → 使用上の情報」の順。個人用保護具はさらにその次。"},
+  {id:53, category:"機械の管理ポイント", page:"P.60", important:true, level:"中級",
+    question:"「本質安全化」の例として「最も適切」なものはどれか。",
+    choices:[
+      "外部動力遮断時に自動的に安全側に作動する機構を採用する設計",
+      "大きな警告ラベルを増貼する",
+      "作業者に厚手の手袋を支給する",
+      "KY シートのフォーマットを刷新する"
+    ],
+    answer:0, explanation:"本質安全化は危険源そのものの除去・低減や、フェールセーフ設計など、機械側の対策で行います。ラベル・保護具・帳票は本質安全ではありません。"},
+  {id:54, category:"機械の管理ポイント", page:"P.60", important:false, level:"中級",
+    question:"機械の保守時に LOTO（ロックアウト／タグアウト）を行う目的として「最も適切」なものはどれか。",
+    choices:[
+      "意図しない起動・通電や残圧開放等によるエネルギー再供給の防止",
+      "作業時間の短縮",
+      "工具のコスト削減",
+      "周辺照明の節電"
+    ],
+    answer:0, explanation:"LOTO は機械の意図しない起動・通電や、ばね・気体・液体等の蓄積エネルギーの解放を防止する手順です。"},
+  {id:55, category:"機械の管理ポイント", page:"P.60", important:true, level:"上級",
+    question:"両手操作式安全装置の要件として「誤り」はどれか。",
+    choices:[
+      "両手のスイッチを同時操作（時間差 0.5 秒以内など）しないと起動しない",
+      "操作中に片手を離すと急停止する",
+      "操作位置から危険区域に手が届かない距離が確保されている",
+      "片手で連続押下を維持できる機能（片手モード）を備えている"
+    ],
+    answer:3, explanation:"両手操作式は両手をスイッチに固定させることで危険区域に手を入れさせない装置。片手モードは安全意図に反します。"},
+  {id:56, category:"機械の管理ポイント", page:"P.60", important:false, level:"初級",
+    question:"プレス・裁断機等での挟まれ防止策のうち「最上位の対策」はどれか。",
+    choices:[
+      "危険源の除去（安全プレス化、機構的に手が入らない構造）",
+      "安全囲い等の固定ガード",
+      "光線式安全装置",
+      "警告ステッカーの貼付"
+    ],
+    answer:0, explanation:"対策優先順位は本質安全 → 安全防護 → 使用上の情報。安全プレス化など機構的な除去が最上位です。"},
+  {id:57, category:"機械の管理ポイント", page:"P.60", important:false, level:"中級",
+    question:"回転体への巻き込まれ防止として「正しい」ものはどれか。",
+    choices:[
+      "回転部の覆い・囲いを設置し、ボール盤等では運転中は手袋を着用しない",
+      "手袋着用を全機械で義務付ければ安全",
+      "緩い袖の作業着で機械を扱う",
+      "装身具は短いものなら付けてよい"
+    ],
+    answer:0, explanation:"ボール盤など回転刃物では手袋が巻き込まれの原因になるため運転中は外す。固定ガードと服装規律が基本です。"},
+  {id:58, category:"機械の管理ポイント", page:"P.60", important:true, level:"中級",
+    question:"プレス機械の安全装置として「該当しない」ものはどれか。",
+    choices:[
+      "両手操作式",
+      "光線式（光電式）",
+      "ガード式",
+      "ベルトコンベヤ式"
+    ],
+    answer:3, explanation:"プレス安全装置には両手操作式、光線式、ガード式、手払い式、感応式等があります。ベルトコンベヤ式は搬送装置で安全装置ではありません。"},
+  {id:59, category:"機械の管理ポイント", page:"P.60", important:false, level:"上級",
+    question:"リスクアセスメントの「リスク見積り」の要素として「誤り」はどれか。",
+    choices:[
+      "危害のひどさ（重篤度）",
+      "危険状態が発生する頻度・時間",
+      "危険事象の発生確率（回避可能性を含む）",
+      "当該機械の購入価格"
+    ],
+    answer:3, explanation:"リスクの見積りは重篤度・頻度・発生確率（回避可能性）で行い、価格は要素になりません。"},
+  {id:60, category:"機械の管理ポイント", page:"P.60", important:false, level:"初級",
+    question:"非常停止装置の要件として「誤り」はどれか。",
+    choices:[
+      "操作子は赤、背景は黄を推奨",
+      "押した後は手動で復帰させなければ再起動できない",
+      "機械全体・危険区域全体を停止できること",
+      "押すだけで運転が自動的に再開する構造とする"
+    ],
+    answer:3, explanation:"非常停止後は手動で復帰させない限り再起動できない自己保持構造が必要。自動再起動は重大事故の原因となります。"},
+  {id:61, category:"機械の管理ポイント", page:"P.30", important:false, level:"中級",
+    question:"機械の据付時に確認すべき事項として「最も重要度が低い」ものはどれか。",
+    choices:[
+      "転倒防止・アンカー固定の確認",
+      "保守スペース・通路幅の確保",
+      "必要照度の確保",
+      "据付業者の制服のデザイン"
+    ],
+    answer:3, explanation:"据付時の確認は安全と運用に関わる項目。業者の制服デザインは安全に関係しません。"},
+
+  /* --- 事故・災害事例 (8) --- */
+  {id:62, category:"事故・災害事例", page:"P.59", important:true, level:"初級",
+    question:"プレス挟まれ災害の典型的な原因として「該当しない」ものはどれか。",
+    choices:[
+      "安全装置の無効化・短絡（バイパス配線）",
+      "金型調整時に電源を遮断せず行った",
+      "1 行程 1 停止機構の不具合",
+      "周辺の換気装置の風量不足"
+    ],
+    answer:3, explanation:"プレスの挟まれ災害は安全装置の無効化・金型調整時の電源未遮断・1 行程 1 停止機構の不良が典型原因。換気不良は粉じん・化学物質の問題で、挟まれの原因ではありません。"},
+  {id:63, category:"事故・災害事例", page:"P.59", important:false, level:"中級",
+    question:"フォークリフトの死亡災害として「最も多い」類型はどれか。",
+    choices:[
+      "はさまれ・巻き込まれ／激突／墜落・転落／転倒",
+      "給油時の感電",
+      "静電気による発火",
+      "ヘッドガード破損による落下物直撃のみ"
+    ],
+    answer:0, explanation:"フォークリフトの死亡災害ははさまれ・巻き込まれ、激突、墜落・転落、転倒が多くを占めます。"},
+  {id:64, category:"事故・災害事例", page:"P.80", important:true, level:"中級",
+    question:"研削といしの破裂事故の主な原因として「該当しない」ものはどれか。",
+    choices:[
+      "最高使用周速度の超過",
+      "取付フランジの径不足や偏心",
+      "試運転（取替時 3 分以上）の省略",
+      "周囲温度が摂氏 20 度であったこと"
+    ],
+    answer:3, explanation:"といし破裂は速度超過、取付不良、試運転省略、亀裂のある旧品使用等が原因。常温室温は破裂原因ではありません。"},
+  {id:65, category:"事故・災害事例", page:"P.57", important:false, level:"上級",
+    question:"クレーンの吊り荷落下・激突災害の防止策として「最も不適切」なものはどれか。",
+    choices:[
+      "つり角度 60 度以下の確保と定格荷重順守",
+      "玉掛け作業者を技能講習修了者から選任",
+      "過巻防止装置・玉掛け用具の定期点検",
+      "吊上時に荷の下を関係作業者が通行できるよう経路を整備"
+    ],
+    answer:3, explanation:"荷の下に人を立ち入らせることはクレ等則 74 条で原則禁止。落下時に直撃を受けるためです。"},
+  {id:66, category:"事故・災害事例", page:"P.70", important:false, level:"中級",
+    question:"アーク溶接作業に伴う代表的災害として「該当しない」ものはどれか。",
+    choices:[
+      "感電",
+      "アーク光による電気性眼炎",
+      "ヒュームによる金属熱・じん肺",
+      "凍傷"
+    ],
+    answer:3, explanation:"アーク溶接の代表的災害は感電・眼障害・火災・ヒューム障害等。凍傷は寒冷曝露の災害で、アーク溶接の典型災害ではありません。"},
+  {id:67, category:"事故・災害事例", page:"P.47", important:true, level:"初級",
+    question:"高所からの墜落災害防止として「最も効果が高い」ものはどれか。",
+    choices:[
+      "まず作業床と手すりを設けること（足場・作業床の設置）",
+      "フルハーネスの掛け方を作業者個人の判断に任せる",
+      "短時間作業は保護具なしでよい",
+      "経験豊富な作業者のみで実施"
+    ],
+    answer:0, explanation:"墜落対策は「作業床と手すりを設ける」が最上位。墜落制止用器具はそれが困難な場合の補完です。"},
+  {id:68, category:"事故・災害事例", page:"P.55", important:false, level:"中級",
+    question:"はさまれ・巻き込まれ災害の再発防止策の検討順序として「最も適切」なものはどれか。",
+    choices:[
+      "本質安全 → 工学的対策（ガード等）→ 管理的対策 → 個人用保護具",
+      "個人用保護具 → 管理的対策 → 工学的対策 → 本質安全",
+      "管理的対策 → 個人用保護具 → 工学的対策 → 本質安全",
+      "工学的対策 → 個人用保護具 → 本質安全 → 管理的対策"
+    ],
+    answer:0, explanation:"再発防止策の検討は対策ピラミッド（本質安全 → 工学的 → 管理的 → 保護具）の順が原則です。"},
+  {id:69, category:"事故・災害事例", page:"P.55", important:false, level:"上級",
+    question:"重大災害発生時の原因分析手法として「不適切」なものはどれか。",
+    choices:[
+      "なぜなぜ分析（5Why 分析）",
+      "4M（Man, Machine, Media, Management）分析",
+      "SHEL モデル等のヒューマンファクター分析",
+      "当事者の人格批判のみで原因を確定する"
+    ],
+    answer:3, explanation:"原因分析は系統的手法（5Why／4M／SHEL 等）で行います。人格批判は再発防止につながらず、報告文化を損ないます。"},
+
+  /* --- 電気の管理ポイント (10) --- */
+  {id:70, category:"電気の管理ポイント", page:"P.63", important:true, level:"初級",
+    question:"低圧電路の感電防止策の組合せとして「最も適切」なものはどれか。",
+    choices:[
+      "接地（D 種等）＋漏電遮断器（高感度型）＋絶縁の確保",
+      "漏電遮断器の代わりに換気を強化する",
+      "接地を避けて完全絶縁のみとする",
+      "電圧を昇圧して電流を減らす"
+    ],
+    answer:0, explanation:"低圧電路の感電防止は「接地・漏電遮断器・絶縁」の三本柱で構成します。"},
+  {id:71, category:"電気の管理ポイント", page:"P.86", important:true, level:"中級",
+    question:"高圧・特別高圧電気取扱業務に従事するために必要なものはどれか。",
+    choices:[
+      "特別教育（安衛則 36 条 4 号）の受講",
+      "普通自動車免許",
+      "衛生管理者資格",
+      "フォークリフト運転技能講習修了"
+    ],
+    answer:0, explanation:"高圧・特別高圧の充電電路の取扱業務には安衛則 36 条 4 号に基づく特別教育が必要です。"},
+  {id:72, category:"電気の管理ポイント", page:"P.84", important:false, level:"中級",
+    question:"停電作業の実施手順として「正しい順序」はどれか。",
+    choices:[
+      "開閉器の開放 → 検電 → 短絡接地 → 施錠／表示",
+      "検電 → 開閉器の開放 → 施錠 → 短絡接地",
+      "施錠 → 短絡接地 → 開閉器の開放 → 検電",
+      "短絡接地 → 検電 → 開閉器の開放 → 施錠"
+    ],
+    answer:0, explanation:"停電作業は「開閉器開放 → 検電 → 短絡接地 → 施錠・表示」の順。逆や省略は誤通電による感電につながります。"},
+  {id:73, category:"電気の管理ポイント", page:"P.63", important:true, level:"上級",
+    question:"D 種接地工事の接地抵抗値として「正しい」ものはどれか。",
+    choices:[
+      "原則 100Ω 以下（漏電遮断器を施設する場合は 500Ω 以下まで緩和）",
+      "一律 10Ω 以下",
+      "一律 1Ω 以下",
+      "規定なし"
+    ],
+    answer:0, explanation:"電気設備技術基準で D 種接地は原則 100Ω 以下。0.5 秒以内に動作する漏電遮断器を施設する場合は 500Ω 以下まで緩和されます。"},
+  {id:74, category:"電気の管理ポイント", page:"P.63", important:false, level:"中級",
+    question:"人体保護用漏電遮断器の定格感度電流・動作時間として一般的な組合せはどれか。",
+    choices:[
+      "30mA 以下、0.1 秒以内（高感度高速形）",
+      "100mA、1 秒",
+      "300mA、3 秒",
+      "1A、5 秒"
+    ],
+    answer:0, explanation:"人体保護用（感電防止）は高感度高速形 30mA 以下・0.1 秒以内が原則。100mA 以上は地絡保護用です。"},
+  {id:75, category:"電気の管理ポイント", page:"P.63", important:false, level:"初級",
+    question:"絶縁用「保護具」と「防具」の使用区分として「正しい」ものはどれか。",
+    choices:[
+      "保護具（絶縁手袋・長靴等）は身体に着用、防具（絶縁シート等）は充電部に取付",
+      "保護具は充電部に取付、防具は身体に着用",
+      "両方とも作業床に敷くのみ",
+      "どちらも同じ用途であり区別はない"
+    ],
+    answer:0, explanation:"保護具は人体側、防具は充電部側に使用します。混同すると感電防止性能が発揮されません。"},
+  {id:76, category:"電気の管理ポイント", page:"P.63", important:true, level:"上級",
+    question:"22kV を超え 33kV 以下の特別高圧充電電路に対する接近限界距離（安衛則 342 条）として「正しい」ものはどれか。",
+    choices:[
+      "30cm",
+      "60cm",
+      "100cm",
+      "200cm"
+    ],
+    answer:0, explanation:"安衛則 342 条で 22kV超〜33kV以下の充電電路に対する接近限界距離は 30cm と定められています。"},
+  {id:77, category:"電気の管理ポイント", page:"P.97", important:false, level:"中級",
+    question:"絶縁用保護具・防具・活線作業用器具の定期自主検査の周期として「正しい」ものはどれか。",
+    choices:[
+      "6 月以内ごとに 1 回",
+      "1 年以内ごとに 1 回",
+      "3 年以内ごとに 1 回",
+      "検査義務なし"
+    ],
+    answer:0, explanation:"労安則 351 条で絶縁用保護具等は 6 月以内ごとに 1 回、定期に絶縁性能等を自主検査します。"},
+  {id:78, category:"電気の管理ポイント", page:"P.63", important:false, level:"初級",
+    question:"電気火災の主因として「適切でない」ものはどれか。",
+    choices:[
+      "トラッキング現象（ホコリと湿気でプラグ部分の絶縁劣化）",
+      "過電流による配線過熱",
+      "短絡（ショート）による高熱発生",
+      "ブレーカーを定格容量で正しく選定・使用すること"
+    ],
+    answer:3, explanation:"正しい容量のブレーカ使用は火災防止策。火災主因はトラッキング・過電流・短絡・接触不良（過熱）などです。"},
+  {id:79, category:"電気の管理ポイント", page:"P.61", important:false, level:"中級",
+    question:"電気室・受変電設備の管理として「不適切」なものはどれか。",
+    choices:[
+      "関係者以外立入禁止表示と施錠管理",
+      "単線結線図・連絡先の掲示",
+      "消火器・絶縁用保護具の常備",
+      "換気のため常時扉を開放し、構内者の通り抜けを認める"
+    ],
+    answer:3, explanation:"電気室は関係者以外の立入禁止・施錠が原則。扉の常時開放は感電・いたずら・短絡事故の原因になります。"},
+
+  /* --- 電気安全十則 (10) --- */
+  {id:80, category:"電気安全十則", page:"P.63", important:true, level:"初級",
+    question:"電気の特性に関する記述として「適切でない」ものはどれか。",
+    choices:[
+      "電気は目に見えず匂いもないため、五感での認知が困難",
+      "触れて初めて危険を認識する場合が多く、致命的になりやすい",
+      "湿気・水分の存在で危険性が大きく増す",
+      "低圧であれば感電死は絶対に起こらない"
+    ],
+    answer:3, explanation:"低圧（特に 100V）でも電流経路と時間によっては心室細動を起こし得ます。「低圧＝安全」は誤りです。"},
+  {id:81, category:"電気安全十則", page:"P.84", important:false, level:"初級",
+    question:"電気取扱の原則として「誤り」はどれか。",
+    choices:[
+      "有資格者のみが操作する",
+      "標識・施錠で操作の権限と状態を明示する",
+      "操作手順は事前に取り決め、記録を残す",
+      "緊急時のみは無資格者も操作してよい"
+    ],
+    answer:3, explanation:"緊急であっても無資格者の電気取扱は禁止。誤操作による二次災害の危険が高まります。"},
+  {id:82, category:"電気安全十則", page:"P.84", important:true, level:"中級",
+    question:"停電作業時に「省略してはならない」措置の組合せはどれか。",
+    choices:[
+      "検電・短絡接地・施錠・表示の 4 点すべて",
+      "検電のみ",
+      "表示のみ",
+      "開閉器の開放のみ"
+    ],
+    answer:0, explanation:"停電作業の安全 4 点セット（検電・短絡接地・施錠・表示）は省略不可。一つでも欠けると誤通電災害につながります。"},
+  {id:83, category:"電気安全十則", page:"P.84", important:false, level:"中級",
+    question:"活線作業時の措置として「不適切」なものはどれか。",
+    choices:[
+      "絶縁用保護具・防具の使用、監視人の配置",
+      "接近限界距離の確保",
+      "作業区域の表示と関係者外立入禁止",
+      "単独作業で実施し応援は呼ばない"
+    ],
+    answer:3, explanation:"活線作業は監視人の配置が必須。単独作業は感電時の救助が遅れ、致命的になります。"},
+  {id:84, category:"電気安全十則", page:"P.84", important:false, level:"初級",
+    question:"電気設備の異常時対応として「適切でない」ものはどれか。",
+    choices:[
+      "直ちに電源遮断",
+      "二次災害防止（消火準備・関係者退避）",
+      "責任者への報告と原因調査",
+      "異音・異臭があっても運転継続し原因を切り分ける"
+    ],
+    answer:3, explanation:"異音・異臭は短絡・絶縁劣化の前兆。継続運転は火災・感電のリスクを高めます。"},
+  {id:85, category:"電気安全十則", page:"P.77", important:true, level:"中級",
+    question:"電気工事・測定で使用する機器の管理として「最も適切」なものはどれか。",
+    choices:[
+      "校正期限の管理と使用前点検、絶縁性能の定期確認",
+      "購入時に確認すれば以後点検不要",
+      "個人で保管し校正記録は付けない",
+      "故障しても見た目で問題なければ使用継続"
+    ],
+    answer:0, explanation:"測定器の校正・絶縁性能管理は誤計測による感電・誤判定防止の前提条件です。"},
+  {id:86, category:"電気安全十則", page:"P.63", important:false, level:"中級",
+    question:"接地に関する記述として「誤り」はどれか。",
+    choices:[
+      "必要な接地を確実に施し、勝手に外さない",
+      "接地線の断線・腐食を点検する",
+      "接地と漏電遮断器を併用することでより安全になる",
+      "短絡接地は活線中でも気軽に取り外してよい"
+    ],
+    answer:3, explanation:"短絡接地の取外しは停電作業の終了直前に行う重要な手順。活線中の取り外しはアーク発生による重大事故の原因になります。"},
+  {id:87, category:"電気安全十則", page:"P.63", important:false, level:"上級",
+    question:"水・湿気と電気の取扱として「誤り」はどれか。",
+    choices:[
+      "濡れた手・濡れた場所では電気作業を避ける",
+      "雨天時の屋外電気工事は原則延期・養生する",
+      "浴室・洗面等の湿気の多い場所では漏電遮断器が有効",
+      "湿気は絶縁性能に影響しない"
+    ],
+    answer:3, explanation:"湿気は絶縁抵抗を著しく低下させ、トラッキング・漏電・感電のリスクを高めます。"},
+  {id:88, category:"電気安全十則", page:"P.61", important:false, level:"初級",
+    question:"電気安全教育として「不適切」なものはどれか。",
+    choices:[
+      "雇入れ時・作業内容変更時の教育",
+      "定期的な再教育と訓練",
+      "災害事例・ヒヤリ事例の共有",
+      "教育記録を残さず、必要時に口頭で確認する"
+    ],
+    answer:3, explanation:"教育記録は法定保存対象。記録がないと未受講者の特定や監督官庁への説明ができません。"},
+  {id:89, category:"電気安全十則", page:"P.84", important:false, level:"中級",
+    question:"思い込み・誤認による事故防止策として「効果が乏しい」ものはどれか。",
+    choices:[
+      "指差呼称",
+      "ダブルチェック（複数人確認）",
+      "作業前 KY による危険共有",
+      "経験年数のみを根拠とする単独判断"
+    ],
+    answer:3, explanation:"経験豊富な作業者ほど思い込み（既知の状況だと早合点）に陥りやすく、単独判断は重大事故の原因になります。"},
+
+  /* --- 別表・選任配置 (5) --- */
+  {id:90, category:"別表・選任配置", page:"P.86", important:true, level:"中級",
+    question:"常時 50 人以上の労働者を使用する事業場で、安全衛生体制上「選任義務がない」ものはどれか。",
+    choices:[
+      "衛生管理者",
+      "産業医",
+      "安全管理者（一定業種）",
+      "安全衛生推進者"
+    ],
+    answer:3, explanation:"安全衛生推進者は常時 10〜49 人の事業場が対象。50 人以上では衛生管理者・産業医（業種により安全管理者）の選任が必要です。"},
+  {id:91, category:"別表・選任配置", page:"P.100", important:false, level:"上級",
+    question:"プレス機械作業主任者の選任要件として「正しい」ものはどれか。",
+    choices:[
+      "動力により駆動されるプレス機械を 5 台以上有する事業場で、技能講習修了者から選任",
+      "プレス 1 台以上の全事業場で必須",
+      "プレス 10 台以上の事業場でのみ必須",
+      "選任は法令上不要"
+    ],
+    answer:0, explanation:"労安則 134 条で動力プレス 5 台以上の事業場ではプレス機械作業主任者技能講習修了者から選任します。"},
+  {id:92, category:"別表・選任配置", page:"P.100", important:false, level:"中級",
+    question:"乾燥設備作業主任者の選任が必要な乾燥設備として「正しい」ものはどれか。",
+    choices:[
+      "危険物等を加熱乾燥するもので、内容積 1 ㎥以上等の一定の乾燥設備",
+      "家庭用ヘアドライヤー",
+      "家庭用食器乾燥機",
+      "事務所のタオルウォーマー"
+    ],
+    answer:0, explanation:"労安則 297 条で危険物等を加熱乾燥する内容積 1 ㎥以上の乾燥設備等が作業主任者選任対象。家庭用器具は対象外です。"},
+  {id:93, category:"別表・選任配置", page:"P.86", important:true, level:"初級",
+    question:"職長等教育（安衛法 60 条）が必要な業種に「該当しない」ものはどれか。",
+    choices:[
+      "建設業",
+      "製造業（食料品製造業等を除く）",
+      "電気業",
+      "金融保険業"
+    ],
+    answer:3, explanation:"職長等教育は建設業・製造業（一部除外）・電気業・ガス業・自動車整備業・機械修理業が対象。金融保険業は対象外です。"},
+  {id:94, category:"別表・選任配置", page:"P.100", important:false, level:"上級",
+    question:"特定化学物質作業主任者の選任が必要な作業として「該当しない」ものはどれか。",
+    choices:[
+      "第 1 類・第 2 類特定化学物質の製造・取扱作業",
+      "第 3 類特定化学物質の製造・取扱作業",
+      "特定化学設備の改造作業",
+      "一般事務室における通常の書類事務"
+    ],
+    answer:3, explanation:"特定化学物質作業主任者は第 1〜3 類の製造・取扱作業や特化設備の改造作業が対象。通常の事務作業は対象外です。"},
+
+  /* --- 別表・表示照度 (4) --- */
+  {id:95, category:"別表・表示照度", page:"P.108", important:false, level:"初級",
+    question:"事務所衛生基準規則（令和 4 年改正）における「一般的事務作業」の照度基準として「正しい」ものはどれか。",
+    choices:[
+      "300 ルクス以上",
+      "150 ルクス以上",
+      "70 ルクス以上",
+      "50 ルクス以上"
+    ],
+    answer:0, explanation:"令和 4 年改正で「精密」「普通」「粗な」の 3 区分から「一般的事務作業 300lx 以上」「付随的事務作業 150lx 以上」の 2 区分へ変更されました。"},
+  {id:96, category:"別表・表示照度", page:"P.108", important:false, level:"中級",
+    question:"事務所衛生基準規則の「付随的事務作業」（資料参照等）の照度基準として「正しい」ものはどれか。",
+    choices:[
+      "150 ルクス以上",
+      "75 ルクス以上",
+      "50 ルクス以上",
+      "20 ルクス以上"
+    ],
+    answer:0, explanation:"付随的事務作業（資料参照等の補助的作業）は 150 ルクス以上が必要です。"},
+  {id:97, category:"別表・表示照度", page:"P.108", important:true, level:"上級",
+    question:"労働安全衛生規則 604 条における「普通の作業」の照度基準として「正しい」ものはどれか。",
+    choices:[
+      "150 ルクス以上",
+      "70 ルクス以上",
+      "30 ルクス以上",
+      "10 ルクス以上"
+    ],
+    answer:0, explanation:"安衛則 604 条で精密作業 300lx 以上、普通作業 150lx 以上、粗な作業 70lx 以上と定められています。"},
+  {id:98, category:"別表・表示照度", page:"P.108", important:false, level:"中級",
+    question:"安衛則 604 条における「精密な作業」の照度基準として「正しい」ものはどれか。",
+    choices:[
+      "300 ルクス以上",
+      "150 ルクス以上",
+      "70 ルクス以上",
+      "30 ルクス以上"
+    ],
+    answer:0, explanation:"精密な作業は 300 ルクス以上が必要。普通作業 150lx・粗な作業 70lx と区別して覚えます。"},
+
+  /* --- 別表・報告 (4) --- */
+  {id:99, category:"別表・報告", page:"P.109", important:true, level:"中級",
+    question:"休業 4 日以上の労働災害が発生したときに提出する書類と提出時期の組合せとして「正しい」ものはどれか。",
+    choices:[
+      "労働者死傷病報告（様式 23 号）、遅滞なく所轄労働基準監督署長へ",
+      "始末書、月末までに労働基準監督署長へ",
+      "事故報告書（任意様式）、年 1 回提出",
+      "提出不要"
+    ],
+    answer:0, explanation:"安衛則 97 条で休業 4 日以上は様式 23 号の労働者死傷病報告を遅滞なく所轄労基署へ提出します。"},
+  {id:100, category:"別表・報告", page:"P.109", important:false, level:"中級",
+    question:"休業 1〜3 日の労働災害の労働者死傷病報告（様式 24 号）の提出周期として「正しい」ものはどれか。",
+    choices:[
+      "四半期ごと（1〜3 月分は 4 月末、4〜6 月分は 7 月末等）",
+      "毎月末",
+      "年 1 回（年度末）",
+      "提出不要"
+    ],
+    answer:0, explanation:"様式 24 号は四半期ごとに翌月末までに取りまとめて提出します。"},
+  {id:101, category:"別表・報告", page:"P.109", important:true, level:"上級",
+    question:"「事故報告」と「労働者死傷病報告」の関係について「正しい」ものはどれか。",
+    choices:[
+      "一定の事故（火災・爆発・クレーン倒壊等）は人的被害の有無にかかわらず事故報告書（様式 22 号）の提出が必要",
+      "事故報告書は労働者死傷病報告と必ず同時に提出する",
+      "死亡災害がなければ事故報告は不要",
+      "事故報告は任意提出で法的義務はない"
+    ],
+    answer:0, explanation:"安衛則 96 条で人的被害の有無に関わらず一定の事故が発生したときは事故報告書の提出が必要。死傷病報告とは独立した報告制度です。"},
+  {id:102, category:"別表・報告", page:"P.109", important:false, level:"初級",
+    question:"労働者死傷病報告の提出先として「正しい」ものはどれか。",
+    choices:[
+      "所轄労働基準監督署長",
+      "所轄税務署長",
+      "市町村長",
+      "都道府県知事"
+    ],
+    answer:0, explanation:"労働者死傷病報告は安衛則 97 条に基づき所轄労働基準監督署長に提出します。"},
+];
+
+/* =========================================================
+   PDF本文準拠問題データ
+  sourcePage は機電安全必携の紙面ページ。PDFビューア上は紙面ページごとの補正で開く。
+   ========================================================= */
+const QUESTIONS = [
+  {id:1001, category:"機電安全責任者の任務", sourcePage:1, important:true, level:"初級",
+    question:"機電安全責任者制度の目的として、本文に最も近いものはどれか。",
+    choices:[
+      "工事に使用する機械・電気機器とそれらを使用する作業の安全管理業務を確実に遂行するため",
+      "工事原価を削減し、機械の稼働率を最大化するため",
+      "協力会社の契約条件を統一し、購買手続きを簡素化するため",
+      "完成検査の品質判定を一元化し、手直し件数を削減するため"
+    ],
+    answer:0, explanation:"P.1では、工事に使用するすべての機械・電気機器及びそれらを使用する作業の安全管理業務を確実に遂行するため、機電安全責任者に任命する制度であると説明されています。"},
+  {id:1002, category:"機電安全責任者の任務", sourcePage:1, important:true, level:"初級",
+    question:"機電安全責任者の任命について、本文に示されている原則として正しいものはどれか。",
+    choices:[
+      "所長が選任し、原則として支店長から任命する",
+      "協力会社が選任し、作業主任者から任命する",
+      "安全衛生委員会が投票で選任し、所長が承認する",
+      "現場作業員の互選により毎月交替で任命する"
+    ],
+    answer:0, explanation:"P.1の『任命』では、所長が選任し、原則として支店長から任命するとされています。"},
+  {id:1003, category:"機電安全責任者の任務", sourcePage:1, important:true, level:"初級",
+    question:"機電安全責任者の任務として列挙されているものに含まれないものはどれか。",
+    choices:[
+      "現場管理業務",
+      "計画・指導業務",
+      "定期自主検査の確認",
+      "工事原価の最終承認"
+    ],
+    answer:3, explanation:"P.1では、現場管理業務、計画・指導業務、定期自主検査の確認が任務として示されています。工事原価の最終承認は示されていません。"},
+  {id:1004, category:"持込機械の検査・管理", sourcePage:2, important:true, level:"初級",
+    question:"現場管理業務の表で、受入時検査（機械、電気機器）の確認事項として示されているものはどれか。",
+    choices:[
+      "持込機械の検査・管理",
+      "作業間連絡調整会議",
+      "安全ダイジェストの該当頁",
+      "事前検討会（周知会）"
+    ],
+    answer:0, explanation:"P.2の現場管理業務の表では、受入時検査（機械、電気機器）の確認事項として『持込機械の検査・管理』が示されています。"},
+  {id:1005, category:"機械作業計画・指示", sourcePage:2, important:false, level:"中級",
+    question:"表で『機械作業計画・作業指示書（機械配置）』に対応する確認事項として示されているものはどれか。",
+    choices:[
+      "建設機械の作業計画。レンタル機械の管理",
+      "作業開始前点検",
+      "持込機械等使用届",
+      "登録運転員証の確認"
+    ],
+    answer:0, explanation:"P.2では、機械作業計画・作業指示書（機械配置）の欄に『建設機械の作業計画。レンタル機械の管理』が示されています。"},
+  {id:1006, category:"持込機械の検査・管理", sourcePage:3, important:true, level:"中級",
+    question:"『持込機械の検査・管理』で、持込機械は何種類に分類し管理すると説明されているか。",
+    choices:[
+      "4種類",
+      "2種類",
+      "3種類",
+      "5種類"
+    ],
+    answer:0, explanation:"P.3では、持込機械の検査・管理について、重点機械（社有機械）、重点機械（工事事務所の借上げ機械）、重点機械（協力会社の持込機械）、重点機械以外の持込機械の4種類に分類し管理すると説明されています。"},
+  {id:1007, category:"持込機械の検査・管理", sourcePage:4, important:true, level:"中級",
+    question:"重点機械（工事事務所の借上げ機械）の流れで、合格後に発行されるものはどれか。",
+    choices:[
+      "持込機械届受理証",
+      "登録運転員証",
+      "作業主任者選任届",
+      "安全衛生教育修了証"
+    ],
+    answer:0, explanation:"P.4のフローでは、検査立会・確認で合格した後、持込機械届受理証を発行し、使用開始へ進む流れが示されています。"},
+  {id:1008, category:"持込機械の検査・管理", sourcePage:5, important:false, level:"中級",
+    question:"重点機械以外の持込機械の例として挙げられているものはどれか。",
+    choices:[
+      "アーク溶接機",
+      "移動式クレーン",
+      "油圧ショベル",
+      "高所作業車"
+    ],
+    answer:0, explanation:"P.5では、重点機械以外の持込機械の例として、ガス溶断、アーク溶接機、ベルトコンベヤ、発電機、コンプレッサ、ポンプ類などが挙げられています。"},
+  {id:1009, category:"受入時検査", sourcePage:6, important:true, level:"初級",
+    question:"受入時検査について、持込機械等使用申請はどの様式で行うと説明されているか。",
+    choices:[
+      "全建統一様式第3号",
+      "全建統一様式第9号",
+      "参考様式第7号",
+      "安衛則様式第24号"
+    ],
+    answer:0, explanation:"P.6では、機械を持込む協力会社は『全建統一様式第3号』にて持込機械等使用申請を行うと説明されています。"},
+  {id:1010, category:"有資格者・教育受講", sourcePage:7, important:true, level:"初級",
+    question:"表で、移動式クレーンの運転員に義務付けられている教育内容として示されているものはどれか。",
+    choices:[
+      "安全衛生教育（有効5年）",
+      "安全衛生教育（有効3年）",
+      "特別教育（有効1年）",
+      "職長教育（有効5年）"
+    ],
+    answer:0, explanation:"P.7の表では、移動式クレーンの内容欄に『安全衛生教育（有効5年）』と示されています。"},
+  {id:1011, category:"建設機械の作業計画", sourcePage:9, important:true, level:"初級",
+    question:"『建設機械の作業計画』で、車両系建設機械や移動式クレーン等を用いる作業について元請が行うこととして正しいものはどれか。",
+    choices:[
+      "元請が作成した施工計画に基づき、作業計画及び作業方法について協力会社を指導する",
+      "協力会社が作業計画を作成した後、元請は結果だけを受領する",
+      "作業計画はレンタル会社が作成し、元請は機械の型式だけを確認する",
+      "作業方法は作業当日の運転者判断に任せ、書面化しない"
+    ],
+    answer:0, explanation:"P.9では、車両系建設機械、移動式クレーン等を用いて作業する場合、元請が作成した施工計画に基づき、作業計画及び作業の方法について協力会社を指導すると説明されています。"},
+  {id:1012, category:"建設機械の作業計画", sourcePage:9, important:false, level:"初級",
+    question:"『施工計画書に記入する項目』として示されていないものはどれか。",
+    choices:[
+      "全体工程表",
+      "機械の搬入・搬出計画",
+      "機械の配置計画",
+      "運転員の給与明細"
+    ],
+    answer:3, explanation:"P.9では、施工計画書に記入する項目として、全体工程表、機械の搬入・搬出計画、機械の配置計画が示されています。"},
+  {id:1013, category:"建設機械の作業計画", sourcePage:9, important:true, level:"中級",
+    question:"移動式クレーンの作業方法等として定める事項に含まれているものはどれか。",
+    choices:[
+      "荷の重量・積卸し位置、設置位置、玉掛け・操作の方法",
+      "運転員の勤務表、燃料購入先、月次請求書の締日",
+      "施工会社の決算情報、使用機械の購入価格、保険料",
+      "作業員の休憩場所、昼食手配、近隣挨拶の方法"
+    ],
+    answer:0, explanation:"P.9では、移動式クレーンについて、作業の方法、荷の重量・積卸し位置、設置位置、玉掛け・操作の方法などを定めることが示されています。"},
+  {id:1014, category:"建設機械の作業計画", sourcePage:9, important:true, level:"中級",
+    question:"車両系建設機械について作業計画書に示す事項として挙げられているものはどれか。",
+    choices:[
+      "機械の種類・能力、運行経路、作業方法",
+      "運転員の生年月日、通勤経路、緊急連絡先",
+      "機械メーカーの株価、購入年月、減価償却方法",
+      "現場事務所のレイアウト、掲示物、駐輪場所"
+    ],
+    answer:0, explanation:"P.9の右側では、車両系建設機械について、機械の種類・能力、運行経路、作業方法を示すこととされています。"},
+  {id:1015, category:"レンタル機械の管理", sourcePage:10, important:true, level:"初級",
+    question:"『レンタル機械の管理』で、機械を操作する者について確認すべきことはどれか。",
+    choices:[
+      "適切な資格を有していること",
+      "レンタル会社の社員であること",
+      "当該機械を購入した経験があること",
+      "元請の社員であること"
+    ],
+    answer:0, explanation:"P.10では、レンタル会社などから機械を借り受けた場合、機械を操作する者が適切な資格を有していることを確認すると説明されています。"},
+  {id:1016, category:"レンタル機械の管理", sourcePage:10, important:true, level:"中級",
+    question:"労働安全衛生法第33条に定められた対象機械として挙げられていないものはどれか。",
+    choices:[
+      "吊上げ荷重0.5t以上の移動式クレーン",
+      "車両系建設機械",
+      "作業床の高さ2m以上の高所作業車",
+      "一般事務用パソコン"
+    ],
+    answer:3, explanation:"P.10では、移動式クレーン、車両系建設機械、不整地運搬車、高所作業車が対象機械として示されています。一般事務用パソコンは対象機械ではありません。"},
+  {id:1017, category:"レンタル機械の管理", sourcePage:10, important:false, level:"中級",
+    question:"『書面交付』で、レンタル会社などの機械貸与者が通知する事項として示されているものはどれか。",
+    choices:[
+      "機械の能力と特性、使用時に注意すべき事項",
+      "機械の購入価格と減価償却年数",
+      "レンタル会社の役員一覧と決算書",
+      "協力会社の作業員名簿と賃金台帳"
+    ],
+    answer:0, explanation:"P.10では、機械貸与者は機械使用上注意すべき事項を書面で通知する義務があり、書面交付として機械の能力と特性、使用時に注意すべき事項が示されています。"},
+  {id:1018, category:"レンタル機械の管理", sourcePage:10, important:false, level:"中級",
+    question:"オペレータへ通知する事項として示されていないものはどれか。",
+    choices:[
+      "作業内容",
+      "指揮系統",
+      "運行経路・制限速度・機械の運行に関する事項",
+      "作業員の賞与額"
+    ],
+    answer:3, explanation:"P.10では、作業内容、指揮系統、連絡・合図の方法、運行経路・制限速度・機械の運行に関する事項などをオペレータへ通知することが示されています。"},
+  {id:1019, category:"法令上の機械の措置", sourcePage:11, important:true, level:"初級",
+    question:"『法令上の機械の措置等』で、元方事業者が行うべきこととして正しいものはどれか。",
+    choices:[
+      "協力会社及び協力会社の作業員が法令に違反しないよう指導し、違反時は是正の指示を行う",
+      "協力会社の法令違反は協力会社だけの責任なので、元方事業者は関与しない",
+      "法令違反を見つけても、作業の進捗を優先して指示を控える",
+      "機電安全責任者は機械の性能だけを確認し、法令上の措置は確認しない"
+    ],
+    answer:0, explanation:"P.11では、元方事業者は協力会社及び協力会社の作業員が法令に違反しないよう指導し、違反しているときは是正のため必要な指示を行わなければならないと説明されています。"},
+  {id:1020, category:"法令上の機械の措置", sourcePage:11, important:true, level:"中級",
+    question:"『指導・指示義務事項の例』で、機電安全責任者の確認事項として示されていないものはどれか。",
+    choices:[
+      "有資格者であるか",
+      "特別教育修了者であるか",
+      "作業主任者が適正に配置されているか",
+      "作業員の趣味嗜好を把握しているか"
+    ],
+    answer:3, explanation:"P.11のマゼンタ枠には、有資格者、特別教育、作業主任者、作業指揮者、監視人又は誘導者、持込機械の安全基準確保及び法定点検の実施状況などが例示されています。"},
+  {id:1021, category:"危険な場所での作業", sourcePage:12, important:true, level:"初級",
+    question:"危険な場所での作業について元方事業者が講じるべきものとして説明されているものはどれか。",
+    choices:[
+      "協力会社が適正に危険防止措置を講じられるよう、技術上の指導や必要な措置を講じる",
+      "危険な場所の判断は協力会社へ完全に任せ、元方事業者は関与しない",
+      "危険な場所では作業速度を上げ、短時間で作業を終えることだけを指導する",
+      "危険防止措置は作業後の写真記録だけで足りる"
+    ],
+    answer:0, explanation:"P.12では、危険な場所での作業では、協力会社が適正に危険防止措置を講じられるよう、元方事業者が技術上の指導やその他の必要な措置を講じることが示されています。"},
+  {id:1022, category:"危険な場所での作業", sourcePage:12, important:true, level:"中級",
+    question:"明り掘削作業において土砂等が崩壊するおそれのある場所への対策として示されていないものはどれか。",
+    choices:[
+      "土止め支保工を設ける",
+      "防護網を張る",
+      "立入禁止とする",
+      "危険区域内に休憩場所を設ける"
+    ],
+    answer:3, explanation:"P.12では、土止め支保工、防護網、立入禁止などが対策として示されています。危険区域内に休憩場所を設けることは対策ではありません。"},
+  {id:1023, category:"危険な場所での作業", sourcePage:12, important:false, level:"中級",
+    question:"地山の崩壊又は土石の落下のおそれがある場所への対策として示されているものはどれか。",
+    choices:[
+      "地山を安全な勾配にし、落下のおそれのある土石を取り除き、擁壁・土止め支保工や排水を行う",
+      "地山の状態にかかわらず、作業員の経験だけで作業可否を判断する",
+      "落下のおそれのある土石は作業の邪魔にならない限り放置する",
+      "雨水・地下水の排水は作業完了後にまとめて行う"
+    ],
+    answer:0, explanation:"P.12では、地山を安全な勾配にする、落下のおそれのある土石を取り除く、擁壁・土止め支保工を設ける、原因となる雨水・地下水を排除するなどの対策が示されています。"},
+  {id:1024, category:"危険な場所での作業", sourcePage:13, important:true, level:"中級",
+    question:"車両系建設機械の運行経路に対する対策として示されていないものはどれか。",
+    choices:[
+      "路肩の崩壊防止",
+      "地盤の不同沈下防止",
+      "必要な幅員の保持",
+      "機械の塗装色を統一する"
+    ],
+    answer:3, explanation:"P.13では、車両系建設機械の運行経路について、路肩の崩壊防止、地盤の不同沈下防止、必要な幅員の保持、ガードレール・標識の設置などが示されています。"},
+  {id:1025, category:"危険な場所での作業", sourcePage:13, important:false, level:"中級",
+    question:"軟弱な地盤への対策として示されているものはどれか。",
+    choices:[
+      "敷板・敷角等を使用する",
+      "誘導者を配置するだけで足りる",
+      "レールクランプだけを使用する",
+      "バランスウェイトだけを取り付ける"
+    ],
+    answer:0, explanation:"P.13では、軟弱な地盤について、敷板・敷角等の使用が対策として示されています。"},
+  {id:1026, category:"移動式クレーン等", sourcePage:14, important:true, level:"中級",
+    question:"移動式クレーンが転倒するおそれのある場所への対策として示されているものはどれか。",
+    choices:[
+      "転倒防止に必要な広さ及び強度を持つ鉄板、敷板、敷角を用いる",
+      "アウトリガーを片側だけ張り出して作業する",
+      "作業範囲を明示せず、運転者の経験で判断する",
+      "地盤の状態にかかわらず、同じ設置方法で作業する"
+    ],
+    answer:0, explanation:"P.14では、軟弱な地盤や埋設物、法肩の損壊により移動式クレーンが転倒するおそれのある場所で、転倒を防止するために必要な広さ及び強度を持つ鉄板、敷板、敷角を用いることが示されています。"},
+  {id:1027, category:"移動式クレーン等", sourcePage:14, important:false, level:"中級",
+    question:"軟弱な地盤等で鉄板等を使用した際のアウトリガーの使用方法として示されているものはどれか。",
+    choices:[
+      "鉄板等の中央部分に設置する",
+      "鉄板等の端部ぎりぎりに設置する",
+      "鉄板等の外側に設置する",
+      "アウトリガーを格納したまま作業する"
+    ],
+    answer:0, explanation:"P.14では、軟弱な地盤等で鉄板等を使用した際のアウトリガーは、鉄板等の中央部分に設置することが示されています。"},
+  {id:1028, category:"移動式クレーン等", sourcePage:14, important:true, level:"中級",
+    question:"架空電線等の充電電路に近接する作業に対する措置として示されていないものはどれか。",
+    choices:[
+      "充電電路の移設",
+      "感電防止のための囲いの設置",
+      "充電電路に絶縁用防護具を装着する",
+      "感電のおそれがあっても監視人を置かず作業する"
+    ],
+    answer:3, explanation:"P.14では、充電電路の移設、感電防止のための囲いの設置、充電電路への絶縁用防護具の装着、これらが困難な場合の監視人配置が示されています。"},
+  {id:1029, category:"作業開始前点検", sourcePage:15, important:true, level:"初級",
+    question:"作業開始前点検表で、点検結果に異常がある場合の措置として示されているものはどれか。",
+    choices:[
+      "取扱責任者へ報告し使用中止する",
+      "異常箇所を記録せず、そのまま使用する",
+      "作業終了後にまとめて確認する",
+      "点検者だけの判断で継続使用する"
+    ],
+    answer:0, explanation:"P.15の作業開始前点検表では、点検結果の措置として、異常がある場合は取扱責任者へ報告し使用中止と示されています。"},
+  {id:1030, category:"作業開始前点検", sourcePage:15, important:false, level:"初級",
+    question:"作業開始前点検表で、点検者として示されているのは誰か。",
+    choices:[
+      "機械運転員あるいは電気機器を使用する者",
+      "現場事務所の経理担当者",
+      "レンタル会社の営業担当者のみ",
+      "近隣住民の代表者"
+    ],
+    answer:0, explanation:"P.15の作業開始前点検表では、点検者として、機械運転員あるいは電気機器を使用する者が示されています。"},
+  {id:1031, category:"移動式クレーンの安全装置", sourcePage:16, important:true, level:"初級",
+    question:"安全装置解除キーの保管場所として示されているものはどれか。",
+    choices:[
+      "クレーン会社か工事事務所",
+      "運転席に常時差したまま",
+      "誰でも使える資材置場",
+      "作業員個人の自宅"
+    ],
+    answer:0, explanation:"P.16では、安全装置は確実に作動させ、安全装置解除キーはクレーン会社か工事事務所に保管すると示されています。"},
+  {id:1032, category:"移動式クレーンの安全装置", sourcePage:16, important:true, level:"中級",
+    question:"モーメントリミッタ外部表示ランプで、負荷率100%以上の状態として正しいものはどれか。",
+    choices:[
+      "赤色灯が点灯し、非常に危険な状態",
+      "緑色灯が点灯し、通常の状態",
+      "黄色灯が点灯し、通常の状態",
+      "外部表示灯は点灯しない"
+    ],
+    answer:0, explanation:"P.16の表では、負荷率100%以上の場合、危険側への作動が自動停止し、ブザー警報が連続音で鳴り、赤色灯が点灯する非常に危険な状態と示されています。"},
+  {id:1033, category:"移動式クレーンの安全装置", sourcePage:16, important:false, level:"中級",
+    question:"モーメントリミッタ外部表示ランプで、負荷率100%未満90%以上の場合の表示として正しいものはどれか。",
+    choices:[
+      "黄色灯が点灯する",
+      "赤色灯が点灯する",
+      "緑色灯が点灯する",
+      "青色灯が点灯する"
+    ],
+    answer:0, explanation:"P.16の表では、負荷率100%未満90%以上の場合、ブザー警報（断続音）と黄色灯点灯で危険な状態と示されています。"},
+  {id:1034, category:"移動式クレーンの安全装置", sourcePage:17, important:true, level:"中級",
+    question:"吊上げ荷重3t未満の移動式クレーンについて、改正後に義務付けられている装置として示されているものはどれか。",
+    choices:[
+      "定格荷重制限装置、定格荷重指示装置など",
+      "荷重計だけ",
+      "バックミラーだけ",
+      "方向指示器だけ"
+    ],
+    answer:0, explanation:"P.17では、改正後は荷重計が過負荷を防止するための装置として認められなくなり、定格荷重制限装置、定格荷重指示装置などを備えることが義務づけられていると示されています。"},
+  {id:1035, category:"移動式クレーンの安全装置", sourcePage:17, important:false, level:"中級",
+    question:"説明されている経過措置として正しいものはどれか。",
+    choices:[
+      "平成31年3月1日前に製造された、又は同日に現に製造している移動式クレーンは、なお従前の例によることができる",
+      "すべての移動式クレーンは即日廃止しなければならない",
+      "改正後も荷重計だけで新規製造できる",
+      "経過措置は高所作業車だけに適用される"
+    ],
+    answer:0, explanation:"P.17には、平成31年（2019年）3月1日前に製造された移動式クレーン、又は同日に現に製造している移動式クレーンについては、なお従前の例によることができると示されています。"},
+  {id:1036, category:"ワイヤロープ管理", sourcePage:18, important:true, level:"初級",
+    question:"ワイヤロープの管理が重要とされている主な理由として説明されているものはどれか。",
+    choices:[
+      "損傷や劣化の見過ごし、交換基準の不徹底などにより破断事故が発生しているため",
+      "ワイヤロープの色を統一するため",
+      "レンタル費用を安くするため",
+      "現場写真の見栄えを良くするため"
+    ],
+    answer:0, explanation:"P.18では、ワイヤロープ破断事故の多くが損傷や劣化の見過ごし、交換基準の不徹底など適切な管理を怠ったことに起因しているため、点検・管理が重要であると説明されています。"},
+  {id:1037, category:"ワイヤロープ管理", sourcePage:18, important:true, level:"中級",
+    question:"『機電安全責任者の確認内容と頻度』で、点検状況の頻度として示されているものはどれか。",
+    choices:[
+      "現場巡視時にワイヤロープを目視点検し、点検後にオペレータの点検結果と照合する",
+      "竣工時に一度だけ確認する",
+      "請求書受領時に金額だけ確認する",
+      "異常があった場合も確認しない"
+    ],
+    answer:0, explanation:"P.18の表では、点検状況について、現場巡視時にワイヤロープを目視点検し、点検後にオペレータの点検結果と自らの結果を照合することが示されています。"},
+  {id:1038, category:"ワイヤロープ管理", sourcePage:18, important:false, level:"中級",
+    question:"ワイヤロープ交換予定日の確認頻度として示されているものはどれか。",
+    choices:[
+      "交換基準に達した時",
+      "毎朝必ず",
+      "年末だけ",
+      "確認不要"
+    ],
+    answer:0, explanation:"P.18の表では、ワイヤロープ交換予定日の頻度として『交換基準に達した時』と示されています。"},
+  {id:1039, category:"特定機械の連絡調整", sourcePage:19, important:true, level:"初級",
+    question:"特定機械による労働災害を防止するため、鹿島が原則としていることはどれか。",
+    choices:[
+      "元請が主体となって連絡・調整すること",
+      "一次協力会社だけで連絡・調整すること",
+      "連絡・調整を行わないこと",
+      "作業員個人の判断だけに任せること"
+    ],
+    answer:0, explanation:"P.19の参考欄では、特定機械による労働災害を防止するために、鹿島は元請が主体となって連絡・調整することを原則としていると示されています。"},
+  {id:1040, category:"特定機械の連絡調整", sourcePage:19, important:true, level:"中級",
+    question:"作業内容等の連絡調整の対象となる機械として示されているものはどれか。",
+    choices:[
+      "パワーショベル、ドラグショベル、クラムシェル（機体重量3t以上）",
+      "家庭用掃除機、電気ポット、扇風機",
+      "事務机、コピー機、会議用椅子",
+      "懐中電灯、ホワイトボード、掲示板"
+    ],
+    answer:0, explanation:"P.19では、対象となる機械として、パワーショベル、ドラグショベル、クラムシェル（機体重量3t以上）などが示されています。"},
+  {id:1041, category:"特定機械の連絡調整", sourcePage:19, important:false, level:"中級",
+    question:"移動式クレーン（つり上げ荷重3t以上）に対応する作業として示されているものはどれか。",
+    choices:[
+      "運転、玉掛け、合図、荷の支持",
+      "書類整理、昼食準備、電話応対",
+      "清掃、掲示物の貼替え、コピー用紙補充",
+      "会議室予約、郵便物整理、駐車場管理"
+    ],
+    answer:0, explanation:"P.19では、移動式クレーン（つり上げ荷重3t以上）に対応する作業として、運転、玉掛け、合図、荷の支持が示されています。"},
+  {id:1042, category:"特定機械の連絡調整", sourcePage:19, important:true, level:"中級",
+    question:"特定機械を用いて複数の事業者の労働者が同一作業場所で特定作業を行う場合に必要な措置として示されているものはどれか。",
+    choices:[
+      "必要な連絡・調整",
+      "作業場所の完全な自由使用",
+      "合図者の廃止",
+      "立入禁止区域の解除"
+    ],
+    answer:0, explanation:"P.19では、特定機械を用いて複数の事業者の労働者が同一作業場所で特定作業を行う場合、必要な連絡・調整をすることが示されています。"},
+  {id:1043, category:"立入禁止措置事例", sourcePage:20, important:false, level:"初級",
+    question:"立入禁止措置事例として掲載されているものはどれか。",
+    choices:[
+      "ラフテレーンクレーン旋回体周りの立入禁止措置",
+      "事務所内の文書保管方法",
+      "食堂の座席配置",
+      "駐車場の料金精算方法"
+    ],
+    answer:0, explanation:"P.20には、ラフテレーンクレーン旋回体周り、クローラクレーン旋回体周り、油圧ショベル等作業範囲周りなどの立入禁止措置事例が写真で示されています。"},
+  {id:1044, category:"立入禁止措置事例", sourcePage:20, important:false, level:"中級",
+    question:"4.9tクローラクレーン周りの工夫例として示されているものはどれか。",
+    choices:[
+      "クローラクレーン本体に外周防護柵を設置する",
+      "外周防護柵を取り外す",
+      "旋回体周りを通路として開放する",
+      "作業範囲を標識なしで運用する"
+    ],
+    answer:0, explanation:"P.20では、4.9tクローラクレーン周りの工夫例として、クローラクレーン本体に外周防護柵を設置する例が示されています。"},
+  {id:1045, category:"機械の危険防止措置", sourcePage:21, important:true, level:"初級",
+    question:"注文者が協力会社に建設物・設備を使用させるときに求められていることはどれか。",
+    choices:[
+      "労働災害防止のための措置をとる",
+      "使用後に写真だけ提出させる",
+      "協力会社の判断にすべて任せる",
+      "元請の責任を免除する"
+    ],
+    answer:0, explanation:"P.21では、注文者が協力会社に建設物、設備を使用させる時は、労働災害防止のための措置をとらなければならないと示されています。"},
+  {id:1046, category:"機械の危険防止措置", sourcePage:21, important:false, level:"中級",
+    question:"注文者が数次の場合に措置を行う者として示されているのはどれか。",
+    choices:[
+      "最上位の者",
+      "最下位の協力会社",
+      "機械の運転者",
+      "任意に選ばれた作業員"
+    ],
+    answer:0, explanation:"P.21では、注文者が数次の場合は、最上位の者が措置を行うとされています。"},
+  {id:1047, category:"機械の危険防止措置", sourcePage:21, important:true, level:"中級",
+    question:"注文者が協力会社にしてはならない指示として示されているものはどれか。",
+    choices:[
+      "法令違反となる指示",
+      "点検を実施する指示",
+      "安全設備を設置する指示",
+      "作業計画を確認する指示"
+    ],
+    answer:0, explanation:"P.21では、すべての注文者は協力会社に法令違反となる指示をしてはならないと示されています。"},
+  {id:1048, category:"グッパー運動", sourcePage:22, important:true, level:"初級",
+    question:"車両系建設機械を用いる作業で原則として禁止されていることはどれか。",
+    choices:[
+      "労働者に危険が生ずるおそれのある箇所へ労働者を立ち入らせること",
+      "誘導者を配置して車両系建設機械を誘導すること",
+      "安全確認のために合図を送ること",
+      "オペレータが合図を確認すること"
+    ],
+    answer:0, explanation:"P.22では、車両系建設機械を用いて作業を行うときは、危険が生ずるおそれがある箇所に労働者を立ち入らせてはならないと示されています。"},
+  {id:1049, category:"グッパー運動", sourcePage:22, important:true, level:"中級",
+    question:"誘導者を配置する場合の取扱いとして正しいものはどれか。",
+    choices:[
+      "誘導者にグッパー運動の合図を送らせ、車両及び荷役運搬を誘導させる",
+      "誘導者は機械から離れて作業を見ない",
+      "誘導者を置く場合は合図を省略する",
+      "誘導者は運転者ではなく歩行者だけを誘導する"
+    ],
+    answer:0, explanation:"P.22では、誘導者を配置する場合、誘導者にはグッパー運動の合図を送らせ、車両及び車両系荷役運搬を誘導すると示されています。"},
+  {id:1050, category:"グッパー運動", sourcePage:22, important:true, level:"中級",
+    question:"相互確認で、歩行者がオペレータに合図を送った後、相手から合図が返ってくるまでの取扱いとして正しいものはどれか。",
+    choices:[
+      "次の動作をしない",
+      "すぐに機械の近くを通過する",
+      "合図を一度送れば確認せず進む",
+      "機械の死角へ移動する"
+    ],
+    answer:0, explanation:"P.22では、送った合図を相手が確認し、合図が返ってくるまでは次の動作をしないと示されています。"},
+  {id:1051, category:"玉掛け作業の管理", sourcePage:23, important:false, level:"初級",
+    question:"玉掛け作業の説明として示されているものはどれか。",
+    choices:[
+      "吊具を用いて行う荷掛け及び荷外しの業務",
+      "クレーンの年次検査だけを行う業務",
+      "建設機械の燃料補給だけを行う業務",
+      "資材の発注数量を決める業務"
+    ],
+    answer:0, explanation:"P.23では、玉掛け作業とは吊具を用いて行う荷掛け及び荷外しの業務をいうと説明されています。"},
+  {id:1052, category:"玉掛け作業の管理", sourcePage:23, important:true, level:"初級",
+    question:"吊上げ荷重1t以上のクレーン等の玉掛け業務に必要な資格として示されているものはどれか。",
+    choices:[
+      "玉掛技能講習修了者",
+      "玉掛特別教育修了者のみ",
+      "車両系建設機械運転技能講習修了者",
+      "フォークリフト運転技能講習修了者"
+    ],
+    answer:0, explanation:"P.23の作業資格では、吊上げ荷重1t以上のクレーン、移動式クレーン等の玉掛け業務は玉掛技能講習修了者と示されています。"},
+  {id:1053, category:"玉掛け作業の管理", sourcePage:23, important:true, level:"中級",
+    question:"一般的な荷の吊上げに関する安全基準として示されているものはどれか。",
+    choices:[
+      "径12mm以上で両端圧縮止めのワイヤロープを使用し、安全率6以上、吊り角度60度以下とする",
+      "径6mm未満のワイヤロープを使用し、吊り角度は自由とする",
+      "玉掛用具の点検は異常発生時だけ行う",
+      "玉掛けワイヤ1本での荷の吊上げを標準とする"
+    ],
+    answer:0, explanation:"P.23では、一般的な荷の吊上げは原則として径12mm以上で両端圧縮止めのワイヤロープを使用し、安全率6以上、吊り角度60度以下と示されています。"},
+  {id:1054, category:"玉掛け作業の管理", sourcePage:23, important:true, level:"中級",
+    question:"クレーン等の運転者に対する合図について示されているものはどれか。",
+    choices:[
+      "指名された一人の合図者が行う",
+      "周囲にいる全員が同時に行う",
+      "合図は必要に応じて省略する",
+      "合図者は毎回その場で多数決で決める"
+    ],
+    answer:0, explanation:"P.23では、クレーン等の運転者に対する合図は指名された一人の合図者が行うと示されています。"},
+  {id:1055, category:"玉掛け方法", sourcePage:24, important:true, level:"中級",
+    question:"玉掛け方法の選定で、基本的な注意事項として示されているものはどれか。",
+    choices:[
+      "玉掛用具に見合った安全係数を確保し、ワイヤロープ等が重ならないようにチェックする",
+      "ワイヤロープが重なる方が安定するため意図的に重ねる",
+      "フックから取り外す際は巻上げで引き抜く",
+      "安全係数は玉掛用具に関係なく一定でよい"
+    ],
+    answer:0, explanation:"P.24では、玉掛用具に見合った安全係数を確保し、フックに掛けたワイヤロープ等が重ならないようにチェックすると示されています。"},
+  {id:1056, category:"玉掛け方法", sourcePage:24, important:false, level:"中級",
+    question:"2本4点半掛け吊りの注意点として示されているものはどれか。",
+    choices:[
+      "ワイヤロープが重ならないこと、吊り角度は原則60度以内とすること",
+      "吊り角度は90度以上を標準とすること",
+      "ワイヤロープのズレ防止は行わないこと",
+      "角部での損傷防止は不要とすること"
+    ],
+    answer:0, explanation:"P.24では、2本4点半掛け吊りの注意点として、ワイヤロープが重ならないこと、吊り角度は原則として60度以内、ズレ防止と角部での損傷防止を行うことが示されています。"},
+  {id:1057, category:"玉掛け方法", sourcePage:24, important:false, level:"中級",
+    question:"3点調整吊りに関する注意点として示されているものはどれか。",
+    choices:[
+      "チェーンブロックは支え側に使用する",
+      "チェーンブロックは巻き側だけに使用する",
+      "チェーンブロックのフックには何も掛けない",
+      "チェーンブロックを使用する場合は安全係数を確認しない"
+    ],
+    answer:0, explanation:"P.24では、3点調整吊りの注意点として、チェーンブロックは支え側に使用することが示されています。"},
+  {id:1058, category:"3・3・3運動", sourcePage:25, important:true, level:"初級",
+    question:"玉掛け作業において安全を確保するための『3・3・3運動』として示されている組合せはどれか。",
+    choices:[
+      "3秒間荷姿を確認、玉掛者等は3m以上離れる、地切りは30cm以内",
+      "3分間待機、3人で確認、地切りは3m以内",
+      "3日前に申請、3回合図、地切りは30m以内",
+      "3種類の資格確認、3枚の書類、地切りは自由"
+    ],
+    answer:0, explanation:"P.25では、3・3・3運動として、玉掛けをしてから3秒間荷姿を確認、玉掛者等は3m以上離れる、地切りは30cm以内と示されています。"},
+  {id:1059, category:"安全ダイジェスト該当項", sourcePage:26, important:false, level:"初級",
+    question:"安全ダイジェスト該当頁の表で、玉掛け用ワイヤロープ・玉掛け用ベルトスリングの該当頁として示されている範囲はどれか。",
+    choices:[
+      "P.95〜P.103",
+      "P.23のみ",
+      "P.44のみ",
+      "P.179のみ"
+    ],
+    answer:0, explanation:"P.26の表では、玉掛け用ワイヤロープ・玉掛け用ベルトスリングの安全ダイジェスト該当頁はP.95〜P.103と示されています。"},
+  {id:1060, category:"作業間連絡調整会議", sourcePage:27, important:true, level:"中級",
+    question:"作業間連絡調整会議において日々確認することとして示されているものはどれか。",
+    choices:[
+      "作業内容と機械性能が整合しているか、人動線と機械作業エリアが干渉していないか",
+      "昼食の献立と休憩室の座席表",
+      "事務所の備品購入予定",
+      "工事写真のファイル名だけ"
+    ],
+    answer:0, explanation:"P.27では、会議で日々確認する事項として、作業内容と機械性能の整合、人動線と機械作業エリアの干渉、機械台数等のムリやムダ、搬入資機材予定などが示されています。"},
+  {id:1061, category:"作業計画・作業指示書", sourcePage:27, important:true, level:"中級",
+    question:"機械等を操作する者に『作業計画・作業指示書』で通知する事項に含まれるものはどれか。",
+    choices:[
+      "作業の内容、指揮の系統、連絡・合図等の方法、運行経路、立入禁止措置など",
+      "作業員の私物管理、通勤経路、給与計算方法",
+      "事務所の座席配置、掲示板の位置、電話番号一覧",
+      "工事写真の保存形式、会議資料の字体"
+    ],
+    answer:0, explanation:"P.27では、作業計画・作業指示書で、作業の内容、指揮の系統、連絡・合図等の方法、運行の経路・制限速度、立入禁止措置、移動式クレーン80%ルールの確認などを通知すると示されています。"},
+  {id:1062, category:"作業計画・作業指示書", sourcePage:27, important:false, level:"中級",
+    question:"作業計画・作業指示書の発行で、機電安全責任者の役割として示されているものはどれか。",
+    choices:[
+      "内容を確認する",
+      "作業計画の記入をすべて代行する",
+      "機械運転者のサインを不要にする",
+      "作業指示書を廃止する"
+    ],
+    answer:0, explanation:"P.27では、作業計画・作業指示書の発行の流れの中で、機電安全責任者は内容を確認すると示されています。"},
+  {id:1063, category:"作業計画・作業指示書", sourcePage:28, important:false, level:"中級",
+    question:"移動式クレーン作業計画・作業指示書の記入例で、定格総荷重の扱いとして示されているものはどれか。",
+    choices:[
+      "クレーン性能表から作業半径に応じた定格総荷重を確認して記入する",
+      "吊荷重量だけを見て定格総荷重の確認は省略する",
+      "定格総荷重は常にクレーン能力と同じ値を書く",
+      "作業半径は記入しない"
+    ],
+    answer:0, explanation:"P.28の記入例では、クレーン性能表から作業半径13mの定格総荷重を確認して記入する例が示されています。"},
+  {id:1064, category:"作業計画・作業指示書", sourcePage:28, important:true, level:"中級",
+    question:"作業上の留意点と確認で、作業範囲制限装置について示されているものはどれか。",
+    choices:[
+      "作業範囲制限装置を正しく設定したか確認する",
+      "作業範囲制限装置は常に解除する",
+      "移動後も再設定しない",
+      "架空線や桁への接近では使用しない"
+    ],
+    answer:0, explanation:"P.28では、作業範囲制限装置を正しく設定したかを確認する項目が示され、ブームの作業半径を制限する装置として説明されています。"},
+  {id:1065, category:"作業場所の記入例", sourcePage:29, important:true, level:"中級",
+    question:"移動式クレーンの作業場所記入例で、配置図に明示することとして示されているものはどれか。",
+    choices:[
+      "クレーンの配置位置、荷の吊り込み位置、吊り降し位置",
+      "作業員の昼食場所と休憩時間",
+      "事務所内の机の配置",
+      "協力会社の請求書番号"
+    ],
+    answer:0, explanation:"P.29では、クレーンの配置位置、荷の吊り込み位置、吊り降し位置を明記すること、書ききれない場合は必要により別紙を添付することが示されています。"},
+  {id:1066, category:"作業場所の記入例", sourcePage:29, important:false, level:"中級",
+    question:"移動式クレーンの計画荷重について示されている考え方はどれか。",
+    choices:[
+      "定格総荷重の80%で計画する",
+      "定格総荷重の120%で計画する",
+      "フック重量を除外して計画する",
+      "作業半径に関係なく一定値で計画する"
+    ],
+    answer:0, explanation:"P.29の吹き出しでは、移動式クレーンは定格総荷重の80%で計画すると示されています。"},
+  {id:1067, category:"作業場所の記入例", sourcePage:29, important:true, level:"中級",
+    question:"油圧ショベルの配置図で、必ず明示する内容として示されているものはどれか。",
+    choices:[
+      "重機・車両の配置場所、立入禁止範囲、誘導者の配置場所、相番作業員の配置場所",
+      "運転者の通勤経路、免許証番号、昼休みの予定",
+      "現場事務所の電話番号とコピー機の位置",
+      "燃料購入先と請求書の締日"
+    ],
+    answer:0, explanation:"P.29の注意欄では、配置図に重機・車両の配置場所、立入り禁止範囲、誘導者の配置場所、相番作業員の配置場所、必要に応じ運行の経路を明示すると示されています。"},
+  {id:1068, category:"機械設置に関する届出", sourcePage:30, important:true, level:"中級",
+    question:"クレーン設置届の届出条件として示されているものはどれか。",
+    choices:[
+      "吊上げ荷重3t以上のクレーンの設置",
+      "吊上げ荷重0.5t未満のクレーンの設置",
+      "どのようなクレーンでも届出不要",
+      "玉掛け用具を1本購入したとき"
+    ],
+    answer:0, explanation:"P.30の計画の届出等の表では、クレーン設置届の条件として、吊上げ荷重3t以上のクレーンの設置が示されています。"},
+  {id:1069, category:"機械設置に関する届出", sourcePage:30, important:false, level:"中級",
+    question:"建設用リフト設置届の条件として示されているものはどれか。",
+    choices:[
+      "ガイドレールの高さが18m以上の建設用リフトの設置",
+      "ガイドレールの高さが1m未満の建設用リフトの設置",
+      "可搬式のゴンドラの設置",
+      "床面積1平方メートル以下の簡易リフトの設置"
+    ],
+    answer:0, explanation:"P.30の表では、建設用リフト設置届の条件として、ガイドレールの高さが18m以上の建設用リフトの設置が示されています。"},
+  {id:1070, category:"機械設置に関する届出", sourcePage:30, important:true, level:"中級",
+    question:"クレーン等設置報告書の提出期限として示されているものはどれか。",
+    choices:[
+      "遅滞なく報告すること",
+      "工事開始の30日前までに届出すること",
+      "設置後3年以内に報告すること",
+      "撤去後に任意で報告すること"
+    ],
+    answer:0, explanation:"P.30では、クレーン等設置報告書の提出期限として、遅滞なく報告することが示されています。"},
+  {id:1071, category:"事前検討会", sourcePage:31, important:true, level:"初級",
+    question:"全ての工種・作業において原則として実施すると示されているものはどれか。",
+    choices:[
+      "協力会社を交えて事前検討会を実施する",
+      "協力会社を除いて社内だけで判断する",
+      "事前検討の結果を関係者に周知しない",
+      "作業手順書に反映させない"
+    ],
+    answer:0, explanation:"P.31では、すべての工種・作業において、原則として協力会社を交えて事前検討会を実施し、結果を作業手順書に反映させ、関係者全員に周知したうえで作業を行うと示されています。"},
+  {id:1072, category:"事前検討会", sourcePage:31, important:true, level:"中級",
+    question:"重点危険工事について支店に求められる確認として示されているものはどれか。",
+    choices:[
+      "支店参画の事前検討会を開催し、支店が作業の実施状況を確認する",
+      "支店は現場へ一切関与しない",
+      "支店は完了後の写真だけ確認する",
+      "支店確認は特殊な工事でも不要とする"
+    ],
+    answer:0, explanation:"P.31では、重点危険工事については、支店参画の事前検討会を必ず開催し、支店は作業の実施状況を必ず確認すると示されています。"},
+  {id:1073, category:"事前検討会", sourcePage:31, important:false, level:"中級",
+    question:"重点危険工事・作業一覧で、土木の項目として示されているものはどれか。",
+    choices:[
+      "吊足場、張出足場、高さ10.0m以上の足場の組立解体作業",
+      "事務所の机配置作業",
+      "休憩所の清掃作業",
+      "安全掲示物の印刷作業"
+    ],
+    answer:0, explanation:"P.31の土木の重点危険工事・作業一覧には、吊足場、張出足場、高さ10.0m以上の足場の組立解体作業などが示されています。"},
+  {id:1074, category:"定期自主検査", sourcePage:32, important:true, level:"初級",
+    question:"定期自主検査の年次検査と月例検査の頻度として示されているものはどれか。",
+    choices:[
+      "年次検査は1年以内ごとに1回、月例検査は1カ月以内ごとに1回",
+      "年次検査は3年に1回、月例検査は任意",
+      "年次検査は毎日、月例検査は年1回",
+      "年次検査も月例検査も不要"
+    ],
+    answer:0, explanation:"P.32では、定期自主検査には1年以内ごとに1回行う年次検査、および1カ月以内ごとに1回の月例点検があると示されています。"},
+  {id:1075, category:"定期自主検査", sourcePage:32, important:true, level:"初級",
+    question:"定期自主検査記録の保存期間として示されているものはどれか。",
+    choices:[
+      "3年間保存する",
+      "1カ月保存する",
+      "検査当日だけ保存する",
+      "保存は不要"
+    ],
+    answer:0, explanation:"P.32では、定期自主検査記録は3年間保存する必要があると示されています。"},
+  {id:1076, category:"定期自主検査", sourcePage:32, important:false, level:"中級",
+    question:"車両系建設機械・フォークリフト・不整地運搬車及び高所作業車の年次検査について示されている呼称はどれか。",
+    choices:[
+      "特定自主検査",
+      "日常清掃",
+      "仮設点検",
+      "臨時受付検査"
+    ],
+    answer:0, explanation:"P.32の注記では、車両系建設機械・フォークリフト・不整地運搬車及び高所作業車の年次検査を特定自主検査というと示されています。"},
+  {id:1077, category:"定期自主検査", sourcePage:32, important:false, level:"中級",
+    question:"不整地運搬車の年次検査について示されている頻度はどれか。",
+    choices:[
+      "2年に1回",
+      "毎月1回",
+      "10年に1回",
+      "検査不要"
+    ],
+    answer:0, explanation:"P.32の注記では、不整地運搬車の年次検査は2年に1回と示されています。"},
+  {id:1078, category:"定期自主検査", sourcePage:33, important:true, level:"中級",
+    question:"定期自主検査表で、点検を要する機械として示されているものはどれか。",
+    choices:[
+      "安衛法第45条で定められたもの",
+      "現場にあるすべての文房具",
+      "事務所の机と椅子",
+      "協力会社が任意に選んだものだけ"
+    ],
+    answer:0, explanation:"P.33の定期自主検査表では、点検を要する機械は安衛法第45条で定められたものと示されています。"},
+  {id:1079, category:"定期自主検査", sourcePage:33, important:true, level:"中級",
+    question:"特定自主検査を実施する者として示されているものはどれか。",
+    choices:[
+      "有資格者",
+      "現場に最初に来た作業員",
+      "協力会社の事務担当者",
+      "資格に関係なく任意の者"
+    ],
+    answer:0, explanation:"P.33の点検者欄では、機械の運転員、取扱者または事業者に指名された者が点検者とされ、ただし特定自主検査は有資格者が実施すると示されています。"},
+  {id:1080, category:"定期自主検査", sourcePage:33, important:true, level:"中級",
+    question:"点検結果に異常があった場合の措置として示されているものはどれか。",
+    choices:[
+      "取扱責任者および機電安全責任者へ報告し、補修その他の措置を行う",
+      "異常を記録せず作業を継続する",
+      "検査標章だけを貼って使用する",
+      "次回の年次検査まで放置する"
+    ],
+    answer:0, explanation:"P.33では、異常があった場合は取扱責任者および機電安全責任者へ報告し、補修その他の措置を行うと示されています。"},
+  {id:1081, category:"定期自主検査", sourcePage:33, important:false, level:"中級",
+    question:"点検結果の確認として機電安全責任者に求められていることはどれか。",
+    choices:[
+      "定期自主検査表を確認し捺印する",
+      "点検表を廃棄する",
+      "検査記録の内容を見ずに承認する",
+      "協力会社の独自書式を禁止する"
+    ],
+    answer:0, explanation:"P.33の点検結果の確認では、取扱責任者が定期自主検査表を確認し捺印し、機電安全責任者も確認し捺印すると示されています。"},
+  {id:1082, category:"特定自主検査", sourcePage:34, important:true, level:"初級",
+    question:"特定の機械について義務付けられている自主検査の周期として示されているものはどれか。",
+    choices:[
+      "1年以内ごとに1回。ただし不整地運搬車は2年以内ごとに1回",
+      "毎日1回。例外なくすべて同じ周期",
+      "5年以内ごとに1回",
+      "故障したときだけ1回"
+    ],
+    answer:0, explanation:"P.34では、車両系建設機械等の特定の機械は1年以内ごとに1回、不整地運搬車は2年以内ごとに1回、有資格者による自主検査を実施しなければならないと示されています。"},
+  {id:1083, category:"特定自主検査", sourcePage:34, important:false, level:"初級",
+    question:"車両系荷役運搬機械として例示されているものはどれか。",
+    choices:[
+      "フォークリフト、不整地運搬車",
+      "コピー機、プリンター",
+      "脚立、手すり",
+      "送風機、照明器具"
+    ],
+    answer:0, explanation:"P.34では、車両系荷役運搬機械としてフォークリフトや不整地運搬車が例示されています。"},
+  {id:1084, category:"特定自主検査", sourcePage:34, important:false, level:"中級",
+    question:"車両系建設機械の例として示されているものはどれか。",
+    choices:[
+      "整地・運搬・積込用機械、掘削用機械、解体用機械など",
+      "空調機、冷蔵庫、洗濯機など",
+      "会議用机、椅子、棚など",
+      "安全帯、ヘルメット、手袋だけ"
+    ],
+    answer:0, explanation:"P.34では、車両系建設機械として整地・運搬・積込用機械、掘削用機械、解体用機械、基礎工事用機械、締固め用機械、コンクリート打設用機械などが示されています。"},
+  {id:1085, category:"フォークリフトの管理", sourcePage:35, important:true, level:"初級",
+    question:"フォークリフトとはどのような機械と説明されているか。",
+    choices:[
+      "前方に荷役用のマストとフォークを備え、フォークを上下させて荷を積み走行する車両系荷役運搬機械",
+      "吊具を使って荷を吊り上げる移動式クレーン",
+      "土砂を掘削する掘削専用機械",
+      "電気配線を検査する測定器"
+    ],
+    answer:0, explanation:"P.35では、フォークリフトは機体前方に荷役用のマストとフォークを備え、油圧でフォークを上下させ、走行と併せて荷役作業を行うものと説明されています。"},
+  {id:1086, category:"フォークリフトの管理", sourcePage:35, important:true, level:"中級",
+    question:"最大荷重1t以上のフォークリフト運転に必要な資格として示されているものはどれか。",
+    choices:[
+      "フォークリフト運転の技能講習修了者",
+      "フォークリフト運転の特別教育修了者のみ",
+      "玉掛技能講習修了者",
+      "移動式クレーン運転士免許のみ"
+    ],
+    answer:0, explanation:"P.35の運転員の資格では、最大荷重1t以上はフォークリフト運転の技能講習修了者、1t未満は特別教育修了者と示されています。"},
+  {id:1087, category:"フォークリフトの管理", sourcePage:35, important:false, level:"中級",
+    question:"フォークリフト持込時の確認ポイントとして示されているものはどれか。",
+    choices:[
+      "1カ月以内ごとに1回の定期自主検査と、1年以内ごとに1回の特定自主検査を行っていること",
+      "5年以内ごとに1回だけ検査すること",
+      "検査は公道走行時だけ行うこと",
+      "フォーク部分の確認は不要であること"
+    ],
+    answer:0, explanation:"P.35では、持込時の確認ポイントとして、1カ月以内ごとに1回の定期自主検査、1年以内ごとに1回の特定自主検査、フォーク部分の変形や亀裂の有無などが示されています。"},
+  {id:1088, category:"フォークリフトの管理", sourcePage:35, important:true, level:"中級",
+    question:"安全基準で、フォークリフトの用途外使用に関して示されているものはどれか。",
+    choices:[
+      "荷の吊り上げや労働者の昇降等に使用しない",
+      "荷の吊り上げに常時使用する",
+      "乗車席以外にも人を乗せてよい",
+      "フォークの下に人を入れてよい"
+    ],
+    answer:0, explanation:"P.35では、安全基準として、荷の吊り上げや労働者の昇降等に使用しない、乗車席以外に人を乗せない、フォークの下に人を入れない等が示されています。"},
+  {id:1089, category:"フォークリフトの管理", sourcePage:35, important:false, level:"中級",
+    question:"フォークリフトの走行時にフォークをどの程度上げると示されているか。",
+    choices:[
+      "地上より15cm程度",
+      "地上より1m以上",
+      "地上に接地させたまま",
+      "最大高さまで"
+    ],
+    answer:0, explanation:"P.35の安全基準では、走行は場内の状況に応じた制限速度を守り、フォークを地上より15cm程度上げて行うと示されています。"},
+  {id:1090, category:"不整地運搬車の管理", sourcePage:36, important:true, level:"初級",
+    question:"不整地運搬車の用途として説明されているものはどれか。",
+    choices:[
+      "トラックなどが入れない軟弱地や不整地で土砂や材料などを運搬する",
+      "建物内部で書類を運搬する",
+      "荷を吊って高所へ揚重する",
+      "電気設備の絶縁抵抗を測定する"
+    ],
+    answer:0, explanation:"P.36では、不整地運搬車はトラックなどが入れない軟弱地や不整地で土砂や材料などを運搬する小型車両と説明されています。"},
+  {id:1091, category:"不整地運搬車の管理", sourcePage:36, important:true, level:"中級",
+    question:"最大積載量1t以上の不整地運搬車の運転に必要な資格として示されているものはどれか。",
+    choices:[
+      "不整地運搬車の技能講習修了者",
+      "不整地運搬車の特別教育修了者のみ",
+      "フォークリフト運転技能講習修了者",
+      "玉掛特別教育修了者"
+    ],
+    answer:0, explanation:"P.36の運転員の資格では、最大積載量1t以上は不整地運搬車の技能講習修了者、1t未満は特別教育修了者と示されています。"},
+  {id:1092, category:"不整地運搬車の管理", sourcePage:36, important:false, level:"中級",
+    question:"不整地運搬車の持込時の確認ポイントとして示されているものはどれか。",
+    choices:[
+      "緊急停止装置と各種安全装置が正常に作動すること",
+      "荷台に作業員を乗せられること",
+      "定格能力を超えて使用できること",
+      "前照燈および尾燈を取り外していること"
+    ],
+    answer:0, explanation:"P.36では、持込時の確認ポイントとして、定期自主検査・特定自主検査の実施、緊急停止装置の作動、各種安全装置の正常作動が示されています。"},
+  {id:1093, category:"不整地運搬車の管理", sourcePage:36, important:true, level:"中級",
+    question:"不整地運搬車の安全基準で、荷台にあおりのない車両を走行させる場合の取扱いはどれか。",
+    choices:[
+      "荷台に作業員を乗車させない",
+      "荷台に作業員を乗せて誘導させる",
+      "荷台から身を乗り出して確認する",
+      "最大積載量を超えて使用する"
+    ],
+    answer:0, explanation:"P.36の安全基準では、荷台にあおりのない不整地運搬車を走行させるときは、荷台に作業員を乗車させないと示されています。"},
+  {id:1094, category:"油圧ショベルの管理", sourcePage:37, important:true, level:"初級",
+    question:"油圧ショベルの安全管理が重要とされる理由として示されているものはどれか。",
+    choices:[
+      "挟まれ・激突されや法肩からの転落による災害が多数発生しているため",
+      "書類の保管場所が不足しやすいため",
+      "燃料費が高くなりやすいため",
+      "運搬距離が短くなりすぎるため"
+    ],
+    answer:0, explanation:"P.37では、油圧ショベルは動作が速く、機械に近寄りすぎての挟まれ・激突されや法肩からの転落による災害が多数発生していると説明されています。"},
+  {id:1095, category:"油圧ショベルの管理", sourcePage:37, important:true, level:"中級",
+    question:"油圧ショベルの安全基準で、危険範囲について示されているものはどれか。",
+    choices:[
+      "危険範囲の設定と立入禁止措置を確実に行う",
+      "危険範囲を設定せず作業員を自由に通行させる",
+      "バケット直下を通路として使用する",
+      "接触防止対策を省略する"
+    ],
+    answer:0, explanation:"P.37では、安全基準として、危険範囲の設定と立入禁止措置を確実に行う、混在作業を防止し『挟まれ注意！』を喚起する等が示されています。"},
+  {id:1096, category:"油圧ショベルの管理", sourcePage:37, important:true, level:"中級",
+    question:"油圧ショベルによる荷の吊上げについて示されているものはどれか。",
+    choices:[
+      "荷の吊上げ等、主たる用途以外での使用を禁止する。荷の吊上げはクレーン機能付きを使用する",
+      "通常の油圧ショベルで自由に吊り上げてよい",
+      "バケットのツメを使って玉掛けする",
+      "合図者がいればどの油圧ショベルでも吊ってよい"
+    ],
+    answer:0, explanation:"P.37では、荷の吊上げ等、主たる用途以外での使用を禁止し、荷の吊上げが必要な場合はクレーン機能付き油圧ショベルを使用すると示されています。"},
+  {id:1097, category:"油圧ショベルの接触防止対策", sourcePage:38, important:true, level:"中級",
+    question:"油圧ショベルのバックモニタの現場管理ポイントとして示されているものはどれか。",
+    choices:[
+      "カメラ映像をモニタに常時表示し、左右後方・後方直下に死角が無いようにカメラを設置する",
+      "モニタは暗所で見えにくいものを選ぶ",
+      "後方直下の死角は確認しない",
+      "カメラ映像は点検時だけ表示すればよい"
+    ],
+    answer:0, explanation:"P.38では、バックモニタについて、カメラ映像をモニタに常時表示し、5インチ以上（7インチ以上推奨）で暗所でも見やすいものを設置し、左右後方・後方直下に死角が無いようにカメラを設置すると示されています。"},
+  {id:1098, category:"油圧ショベルの接触防止対策", sourcePage:38, important:false, level:"中級",
+    question:"警報装置の現場管理ポイントとして示されているものはどれか。",
+    choices:[
+      "警報を発信する接近距離を事前に確認し、日常点検で警報装置の作動を確認する",
+      "警報距離は確認せず使用する",
+      "警報装置は周囲に表示しない",
+      "日常点検では警報装置を確認しない"
+    ],
+    answer:0, explanation:"P.38では、警報装置について、警報を発信する接近距離を事前に確認し、機械本体及び周囲に表示し、日常点検で作動を確認すると示されています。"},
+  {id:1099, category:"油圧ショベルの接触防止対策", sourcePage:38, important:false, level:"中級",
+    question:"土木工事における管理で、重機・車両移動時の合図として示されているものはどれか。",
+    choices:[
+      "前進2回、後退3回のクラクション合図を行い、周囲を確認して3秒後に発進する",
+      "合図なしで直ちに発進する",
+      "後退時だけ合図を省略する",
+      "前進も後退も1回だけ合図する"
+    ],
+    answer:0, explanation:"P.38の土木工事における管理では、重機・車両移動時は前進2回、後退3回のクラクション合図をし、周囲を確認し、3秒後に発進すると示されています。"},
+  {id:1100, category:"クレーン機能付油圧ショベル", sourcePage:39, important:true, level:"中級",
+    question:"油圧ショベルによる荷の吊上げを行う必要がある場合に使用すると示されているものはどれか。",
+    choices:[
+      "クレーン機能付油圧ショベル",
+      "通常の油圧ショベルのバケットのツメ",
+      "フォークリフトのフォーク",
+      "不整地運搬車の荷台"
+    ],
+    answer:0, explanation:"P.39では、油圧ショベルによる荷の吊上げ作業は禁止とし、必要がある場合にはクレーン機能付油圧ショベルを使用すると示されています。"},
+  {id:1101, category:"クレーン機能付油圧ショベル", sourcePage:39, important:true, level:"中級",
+    question:"油圧ショベルのみを使用しクレーン機能を使わない場合の運転資格として示されているものはどれか。",
+    choices:[
+      "車両系建設機械（整地・運搬・積込み用及び掘削用）運転技能講習修了証で運転可能",
+      "移動式クレーン運転士免許だけで運転可能",
+      "玉掛け資格だけで運転可能",
+      "資格は不要"
+    ],
+    answer:0, explanation:"P.39では、油圧ショベルのみ使用の場合は、車両系建設機械『整地・運搬・積込み用及び掘削用』運転技能講習修了証で運転可能と示されています。ただし格納式フックを固定するなどクレーン機能を使用できない措置を取ります。"},
+  {id:1102, category:"クレーン機能付油圧ショベル", sourcePage:39, important:true, level:"中級",
+    question:"クレーン機能付油圧ショベルによる作業計画・作業指示書について示されているものはどれか。",
+    choices:[
+      "移動式クレーンの作業計画・作業指示書を必ず発行する",
+      "通常の掘削作業なので作業計画は不要",
+      "口頭指示だけでよい",
+      "フォークリフト用の指示書を代用する"
+    ],
+    answer:0, explanation:"P.39では、当該作業においては移動式クレーンの作業計画・作業指示書を必ず発行すると示されています。"},
+  {id:1103, category:"クレーン機能付油圧ショベル", sourcePage:39, important:false, level:"中級",
+    question:"安全基準で、クレーン機能へ切り替えた際に確認することとして示されているものはどれか。",
+    choices:[
+      "後部回転灯の点灯を確認する",
+      "前照灯を消灯する",
+      "バケットのツメを使用する",
+      "過負荷制限装置を停止する"
+    ],
+    answer:0, explanation:"P.39の安全基準では、クレーンモードに切替えた際には、後部回転灯の点灯を確認すると示されています。"},
+  {id:1104, category:"クレーン機能付油圧ショベル", sourcePage:39, important:false, level:"中級",
+    question:"安全基準で、荷の吊荷走行について示されているものはどれか。",
+    choices:[
+      "原則禁止",
+      "短距離なら常に可",
+      "誘導者がいれば自由に可",
+      "夜間のみ可"
+    ],
+    answer:0, explanation:"P.39の安全基準では、吊荷走行は原則禁止と示されています。"},
+  {id:1105, category:"基礎工事用機械の管理", sourcePage:40, important:true, level:"初級",
+    question:"基礎工事用機械の例として示されているものはどれか。",
+    choices:[
+      "くい打機、アース・ドリル等",
+      "フォークリフト、台車、脚立",
+      "エレベーター、建設用リフト、ゴンドラ",
+      "発電機、分電盤、照明器具"
+    ],
+    answer:0, explanation:"P.40では、基礎工事用機械は、くい打機やアース・ドリル等の建設機械をいうと説明されています。"},
+  {id:1106, category:"基礎工事用機械の管理", sourcePage:40, important:true, level:"中級",
+    question:"自走できる基礎工事用機械のうち機体重量3t以上の運転資格として示されているものはどれか。",
+    choices:[
+      "車両系建設機械（基礎工事用）の技能講習修了者",
+      "車両系建設機械（基礎工事用）の特別教育修了者",
+      "玉掛け技能講習修了者のみ",
+      "高所作業車特別教育修了者のみ"
+    ],
+    answer:0, explanation:"P.40では、自走できる基礎工事用機械で機体重量3t以上の場合、車両系建設機械（基礎工事用）の技能講習修了者が必要と示されています。"},
+  {id:1107, category:"基礎工事用機械の管理", sourcePage:40, important:true, level:"中級",
+    question:"基礎工事用機械の組立・解体・修理時の安全基準として示されているものはどれか。",
+    choices:[
+      "作業指揮者を選任し、作業エリアの立入禁止措置を行う",
+      "指揮者を置かず各自の判断で行う",
+      "リスクアセスメントを含む作業手順書は不要とする",
+      "リーダ上の作業では墜落制止用器具を使わない"
+    ],
+    answer:0, explanation:"P.40では、組立・解体・修理時に、作業指揮者の選任、作業エリアの立入禁止措置、作業手順書の作成、リーダ上での墜落制止用器具使用などが示されています。"},
+  {id:1108, category:"基礎工事用機械の管理", sourcePage:41, important:false, level:"中級",
+    question:"基礎工事用機械の移動時に示されている安全基準はどれか。",
+    choices:[
+      "走行地盤は接地圧に耐える強度を確保し、誘導員・合図者及び運転員を選任する",
+      "走行地盤の強度確認は不要とする",
+      "合図方法を決めずに移動する",
+      "敷鉄板による養生は行わない"
+    ],
+    answer:0, explanation:"P.41では、移動時に走行地盤の強度を確保して敷鉄板で養生し、誘導員、合図者及び運転員を選任し、決められた合図・信号方法で移動すると示されています。"},
+  {id:1109, category:"基礎工事用機械の管理", sourcePage:41, important:true, level:"中級",
+    question:"基礎工事用機械の作業時に、リーダ、ブーム及び芯材の直下について示されているものはどれか。",
+    choices:[
+      "関係者も立入禁止とする",
+      "関係者なら常時立ち入ってよい",
+      "合図者だけは直下で待機する",
+      "立入禁止は移動時だけでよい"
+    ],
+    answer:0, explanation:"P.41の作業時の安全基準では、リーダ、ブーム及び芯材の直下は関係者も立入禁止とすると示されています。"},
+  {id:1110, category:"基礎工事用機械の事故事例", sourcePage:41, important:false, level:"中級",
+    question:"事故・災害事例で、中間振れ止めの落下に関する再発防止として示されているものはどれか。",
+    choices:[
+      "中間振れ止めが突然外れて落下する特性を加味した作業計画とする",
+      "中間振れ止めの落下を想定しない",
+      "ロッドジョイント作業中は作業計画を不要とする",
+      "落下物の危険を考慮せず作業を進める"
+    ],
+    answer:0, explanation:"P.41の事故・災害事例では、ロッドの途中に引っ掛かった中間振れ止めは突然外れて落下するという特性を加味した作業計画とすることが再発防止として示されています。"},
+  {id:1111, category:"コンクリートポンプ車の管理", sourcePage:42, important:true, level:"初級",
+    question:"コンクリートポンプ車の説明として示されているものはどれか。",
+    choices:[
+      "生コンクリートを受けて打設場所まで圧送する機械",
+      "荷を吊り上げ水平運搬する機械",
+      "不整地で土砂を運搬する車両",
+      "高所で作業床を昇降させる機械"
+    ],
+    answer:0, explanation:"P.42では、コンクリートポンプ車は生コンクリートをアジテーターカーまたはミキサから受けて打設場所まで圧送する機械と説明されています。"},
+  {id:1112, category:"コンクリートポンプ車の管理", sourcePage:42, important:true, level:"中級",
+    question:"コンクリートポンプの操作資格として示されているものはどれか。",
+    choices:[
+      "コンクリート打設用機械の特別教育修了者",
+      "移動式クレーン運転士免許",
+      "フォークリフト運転技能講習修了者",
+      "高所作業車技能講習修了者"
+    ],
+    answer:0, explanation:"P.42の運転員の資格では、コンクリートポンプの操作はコンクリート打設用機械の特別教育修了者と示されています。"},
+  {id:1113, category:"コンクリートポンプ車の管理", sourcePage:42, important:false, level:"中級",
+    question:"コンクリートポンプ車の持込時の確認ポイントとして示されているものはどれか。",
+    choices:[
+      "ブームに亀裂や変形がなく、アウトリガーに亀裂や変形がなく安全ピンが装着されている",
+      "ブームの亀裂は使用上問題ないので確認しない",
+      "アウトリガーの安全ピンは取り外して使用する",
+      "配管やホースの落下防止ワイヤは不要とする"
+    ],
+    answer:0, explanation:"P.42では、持込時の確認ポイントとして、ブームの亀裂・変形の有無、アウトリガーの亀裂・変形と安全ピン、配管・ホースの落下防止ワイヤなどが示されています。"},
+  {id:1114, category:"コンクリートポンプ車の管理", sourcePage:42, important:true, level:"中級",
+    question:"安全基準で、コンクリート等の吹出しによる危険がある箇所について示されているものはどれか。",
+    choices:[
+      "立ち入らせない",
+      "監視員だけを立ち入らせる",
+      "自由に通路として使う",
+      "ブーム直下だけを開放する"
+    ],
+    answer:0, explanation:"P.42では、コンクリート等の吹出しにより危険が生ずるおそれのある箇所に立ち入らせないこと、ブーム直下での作業禁止などが示されています。"},
+  {id:1115, category:"解体用機械の管理", sourcePage:43, important:true, level:"初級",
+    question:"車両系建設機械の解体用機械として定義されるものに含まれるのはどれか。",
+    choices:[
+      "ブレーカ、鉄骨切断機、コンクリート圧砕機、解体用つかみ機",
+      "フォークリフト、台車、パレット",
+      "分電盤、発電機、照明器具",
+      "エレベーター、ゴンドラ、建設用リフト"
+    ],
+    answer:0, explanation:"P.43では、車両系建設機械の解体用機械として、ブレーカとともに鉄骨切断機、コンクリート圧砕機、解体用つかみ機が定義されています。"},
+  {id:1116, category:"解体用機械の管理", sourcePage:43, important:true, level:"中級",
+    question:"機体重量3t以上の解体用機械の運転資格として示されているものはどれか。",
+    choices:[
+      "車両系建設機械（解体用）の運転技能講習修了者",
+      "車両系建設機械（解体用）の運転特別教育修了者",
+      "フォークリフト運転技能講習修了者",
+      "小型移動式クレーン運転技能講習修了者"
+    ],
+    answer:0, explanation:"P.43では、機体重量3t以上の解体用機械は車両系建設機械（解体用）の運転技能講習修了者、3t未満は運転特別教育修了者と示されています。"},
+  {id:1117, category:"解体用機械の管理", sourcePage:43, important:false, level:"中級",
+    question:"アーム長さ12m以上の特定解体用機械について、定期自主検査で確認すると示されているものはどれか。",
+    choices:[
+      "操作装置、作業装置に加え、逆止め弁、警報装置等の異常の有無",
+      "事務所の鍵の保管状況",
+      "作業員の通勤経路",
+      "コンクリートポンプ車の配管肉厚"
+    ],
+    answer:0, explanation:"P.43では、アーム長さ12m以上の特定解体用機械について、操作装置、作業装置に加え、逆止め弁、警報装置等の異常の有無も自主検査すると示されています。"},
+  {id:1118, category:"解体用機械の管理", sourcePage:43, important:true, level:"中級",
+    question:"高さ5m以上のコンクリート工作物を解体する場合に選任すると示されているものはどれか。",
+    choices:[
+      "作業主任者",
+      "合図者だけ",
+      "フォークリフト運転者",
+      "電気取扱者"
+    ],
+    answer:0, explanation:"P.43では、高さ5m以上のコンクリート工作物を解体する場合、作業主任者を選任すると示されています。"},
+  {id:1119, category:"解体用機械の管理", sourcePage:43, important:true, level:"中級",
+    question:"安全基準で、アタッチメントにワイヤロープをかけて荷の吊上げを行うことについて示されているものはどれか。",
+    choices:[
+      "主たる用途以外での使用として禁止する",
+      "軽量物なら自由に行う",
+      "合図者がいれば行ってよい",
+      "バックモニタがあれば行ってよい"
+    ],
+    answer:0, explanation:"P.43では、アタッチメントにワイヤロープをかけて荷の吊上げを行う等、主たる用途以外での使用を禁止すると示されています。"},
+  {id:1120, category:"クレーンの管理", sourcePage:44, important:true, level:"初級",
+    question:"クレーンの説明として示されているものはどれか。",
+    choices:[
+      "動力を用いて荷を吊上げ、水平に運搬することを目的とする機械装置",
+      "高所で作業床を上下させる機械",
+      "生コンクリートを圧送する機械",
+      "土砂を不整地で運搬する車両"
+    ],
+    answer:0, explanation:"P.44では、クレーンとは動力を用いて荷を吊上げ、これを水平に運搬することを目的とする機械装置と説明されています。"},
+  {id:1121, category:"クレーンの管理", sourcePage:44, important:false, level:"初級",
+    question:"クレーンの種類として示されている組合せはどれか。",
+    choices:[
+      "クレーン、移動式クレーン、デリック",
+      "フォークリフト、不整地運搬車、高所作業車",
+      "発電機、分電盤、照明器具",
+      "脚立、作業台、手すり"
+    ],
+    answer:0, explanation:"P.44のクレーンの種類では、クレーン、移動式クレーン、デリックが表で示されています。"},
+  {id:1122, category:"クレーンの管理", sourcePage:44, important:true, level:"中級",
+    question:"吊上げ荷重5t以上のクレーンまたはデリックに必要な資格として示されているものはどれか。",
+    choices:[
+      "クレーン運転士免許またはクレーン・デリック運転士免許",
+      "小型移動式クレーン運転特別教育のみ",
+      "高所作業車技能講習のみ",
+      "玉掛け特別教育のみ"
+    ],
+    answer:0, explanation:"P.44の資格表では、吊上げ荷重5t以上のクレーンにはクレーン運転士免許、5t以上のデリックにはクレーン・デリック運転士免許が示されています。"},
+  {id:1123, category:"クレーンの管理", sourcePage:44, important:true, level:"中級",
+    question:"安全基準で、定格荷重に関して示されているものはどれか。",
+    choices:[
+      "定格荷重を超える荷重をかけて使用してはならない",
+      "短時間なら定格荷重を超えてよい",
+      "合図者がいれば定格荷重の確認は不要",
+      "雷発生時でも作業を継続する"
+    ],
+    answer:0, explanation:"P.44の安全基準では、クレーンにその定格荷重を超える荷重をかけて使用してはならないと示されています。"},
+  {id:1124, category:"移動式クレーンの管理", sourcePage:45, important:true, level:"初級",
+    question:"移動式クレーンに含まれるものとして示されているものはどれか。",
+    choices:[
+      "トラッククレーン、ホイールクレーン、クローラクレーン、積載型トラッククレーン",
+      "フォークリフト、不整地運搬車、台車",
+      "くい打機、アース・ドリル、リバースドリル",
+      "高所作業車、ゴンドラ、建設用リフト"
+    ],
+    answer:0, explanation:"P.45では、移動式クレーンの種類としてトラッククレーン、ホイールクレーン、クローラクレーン、積載型トラッククレーンが示されています。"},
+  {id:1125, category:"移動式クレーンの管理", sourcePage:45, important:true, level:"中級",
+    question:"吊上げ荷重5t以上の移動式クレーンに必要な資格として示されているものはどれか。",
+    choices:[
+      "移動式クレーン運転士免許",
+      "小型移動式クレーン運転技能講習",
+      "小型移動式クレーン運転特別教育",
+      "フォークリフト運転技能講習"
+    ],
+    answer:0, explanation:"P.45の資格表では、吊上げ荷重5t以上の移動式クレーンは移動式クレーン運転士免許と示されています。"},
+  {id:1126, category:"移動式クレーンの管理", sourcePage:45, important:true, level:"中級",
+    question:"移動式クレーンの作業計画における能力の考え方として示されているものはどれか。",
+    choices:[
+      "定格総荷重の80%以内で作業計画を立案する",
+      "定格総荷重の120%以内で計画する",
+      "荷重計算をせず経験で計画する",
+      "アウトリガーは格納したまま計画する"
+    ],
+    answer:0, explanation:"P.45の安全基準では、定格総荷重の80%以内で作業計画を立案し、計算式は吊荷＋吊具＋フック≦定格総荷重×0.8と示されています。"},
+  {id:1127, category:"積載形トラッククレーンの管理", sourcePage:46, important:true, level:"中級",
+    question:"積載形トラッククレーンの運転資格として、吊上げ荷重1t以上5t未満に必要と示されているものはどれか。",
+    choices:[
+      "小型移動式クレーン運転の技能講習修了者",
+      "小型移動式クレーン運転の特別教育修了者",
+      "高所作業車技能講習修了者",
+      "車両系建設機械（解体用）技能講習修了者"
+    ],
+    answer:0, explanation:"P.46では、積載形トラッククレーンの吊上げ荷重1t以上5t未満は小型移動式クレーン運転の技能講習修了者、1t未満は特別教育修了者と示されています。"},
+  {id:1128, category:"積載形トラッククレーンの管理", sourcePage:46, important:true, level:"中級",
+    question:"積載形トラッククレーンの安全基準で、吊り荷の重量及び作業半径について示されているものはどれか。",
+    choices:[
+      "確認し、定格総荷重の80%以内で作業する",
+      "確認せず最大能力で作業する",
+      "横引き・斜め引きを標準とする",
+      "荷を吊ったまま操作位置を離れる"
+    ],
+    answer:0, explanation:"P.46では、吊り荷の重量及び作業半径を確かめ、定格総荷重の80%以内で作業すること、横引き・斜め引きをしないことなどが示されています。"},
+  {id:1129, category:"高所作業車の管理", sourcePage:47, important:true, level:"初級",
+    question:"高所作業車の説明として示されているものはどれか。",
+    choices:[
+      "高所での工事、点検、補修等に使われ、作業床や昇降装置を有し、自走できる機械",
+      "生コンクリートを圧送する機械",
+      "荷を吊り上げ水平運搬する機械",
+      "土砂を不整地で運搬する車両"
+    ],
+    answer:0, explanation:"P.47では、高所作業車は高所での工事、点検、補修等に使用され、作業床及び昇降装置等を有し、動力を用いて不特定の場所に自走できる機械と説明されています。"},
+  {id:1130, category:"高所作業車の管理", sourcePage:47, important:true, level:"中級",
+    question:"作業床の最大地上高さ10m以上の高所作業車に必要な資格として示されているものはどれか。",
+    choices:[
+      "高所作業車の技能講習修了者",
+      "高所作業車の特別教育修了者",
+      "玉掛け技能講習修了者",
+      "小型移動式クレーン運転特別教育修了者"
+    ],
+    answer:0, explanation:"P.47の運転員の資格では、作業床の最大地上高さが10m以上は高所作業車の技能講習修了者、10m未満は特別教育修了者と示されています。"},
+  {id:1131, category:"高所作業車の管理", sourcePage:47, important:true, level:"中級",
+    question:"高所作業車の安全基準で、作業床上で使用すると示されているものはどれか。",
+    choices:[
+      "墜落制止用器具",
+      "クレーン用フック",
+      "コンクリート圧送ホース",
+      "基礎工事用リーダ"
+    ],
+    answer:0, explanation:"P.47の安全基準では、作業床上で墜落制止用器具を使用すること、乗車席・作業床以外に労働者を乗せないことなどが示されています。"},
+  {id:1132, category:"高所作業車の管理", sourcePage:47, important:false, level:"中級",
+    question:"垂直式高所作業車の作業台について示されている禁止事項はどれか。",
+    choices:[
+      "作業台を上げたまま走行しない",
+      "作業台を上げたまま常に走行する",
+      "傾斜地では水平確認をしない",
+      "作業床以外の箇所で自由に操作する"
+    ],
+    answer:0, explanation:"P.47では、垂直式高所作業車の作業台を上げたまま走行しないこと、スロープ等傾斜地では作業台が水平となる機能付きの機械を使うことなどが示されています。"},
+  {id:1133, category:"カメラを活用した安全管理", sourcePage:48, important:true, level:"初級",
+    question:"カメラを活用した安全管理の目的として示されているものはどれか。",
+    choices:[
+      "現場の見える化を図る",
+      "書類の印刷枚数を減らす",
+      "作業員の休憩場所を決める",
+      "機械の燃料使用量だけを記録する"
+    ],
+    answer:0, explanation:"P.48では、現場内の各所にカメラを設置し、事務所で『現場の見える化』を図ることが示されています。"},
+  {id:1134, category:"カメラを活用した安全管理", sourcePage:48, important:true, level:"中級",
+    question:"WEBカメラの現場管理ポイントとして示されているものはどれか。",
+    choices:[
+      "重機周りやクレーン作業ヤードなど災害発生リスクが高い場所にカメラを設置する",
+      "災害発生リスクが高い場所を避けて設置する",
+      "本支店での一元管理ができない方式だけを使う",
+      "現場内カメラは土木現場では使わない"
+    ],
+    answer:0, explanation:"P.48では、現場管理のポイントとして、重機周りやクレーン作業ヤードなど災害発生リスクが高い場所にカメラを設置し、本支店で一元管理可能なクラウド利用を推進すると示されています。"},
+  {id:1135, category:"カメラを活用した安全管理", sourcePage:48, important:false, level:"中級",
+    question:"ドライブレコーダを設置すると示されている対象機械はどれか。",
+    choices:[
+      "すべての車両系建設機械、荷役運搬機械、移動式クレーン等",
+      "事務所のコピー機だけ",
+      "脚立と手すりだけ",
+      "一般公道を走行するコンクリートポンプ車と資材運搬車だけ"
+    ],
+    answer:0, explanation:"P.48では、一般公道を走行するコンクリートポンプ車、資材運搬車、ダンプトラック、生コン車を除き、すべての車両系建設機械、荷役運搬機械、移動式クレーン等に録画機能付きドライブレコーダを設置すると示されています。"},
+  {id:1136, category:"カメラを活用した安全管理", sourcePage:48, important:false, level:"中級",
+    question:"ドライブレコーダの現場管理ポイントとして示されているものはどれか。",
+    choices:[
+      "定期的に作業状況を確認し、不安全行動があれば作業を中断し適切な対策を講ずる",
+      "録画映像は災害発生時にも確認しない",
+      "対象機械周辺の状況はモニタリングしない",
+      "関連会社の映像は情報管理せず自由に扱う"
+    ],
+    answer:0, explanation:"P.48では、定期的に作業状況を確認し、不安全行動があれば作業を中断して適切な対策を講ずること、災害発生時には録画映像を原因究明と対策立案に活用することが示されています。"},
+  {id:1137, category:"玉掛用具の管理", sourcePage:49, important:true, level:"初級",
+    question:"玉掛用具を管理するうえで必要とされている認識はどれか。",
+    choices:[
+      "取替える消耗品であり、保守・管理方法や点検項目等の正しい知識を持って管理する",
+      "高価な設備なので交換せず長く使い続ける",
+      "ややもすると扱いが雑でよい",
+      "点検項目や廃棄基準は不要である"
+    ],
+    answer:0, explanation:"P.49では、玉掛用具はいずれは取替える消耗品であるとの認識から、保守・管理方法、点検項目と廃棄基準等の正しい知識を持って管理する必要があると説明されています。"},
+  {id:1138, category:"玉掛ワイヤロープの管理", sourcePage:49, important:true, level:"中級",
+    question:"玉掛ワイヤロープの使用時の点検基準として示されているものはどれか。",
+    choices:[
+      "安全係数は6以上",
+      "安全係数は2以上",
+      "安全係数は確認しない",
+      "安全係数は荷の形状だけで決める"
+    ],
+    answer:0, explanation:"P.49の使用時の点検基準では、安全係数は6以上と示されています。"},
+  {id:1139, category:"玉掛ワイヤロープの管理", sourcePage:49, important:true, level:"中級",
+    question:"JIS4号品6×24、12mmの玉掛ワイヤロープについて、1撚り間の素線切れが何本以上の場合は不可と示されているか。",
+    choices:[
+      "15本以上",
+      "5本以上",
+      "24本以上",
+      "1本以上"
+    ],
+    answer:0, explanation:"P.49の計算例では、6ストランド×24素線×10%=14.4本であり、1撚りの間で15本以上の素線切れは不可と示されています。"},
+  {id:1140, category:"玉掛ワイヤロープの管理", sourcePage:49, important:true, level:"中級",
+    question:"12mmの玉掛ワイヤロープの直径減少について不可とされる基準はどれか。",
+    choices:[
+      "11.16mm未満",
+      "12.5mm以上",
+      "11.9mm未満",
+      "10%未満の減少"
+    ],
+    answer:0, explanation:"P.49の計算例では、12mm×7%=0.84、12-0.84=11.16となり、11.16mm未満のワイヤは不可と示されています。"},
+  {id:1141, category:"玉掛ワイヤロープの管理", sourcePage:50, important:false, level:"中級",
+    question:"玉掛ワイヤロープの不具合事例として示されているものはどれか。",
+    choices:[
+      "芯線はみ出し、素線切れ、キンク、形くずれ、圧縮止め金物割れ",
+      "タグ表示がはっきりしている状態",
+      "点検済テープが適切な位置に巻かれた状態",
+      "乾燥した場所で保管されている状態"
+    ],
+    answer:0, explanation:"P.50では、不具合事例として、芯線はみ出し及び素線切れ、キンクと形くずれ、圧縮止め金物割れが示されています。"},
+  {id:1142, category:"玉掛ワイヤロープの管理", sourcePage:50, important:false, level:"中級",
+    question:"玉掛ワイヤロープの点検テープについて示されているものはどれか。",
+    choices:[
+      "点検済テープは確実な点検の目印として巻くもので、テープを巻くことが目的ではない",
+      "点検済テープは合金止め部に巻く",
+      "テープを巻けば現物確認は不要である",
+      "異常のあるロープでもテープを巻けば使用できる"
+    ],
+    answer:0, explanation:"P.50では、点検済テープは確実な点検の目印として巻くもので、テープを巻くことが目的ではないこと、合金止め部には巻かないことが示されています。"},
+  {id:1143, category:"玉掛用具の保管", sourcePage:50, important:false, level:"中級",
+    question:"玉掛用具の保管方法として示されているものはどれか。",
+    choices:[
+      "乾燥した室内や屋根のかかった風通しの良い場所に保管する",
+      "コンクリート床や地面に直接置く",
+      "雨水にさらして保管する",
+      "泥や砂が付着しても放置する"
+    ],
+    answer:0, explanation:"P.50では、ワイヤロープはロープグリースで劣化防止と素線間の摩擦保護をしているため、乾燥した室内や屋根のかかった風通しの良い場所に保管することが示されています。"},
+  {id:1144, category:"ベルトスリングの管理", sourcePage:51, important:true, level:"初級",
+    question:"玉掛け用ベルトスリングの種類として示されているものはどれか。",
+    choices:[
+      "ベルト型、ラウンド型",
+      "固定式、スイベル式",
+      "ネジ式、レンフロー式",
+      "トラック型、ホイール型"
+    ],
+    answer:0, explanation:"P.51では、ベルトスリングの種類としてベルト型とラウンド型が示されています。"},
+  {id:1145, category:"ベルトスリングの管理", sourcePage:51, important:true, level:"中級",
+    question:"角張った荷をベルトスリングで吊る場合に使用すると示されているものはどれか。",
+    choices:[
+      "角当て",
+      "合金圧縮止め",
+      "バックモニタ",
+      "ロッキングフック"
+    ],
+    answer:0, explanation:"P.51の使用上の注意点では、角張った荷を吊る場合には必ず角当てを使用し、横滑りさせてはならないと示されています。"},
+  {id:1146, category:"ベルトスリングの管理", sourcePage:51, important:false, level:"中級",
+    question:"ベルトスリングの使用期間について示されているものはどれか。",
+    choices:[
+      "屋内使用は使用開始後7年、常時屋外使用は使用開始後3年を超えるものはメーカー点検または廃棄とする",
+      "屋内外とも使用開始後30年まで使用できる",
+      "使用期間を超えても点検なしで使用できる",
+      "常時屋外使用のほうが屋内使用より長く使える"
+    ],
+    answer:0, explanation:"P.51では、使用期間として屋内使用は使用開始後7年、常時屋外使用は使用開始後3年、使用期間を超えるものはメーカー点検または廃棄と示されています。"},
+  {id:1147, category:"ベルトスリングの管理", sourcePage:51, important:true, level:"中級",
+    question:"ベルトスリング使用時の点検基準として示されているものはどれか。",
+    choices:[
+      "安全係数は6以上、ストランドが切断していない、著しい損傷・腐食がない",
+      "安全係数は3以上でよい",
+      "表面に毛羽立ちがあっても確認不要",
+      "タグ表示がなくても使用してよい"
+    ],
+    answer:0, explanation:"P.51では、ベルトスリング使用時の点検基準として、安全係数6以上、ストランド切断なし、表面の毛羽立ちなし、縫製部・アイ・外観異常なし、タグ表示がはっきりしていることなどが示されています。"},
+  {id:1148, category:"シャックルの管理", sourcePage:52, important:true, level:"中級",
+    question:"シャックル使用時の確認ポイントとして示されているものはどれか。",
+    choices:[
+      "ワイヤー径よりワンサイズ大きいものを使用する",
+      "ワイヤー径より小さいものを使用する",
+      "JIS型やメーカー刻印の有無は確認しない",
+      "変形や摩耗があっても使用する"
+    ],
+    answer:0, explanation:"P.52では、シャックル使用時の確認ポイントとして、ワイヤー径よりワンサイズ大きいものを使用する、JIS型シャックル及びメーカー刻印入りのものを使用する、変形・摩耗やキズがあるものは廃棄すると示されています。"},
+  {id:1149, category:"吊治具の選定", sourcePage:52, important:true, level:"中級",
+    question:"吊治具選定上の留意事項として示されているものはどれか。",
+    choices:[
+      "揚重物の重量、荷姿、数量等を事前に確認し、作業環境や作業姿勢を考慮して選定する",
+      "専門工事会社やリースレンタル会社との打合せは不要とする",
+      "治具工具リストは作成しない",
+      "作業開始前点検は省略する"
+    ],
+    answer:0, explanation:"P.52では、吊治具選定上の留意事項として、関係会社を含めた打合せ、揚重物の重量・荷姿・数量の事前確認、作業環境・作業姿勢の考慮、治具工具リストの作成確認、点検による不良品排除が示されています。"},
+  {id:1150, category:"吊治具の管理", sourcePage:52, important:false, level:"中級",
+    question:"敷鉄板吊治具の注意事項として示されているものはどれか。",
+    choices:[
+      "フックが吊り穴に入るか事前に確認し、外止め機構が確実にロックされることを確認する",
+      "フックの吊り穴確認は不要である",
+      "掛外し時にロックが開放されることはないので注意不要である",
+      "支店ルールや取扱説明書は確認しない"
+    ],
+    answer:0, explanation:"P.52では、敷鉄板吊治具はフックが吊り穴に入るか事前に確認すること、外止め機構が確実にロックされること、掛外し時はロック開放に注意することが示されています。"},
+  {id:1151, category:"吊治具の管理", sourcePage:53, important:false, level:"中級",
+    question:"ラッチロックフック使用時の注意事項として示されているものはどれか。",
+    choices:[
+      "荷は必ずフックの中央で吊り、フック先端で吊らない",
+      "フック先端で吊ることを基本とする",
+      "巻上時にフックの中に指を入れる",
+      "玉掛け時のロック確認は不要である"
+    ],
+    answer:0, explanation:"P.53では、ラッチロックフックについて、玉掛け時にロックがかかっていることを確認し、荷は必ずフックの中央で吊り、フック先端で吊らないこと、巻上時にフックの中に指を入れないことが示されています。"},
+  {id:1152, category:"吊治具の管理", sourcePage:53, important:false, level:"中級",
+    question:"自動玉外し装置の確認事項として示されているものはどれか。",
+    choices:[
+      "固定ピンの掛かり状態を目視で確認する",
+      "固定ピンの状態は確認しない",
+      "エア供給は行わず使用する",
+      "無線操作で固定ピンを操作できないものを使う"
+    ],
+    answer:0, explanation:"P.53では、自動玉外し装置について、無線操作でエアを供給して固定ピン操作ができること、固定ピンの掛かり状態は目視で確認することが示されています。"},
+  {id:1153, category:"吊治具の管理", sourcePage:54, important:false, level:"中級",
+    question:"反転吊装置（立て起こし装置）の計画時に見込むものとして示されているものはどれか。",
+    choices:[
+      "吊り治具の重量",
+      "作業員の通勤時間",
+      "作業床の照度だけ",
+      "WEBカメラのクラウド費用"
+    ],
+    answer:0, explanation:"P.54では、反転吊装置は本体重量が大きいため、クレーン能力検証時は吊り治具の重量を見込んで計画することが示されています。"},
+  {id:1154, category:"機械関連事故・災害事例", sourcePage:55, important:true, level:"中級",
+    question:"油圧ショベル事故事例で、原因として繰り返し示されているものはどれか。",
+    choices:[
+      "重機と作業員の混在作業",
+      "WEBカメラの設置過多",
+      "玉掛ワイヤの屋内保管",
+      "高所作業車の資格区分"
+    ],
+    answer:0, explanation:"P.55の油圧ショベル事故事例では、原因として重機と作業員の混在作業が複数例で示されています。"},
+  {id:1155, category:"機械関連事故・災害事例", sourcePage:55, important:false, level:"中級",
+    question:"油圧ショベル事故事例で、地下躯体の解体作業中の災害原因として示されているものはどれか。",
+    choices:[
+      "重機作業エリア内で別作業の作業員が作業し、重機運転員の後方確認が不十分であった",
+      "ベルトスリングの使用期間が過ぎていた",
+      "コンクリートポンプ車の配管が閉塞した",
+      "高所作業車の作業床が水平だった"
+    ],
+    answer:0, explanation:"P.55では、地下躯体の解体作業中の事例として、重機作業エリア内で別作業の作業員が作業していたこと、重機運転員の後方確認が不十分であったこと、作業計画指示が不適切であったことが示されています。"},
+  {id:1156, category:"機械関連事故・災害事例", sourcePage:55, important:false, level:"中級",
+    question:"油圧ショベル事故事例で、用途外作業での荷重オーバーによる災害原因として示されているものはどれか。",
+    choices:[
+      "性能を超えた過荷重作業で、正規の運転者ではない作業員が勝手に運転した",
+      "定格総荷重の80%以内で計画していた",
+      "カギを抜いて離席していた",
+      "作業計画・指示書に基づいて作業していた"
+    ],
+    answer:0, explanation:"P.55では、用途外作業で改良材2袋（2t）を吊上げ旋回中に転倒した事例について、性能を超えた過荷重作業、正規の運転者ではない作業員の勝手な運転、作業計画・指示書にない作業、カギを差したまま離席したことが示されています。"},
+  {id:1157, category:"コンクリートポンプ車事故事例", sourcePage:56, important:false, level:"中級",
+    question:"コンクリートポンプ車事故事例で、アウトリガー折損の原因として示されているものはどれか。",
+    choices:[
+      "整備不良・金属疲労、過荷重状態、特定自主検査で亀裂を発見できなかったこと",
+      "玉掛ワイヤの安全係数不足",
+      "高所作業車の作業床を上げたまま走行したこと",
+      "WEBカメラを設置したこと"
+    ],
+    answer:0, explanation:"P.56では、コンクリートポンプ車のアウトリガー折損事例について、整備不良・金属疲労、過荷重状態、特定自主検査でアウトリガーの亀裂を発見できなかったことが原因として示されています。"},
+  {id:1158, category:"コンクリートポンプ車事故事例", sourcePage:56, important:false, level:"中級",
+    question:"ブーム折損事例で、原因として示されているものはどれか。",
+    choices:[
+      "特定自主検査及び適切な整備や出庫時点検がなされておらず、過荷重による金属疲労があった",
+      "定期自主検査が過剰に実施されていた",
+      "ブーム直下の立入禁止が確実だった",
+      "ポンプ車の特性を運転員が十分理解していた"
+    ],
+    answer:0, explanation:"P.56では、耐圧盤コンクリート打設中に第2ブーム根元が折れた事例について、特定自主検査及び適切な整備や出庫時点検がなされていないこと、過荷重による金属疲労、ブーム直下の立入禁止がなされていないことが示されています。"},
+  {id:1159, category:"コンクリートポンプ車事故事例", sourcePage:56, important:false, level:"中級",
+    question:"車体の傾き事例で、原因として示されているものはどれか。",
+    choices:[
+      "アウトリガーが完全張出しでなく、打設計画の検討が不足していた",
+      "アウトリガーが完全張出しだった",
+      "作業員が作業床で墜落制止用器具を使用していた",
+      "吊荷の重量を確認していた"
+    ],
+    answer:0, explanation:"P.56では、先端配管を切り離しブームを浮かせた際、アウトリガーが完全張出しでなかったため車体が40度傾いた事例と、打設計画の検討不足が示されています。"},
+  {id:1160, category:"移動式クレーン事故事例", sourcePage:57, important:true, level:"中級",
+    question:"50tラフタークレーンのアウトリガー下地盤強度不足事例の原因として示されているものはどれか。",
+    choices:[
+      "地盤改良されていない均しコン上にアウトリガーをセットし、十分な鉄板養生を行わなかった",
+      "アウトリガーを完全張出しして十分な地盤養生を行った",
+      "定格総荷重の80%以内で作業計画を立てた",
+      "運転者が均しコンを躯体と勘違いしなかった"
+    ],
+    answer:0, explanation:"P.57では、アウトリガー下地盤強度不足として、地盤改良されていない均しコン上にアウトリガーをセットしたこと、均しコンを躯体と勘違いしたこと、作業計画・作業指示不足、十分な鉄板養生不足が示されています。"},
+  {id:1161, category:"移動式クレーン事故事例", sourcePage:57, important:true, level:"中級",
+    question:"モーメントリミッタを解除して過荷重作業を行った事例について示されているものはどれか。",
+    choices:[
+      "安全装置解除キーを現場内に持ち込み、外部表示ランプを不正改造していた",
+      "安全装置解除キーは事業者が保管していた",
+      "過荷重作業は発生していなかった",
+      "作業計画指示が適切だった"
+    ],
+    answer:0, explanation:"P.57では、16tラフタークレーンによる鉄筋かごの荷降ろし中、モーメントリミッタを解除し過荷重作業を行ったこと、安全装置解除キーを現場内に持ち込んでいたこと、外部表示ランプを不正に改造したことが示されています。"},
+  {id:1162, category:"移動式クレーン事故事例", sourcePage:57, important:false, level:"中級",
+    question:"旋回自動停止装置を解除した過荷重事例に関して示されているものはどれか。",
+    choices:[
+      "中間張出しの性能を理解せず、作業計画指示が不適切であった",
+      "アウトリガーは完全張出しであった",
+      "旋回自動停止装置を解除していなかった",
+      "過荷重は発生していなかった"
+    ],
+    answer:0, explanation:"P.57では、アウトリガーが3.2m中間張出しで、旋回自動停止装置を解除したため能力の低い側方に旋回して転倒したこと、中間張出し性能を理解していなかったこと、作業計画指示が不適切だったことが示されています。"},
+  {id:1163, category:"ミニクレーン事故事例", sourcePage:58, important:false, level:"中級",
+    question:"ミニクレーン事故事例で、過荷重警報の無視として示されている原因はどれか。",
+    choices:[
+      "過荷重制限装置が装備されておらず、定格総荷重80%以内の作業計画がなされていなかった",
+      "過荷重制限装置が正常に装備され、80%以内で計画していた",
+      "機械の能力選定が適切であった",
+      "作業計画指示が適切であった"
+    ],
+    answer:0, explanation:"P.58では、2.6t吊りクローラクレーンで転倒した事例について、過荷重制限装置が装備されていないこと、定格総荷重80%以内の作業計画がないこと、作業計画指示や機械能力選定が不適切であったことが示されています。"},
+  {id:1164, category:"ミニクレーン事故事例", sourcePage:58, important:false, level:"中級",
+    question:"無理な操作による過荷重事例で、過荷重となった原因として示されているものはどれか。",
+    choices:[
+      "旋回動作で荷を振ろうとして横方向の力が負荷し、H鋼の重心が遠くなった",
+      "クレーンに横方向の力をかけなかった",
+      "長物のH鋼を倒しても衝撃は加わらなかった",
+      "無理な旋回を行わなかった"
+    ],
+    answer:0, explanation:"P.58では、2.9t吊りクローラクレーンで無理な旋回を行った際、旋回動作で荷を振ろうとしてクレーンに横方向の力が負荷したこと、長物のH鋼を倒した際に衝撃が加わったこと、H鋼の重心が遠くなったことが示されています。"},
+  {id:1165, category:"ミニクレーン事故事例", sourcePage:58, important:false, level:"中級",
+    question:"地下ピットへの資材荷降ろし中のカニクレーン転倒事例の原因として示されているものはどれか。",
+    choices:[
+      "アウトリガーの張出しが不完全で、張出し検知装置が装備されていない機械だった",
+      "アウトリガーを完全に張り出し、検知装置も装備されていた",
+      "クレーン能力や資材重量を考慮した作業計画があった",
+      "過荷重ではなかった"
+    ],
+    answer:0, explanation:"P.58では、2.9t吊りカニクレーンで地下ピットへ資材を荷降ろし中に転倒した事例について、アウトリガーの不完全張出し、張出し検知装置なし、能力や重量を考慮した作業計画指示なしが示されています。"},
+  {id:1166, category:"その他機械事故事例", sourcePage:59, important:true, level:"中級",
+    question:"『その他』事故事例で、超小旋回ミニ油圧ショベル転倒の原因として示されているものはどれか。",
+    choices:[
+      "クレーン機能付きで敷鉄板を揚重したが、作業地盤に約1/10の勾配があり、運転員が無資格だった",
+      "運転員が移動式クレーンの特別教育を受けていた",
+      "作業地盤は完全に水平だった",
+      "作業計画・指示書に基づく作業だった"
+    ],
+    answer:0, explanation:"P.59では、超小旋回ミニ油圧ショベルで敷鉄板を揚重した際、作業半径に対する過負荷、約1/10の勾配、無資格、作業計画・指示書にない作業が原因として示されています。"},
+  {id:1167, category:"その他機械事故事例", sourcePage:59, important:false, level:"中級",
+    question:"積載型トラッククレーンの前方吊り事例で、前方吊りの場合の定格総荷重について示されているものはどれか。",
+    choices:[
+      "25%以下になる",
+      "100%のままである",
+      "80%固定である",
+      "150%まで増える"
+    ],
+    answer:0, explanation:"P.59では、前方吊りの場合は定格総荷重が25%以下になると示され、その状態で過負荷作業を行ったことが事例の原因として挙げられています。"},
+  {id:1168, category:"その他機械事故事例", sourcePage:59, important:false, level:"中級",
+    question:"墜落事例で、1F構台上からブームを降ろしホースを取り込む際の原因として示されているものはどれか。",
+    choices:[
+      "墜落制止用器具を使用せず、スラブ端部に手摺がなく、作業計画指示が十分でなかった",
+      "墜落制止用器具を使用し、手摺も設置されていた",
+      "ホース取り込みの作業計画指示が十分だった",
+      "スラブ端部から体を乗り出していなかった"
+    ],
+    answer:0, explanation:"P.59の墜落事例では、墜落制止用器具を使用していないこと、スラブ端部に手摺が設置されていないこと、ホース取り込みの作業計画指示が十分でなかったことが示されています。"},
+  {id:1169, category:"機械安全十則", sourcePage:60, important:true, level:"初級",
+    question:"機械安全十則で、第1項として示されているものはどれか。",
+    choices:[
+      "作業の内容、順序をよく確認して仕事にかかろう",
+      "作業を終えたら清掃・手入れを必ずやろう",
+      "玉掛けは正しく確実にやろう",
+      "駐車時のブレーキや歯止めを確実にしよう"
+    ],
+    answer:0, explanation:"P.60の機械安全十則では、第1項として『作業の内容、順序をよく確認して仕事にかかろう』と示されています。"},
+  {id:1170, category:"機械安全十則", sourcePage:60, important:true, level:"初級",
+    question:"機械安全十則で、資格に関して示されているものはどれか。",
+    choices:[
+      "資格のある人、決められた人で運転しよう",
+      "資格の有無にかかわらず近くの人が運転しよう",
+      "慣れた機械なら誰でも運転しよう",
+      "連絡合図は省略しよう"
+    ],
+    answer:0, explanation:"P.60の機械安全十則では、第3項として『資格のある人、決められた人で運転しよう』と示されています。"},
+  {id:1171, category:"機械安全十則", sourcePage:60, important:true, level:"初級",
+    question:"機械安全十則で、玉掛けについて示されているものはどれか。",
+    choices:[
+      "玉掛けは正しく確実にやろう",
+      "玉掛けは短時間なら省略しよう",
+      "吊荷の重量は確認しないでよい",
+      "作業後の清掃は不要である"
+    ],
+    answer:0, explanation:"P.60の機械安全十則では、第8項として『玉掛けは正しく確実にやろう』と示されています。"},
+  {id:1172, category:"機械安全十則", sourcePage:60, important:false, level:"初級",
+    question:"機械安全十則で、駐車時について示されているものはどれか。",
+    choices:[
+      "駐車時のブレーキや歯止めを確実にし、エンジンキーは必ず抜こう",
+      "駐車時はエンジンキーを差したままにしよう",
+      "ブレーキや歯止めは不要である",
+      "作業を終えたら清掃・手入れをしない"
+    ],
+    answer:0, explanation:"P.60の機械安全十則では、第9項として『駐車時のブレーキや歯止めを確実にし、エンジンキーは必ず抜こう』と示されています。"},
+  {id:1173, category:"電気管理責任者の任務", sourcePage:61, important:true, level:"初級",
+    question:"電気管理責任者の職責として示されているものはどれか。",
+    choices:[
+      "電気事業法に基づく保安規程で定められた、現場の電気保安を実施する職責",
+      "重機の搬入計画だけを作成する職責",
+      "作業員の出退勤を管理する職責",
+      "電力会社に代わって送電設備を運転する職責"
+    ],
+    answer:0, explanation:"P.61では、電気管理責任者は電気事業法に基づく保安規程で定められた『現場の電気保安を実施する職責』と示されています。"},
+  {id:1174, category:"電気管理責任者の任務", sourcePage:61, important:true, level:"初級",
+    question:"電気管理責任者の任務として示されているものはどれか。",
+    choices:[
+      "統括・担当電気主任技術者の監督のもと、電気取扱責任者を指揮して工事用電気設備の保安管理を実施する",
+      "統括・担当電気主任技術者を指揮して、保安規程を廃止する",
+      "電気取扱責任者を置かず、すべての電気工事を単独で行う",
+      "受電設備の点検を省略し、送電後だけ確認する"
+    ],
+    answer:0, explanation:"P.61の任務では、統括・担当電気主任技術者の監督のもと、電気取扱責任者を指揮して工事用電気設備の保安管理を実施するとされています。"},
+  {id:1175, category:"電気管理責任者の任務", sourcePage:61, important:false, level:"初級",
+    question:"『電力会社の設計立会い』で協議する内容として示されているものはどれか。",
+    choices:[
+      "電力引込地点及び引込方法",
+      "クレーンの定格総荷重",
+      "足場の幅木の寸法",
+      "作業員宿舎の間取り"
+    ],
+    answer:0, explanation:"P.61では、電力会社の担当者と電力引込地点及び引込方法について協議すると示されています。"},
+  {id:1176, category:"電気管理責任者の任務", sourcePage:61, important:false, level:"初級",
+    question:"『受電手続依頼』で、工事用電力の受電日が決定した時に行うことはどれか。",
+    choices:[
+      "統括・担当電気主任技術者に受電手続を依頼する",
+      "受電日を現場だけで決め、支店へ連絡しない",
+      "受電までの日数確認を省略する",
+      "電気取扱責任者だけで電力会社へ送電を命令する"
+    ],
+    answer:0, explanation:"P.61では、工事用電力の受電日が決定したら、統括・担当電気主任技術者に受電手続を依頼し、受電までの日数も確認すると示されています。"},
+  {id:1177, category:"電気管理責任者の任務", sourcePage:61, important:true, level:"中級",
+    question:"『受変電設備の受電前点検』で示されている内容として正しいものはどれか。",
+    choices:[
+      "キュービクル据付後、フェンスや看板等を整備し、点検表に基づく点検を実施する",
+      "キュービクル据付後は、フェンスや看板の整備を受電後まで待つ",
+      "受電前点検は点検表を使わず目視だけで済ませる",
+      "電気設備保安連絡表は掲示しない"
+    ],
+    answer:0, explanation:"P.61では、キュービクル据付後にフェンスや看板等を整備し、点検表に基づく点検を実施し、『電気設備保安連絡表』を見やすい所に掲示すると示されています。"},
+  {id:1178, category:"電気管理責任者の任務", sourcePage:61, important:true, level:"中級",
+    question:"『受変電設備の自主検査』で行う検査として示されているものはどれか。",
+    choices:[
+      "受電設備や引込みケーブルの絶縁・接地測定、耐圧・保護継電器試験等",
+      "玉掛けワイヤロープの径だけの確認",
+      "車両系建設機械の始業前点検だけ",
+      "足場の最大積載荷重表示だけ"
+    ],
+    answer:0, explanation:"P.61では、統括・担当電気主任技術者立会いのもと、受電設備や引込みケーブルの絶縁・接地測定、耐圧・保護継電器試験等の自主検査を行うと示されています。"},
+  {id:1179, category:"電気管理責任者の任務", sourcePage:61, important:false, level:"初級",
+    question:"『受電立会い』で、送電後に電気管理責任者が行うこととして示されているものはどれか。",
+    choices:[
+      "異常のないことを確認し、支店へ報告する",
+      "異常確認をせず、すぐ全設備を使用開始する",
+      "電気取扱責任者を立ち会わせない",
+      "電力会社の送電前に支店報告を完了扱いにする"
+    ],
+    answer:0, explanation:"P.61では、電力会社の送電時に電気取扱責任者を立ち会わせ、送電後に異常のないことを確認して支店へ報告すると示されています。"},
+  {id:1180, category:"電気管理責任者の任務", sourcePage:62, important:false, level:"初級",
+    question:"『受変電設備の増減設依頼』で、増減設の必要が生じた時に行うことはどれか。",
+    choices:[
+      "統括・担当電気主任技術者に増減設手続きを依頼する",
+      "現場判断で無届けのまま増設する",
+      "電気取扱責任者の月例点検を中止する",
+      "支店への相談を受電後まで禁止する"
+    ],
+    answer:0, explanation:"P.62では、工事の進捗に伴って受変電設備の増減設が必要になった時は、統括・担当電気主任技術者に増減設手続きを依頼すると示されています。"},
+  {id:1181, category:"電気管理責任者の任務", sourcePage:62, important:false, level:"初級",
+    question:"『廃止手続依頼』で、工事用電力の廃止日が決定した時に行うことはどれか。",
+    choices:[
+      "統括・担当電気主任技術者に廃止手続を依頼し、廃止までの日数を確認する",
+      "廃止日が決まっても連絡せず、現場だけで撤去する",
+      "廃止手続は電気取扱責任者の月例点検後まで禁止する",
+      "廃止日は発電機の容量だけで決める"
+    ],
+    answer:0, explanation:"P.62では、工事用電力の廃止日が決定したら、統括・担当電気主任技術者に廃止手続を依頼し、廃止までの日数を確認すると示されています。"},
+  {id:1182, category:"電気管理責任者の任務", sourcePage:62, important:true, level:"中級",
+    question:"他社に工事用電力を供給する場合に必要とされているものはどれか。",
+    choices:[
+      "責任区分を明確にするための協定書の取り交わし",
+      "口頭了解だけで供給を開始すること",
+      "支店や電気主任技術者へ相談しないこと",
+      "日常定期巡視点検表を廃止すること"
+    ],
+    answer:0, explanation:"P.62では、当社の電気設備から他社に電気を供給する場合、責任区分を明確にするための協定書を取り交わす必要があり、統括・担当電気主任技術者に相談すると示されています。"},
+  {id:1183, category:"電気管理責任者の任務", sourcePage:62, important:true, level:"初級",
+    question:"『日常定期巡視点検の実施』で示されている点検頻度はどれか。",
+    choices:[
+      "月1回以上",
+      "年1回のみ",
+      "受電時の1回のみ",
+      "異常発生時だけ"
+    ],
+    answer:0, explanation:"P.62では、月1回以上の点検を電気取扱責任者に実施させ、『日常定期巡視点検表』に記入し、現場所長の承認を受けて毎月支店へ提出すると示されています。"},
+  {id:1184, category:"電気管理責任者の任務", sourcePage:62, important:true, level:"中級",
+    question:"『発電設備の使用報告書』で、支店へ提出すると示されている発電機はどれか。",
+    choices:[
+      "レンタル会社から借り受けた12.5kVA（10kW）以上の発電機",
+      "容量に関係なくすべての乾電池",
+      "作業員個人の携帯電話用充電器",
+      "廃止済みの受変電設備"
+    ],
+    answer:0, explanation:"P.62では、元請がレンタル会社から借り受けた12.5kVA（10kW）以上の発電機について、『移動用発電設備使用報告書』を支店へ提出すると示されています。"},
+  {id:1185, category:"電気安全の基礎知識", sourcePage:63, important:true, level:"初級",
+    question:"アース（接地）の説明として示されているものはどれか。",
+    choices:[
+      "電気機器を大地と電気的に接続し、漏電電流を地中に流して感電や漏電火災を防止する設備",
+      "電気機器を地面から浮かせて、漏電電流を人体に流す設備",
+      "電気機器の外観を塗装するための設備",
+      "電気設備の容量を増やすためだけの設備"
+    ],
+    answer:0, explanation:"P.63では、アースは電気機器を大地と電気的に接続することで漏電電流を地中に流し、感電や漏電火災を防止する重要な設備と説明されています。"},
+  {id:1186, category:"電気安全の基礎知識", sourcePage:63, important:true, level:"初級",
+    question:"『アースあり』の説明として正しいものはどれか。",
+    choices:[
+      "漏電電流はほとんどアースを通るため安全である",
+      "漏電電流はすべて人体を通過する",
+      "漏電しても電流はどこにも流れない",
+      "アースがあると感電の危険が必ず増える"
+    ],
+    answer:0, explanation:"P.63の図では、アースありの場合は漏電電流がほとんどアースを通るため安全と示されています。"},
+  {id:1187, category:"電気安全の基礎知識", sourcePage:63, important:true, level:"初級",
+    question:"『アースなし』で漏電している場合の危険として示されているものはどれか。",
+    choices:[
+      "漏電電流がすべて人体を通過し感電する",
+      "漏電電流がアースを通って安全になる",
+      "感電の危険はなくなる",
+      "漏電火災だけで感電は起きない"
+    ],
+    answer:0, explanation:"P.63では、アースが接続されておらず漏電している場合、人体に漏電電流が流れてしまうと示されています。"},
+  {id:1188, category:"電気安全の基礎知識", sourcePage:63, important:false, level:"中級",
+    question:"人体への電流影響の図で、50mAの影響として示されているものはどれか。",
+    choices:[
+      "短時間でも生命にかかわる",
+      "ピリッと感じる程度",
+      "相当に痛い",
+      "耐えられないほどビリビリくる"
+    ],
+    answer:0, explanation:"P.63の図では、50mAは『短時間でも生命にかかわる』と示されています。"},
+  {id:1189, category:"漏電遮断器", sourcePage:64, important:true, level:"初級",
+    question:"漏電遮断器（ELB）の機能として示されているものはどれか。",
+    choices:[
+      "漏電が電路に発生した際に自動的に電源を遮断し、感電災害を未然に防止する",
+      "漏電時に電源を入れ続け、作業を止めない",
+      "接地線の代わりに人体へ電流を流す",
+      "分電盤の外観だけを表示する"
+    ],
+    answer:0, explanation:"P.64では、ELBはキュービクルや分電盤等に設置され、漏電が発生した際に自動的に電源を遮断して感電災害を未然に防止すると示されています。"},
+  {id:1190, category:"漏電遮断器", sourcePage:64, important:true, level:"初級",
+    question:"漏電遮断器の使用前点検として示されているものはどれか。",
+    choices:[
+      "テストボタンにより正常に動作するかを使用者が使用前に実施する",
+      "年1回だけ外観を眺める",
+      "使用中に動作した時だけ点検する",
+      "測定記録を残さない"
+    ],
+    answer:0, explanation:"P.64では、使用前点検として、テストボタンにより正常に動作するかを使用者が使用前に実施すると示されています。"},
+  {id:1191, category:"漏電遮断器", sourcePage:64, important:false, level:"中級",
+    question:"漏電遮断器の定期測定で示されている管理として正しいものはどれか。",
+    choices:[
+      "法令に基づいた測定を定期的に実施し、測定記録を保管し、ELBに測定日を表示する",
+      "測定結果は口頭で伝えるだけで記録しない",
+      "測定日をELBに表示してはならない",
+      "定期測定は異常が出てから初めて実施する"
+    ],
+    answer:0, explanation:"P.64では、自家用電気工作物の法令に基づいた測定を定期的に実施し、測定記録を保管し、またELBに測定日を表示すると示されています。"},
+  {id:1192, category:"漏電遮断器", sourcePage:64, important:false, level:"中級",
+    question:"漏電遮断器測定の判定として示されているものはどれか。",
+    choices:[
+      "感度電流測定は定格感度電流以内で動作、動作時間測定は定格動作時間以内で動作",
+      "感度電流測定は定格感度電流を超えてから動作すればよい",
+      "動作時間は長いほどよい",
+      "感度電流と動作時間の測定は判定対象ではない"
+    ],
+    answer:0, explanation:"P.64の表では、感度電流測定は定格感度電流以内で動作、動作時間測定は定格動作時間以内で動作と示されています。"},
+  {id:1193, category:"漏電遮断器", sourcePage:64, important:true, level:"初級",
+    question:"漏電遮断器が正常に動作しない場合の対応として示されているものはどれか。",
+    choices:[
+      "その電路は使用禁止とする",
+      "注意しながらそのまま使用する",
+      "テストボタンを外して使用する",
+      "測定日だけを書き換える"
+    ],
+    answer:0, explanation:"P.64の使用上の注意事項では、漏電遮断器が正常に動作しない場合、その電路は使用禁止とすると示されています。"},
+  {id:1194, category:"漏電遮断器", sourcePage:64, important:true, level:"初級",
+    question:"電気機器使用時に漏電遮断器が動作した場合の対応として示されているものはどれか。",
+    choices:[
+      "一旦使用を中止し、有資格者に調査を依頼して原因を取り除いてから使用を開始する",
+      "すぐに再投入して作業を継続する",
+      "動作表示を戻して原因調査を省略する",
+      "電気取扱責任者への連絡を禁止する"
+    ],
+    answer:0, explanation:"P.64では、漏電遮断器が使用中に動作した場合は一旦使用を中止し、電気取扱責任者等の有資格者に調査を依頼し、原因を取り除いてから使用を開始すると示されています。"},
+  {id:1195, category:"アーク溶接機の管理", sourcePage:65, important:true, level:"初級",
+    question:"アーク溶接機の持込時点検で確認する項目として示されているものはどれか。",
+    choices:[
+      "本体、ケーブル、溶接ホルダー・保護具の損傷、定期点検の有効期限",
+      "運搬車両の燃料残量だけ",
+      "作業員の休憩場所だけ",
+      "足場板の色だけ"
+    ],
+    answer:0, explanation:"P.65の持込時点検では、本体に損傷がないか、ケーブルに劣化や損傷がないか、溶接ホルダー・保護具に損傷がないか、定期点検が有効期限内かを確認すると示されています。"},
+  {id:1196, category:"アーク溶接機の管理", sourcePage:65, important:true, level:"初級",
+    question:"アーク溶接機の使用前点検を行うタイミングとして示されているものはどれか。",
+    choices:[
+      "その日の使用を開始する前",
+      "工事がすべて終わった後だけ",
+      "故障してから初めて",
+      "定期点検の有効期限が切れてから"
+    ],
+    answer:0, explanation:"P.65では、使用者はその日の使用を開始する前に溶接機の使用前点検を実施しなければならないと示されています。"},
+  {id:1197, category:"アーク溶接機の管理", sourcePage:65, important:true, level:"中級",
+    question:"使用前点検で、交流アーク溶接機用自動電撃防止装置について確認する内容はどれか。",
+    choices:[
+      "作動状態をテストボタンで確認する",
+      "塗装の色を確認する",
+      "分電盤の扉の色を確認する",
+      "帰線の長さだけを確認する"
+    ],
+    answer:0, explanation:"P.65の使用前点検表では、交流アーク溶接機用自動電撃防止装置の作動状態をテストボタンで確認すると示されています。"},
+  {id:1198, category:"アーク溶接機の管理", sourcePage:65, important:false, level:"中級",
+    question:"使用前点検で、帰線について示されている確認内容はどれか。",
+    choices:[
+      "帰線は溶接箇所付近に取り付けてあるかを確認し、万力タイプの使用が望ましい",
+      "帰線は溶接箇所からできるだけ遠くに取り付ける",
+      "帰線は取り外した状態で作業する",
+      "帰線の確認は定期点検時だけでよい"
+    ],
+    answer:0, explanation:"P.65の使用前点検表では、帰線が溶接箇所付近に取り付けてあるかを確認し、備考に万力タイプの使用が望ましいと示されています。"},
+  {id:1199, category:"アーク溶接機の管理", sourcePage:65, important:true, level:"中級",
+    question:"交流アーク溶接機の定期点検と定期測定の実施期限として示されているものはどれか。",
+    choices:[
+      "定期検査は6カ月以内、定期測定は1年以内",
+      "定期検査は1年以内、定期測定は6カ月以内",
+      "定期検査も定期測定も3年以内",
+      "定期検査も定期測定も不要"
+    ],
+    answer:0, explanation:"P.65では、交流アーク溶接機の定期点検として、定期検査は6カ月以内、定期測定は1年以内に実施すると示されています。"},
+  {id:1200, category:"迷走電流", sourcePage:66, important:true, level:"初級",
+    question:"迷走電流が発生する原因として示されているものはどれか。",
+    choices:[
+      "帰線を溶接作業近くの被溶接材に取り付けないこと",
+      "帰線を溶接箇所付近に確実に取り付けること",
+      "使用前点検を確実に実施すること",
+      "溶接棒を休止中にホルダーから取り外すこと"
+    ],
+    answer:0, explanation:"P.66では、帰線を溶接作業近くの被溶接材に取り付けないと迷走電流が発生し、ダクトなどの金物に流れると示されています。"},
+  {id:1201, category:"迷走電流", sourcePage:66, important:true, level:"初級",
+    question:"迷走電流による危険として示されているものはどれか。",
+    choices:[
+      "火災や感電災害につながるおそれがある",
+      "溶接品質だけが上がる",
+      "電気災害とは関係がない",
+      "帰線クランプが必ず冷却される"
+    ],
+    answer:0, explanation:"P.66では、迷走電流がダクトなどの金物に流れ、火災や感電災害につながるおそれがあると示されています。"},
+  {id:1202, category:"迷走電流", sourcePage:66, important:true, level:"中級",
+    question:"迷走電流に関する注意事項として示されているものはどれか。",
+    choices:[
+      "帰線は溶接作業近くの被溶接材に確実に取り付ける",
+      "帰線は溶接作業箇所から遠い金物に取り付ける",
+      "使用前点検を省略してよい",
+      "休止中もホルダーに溶接棒を付けたまま電源を入れておく"
+    ],
+    answer:0, explanation:"P.66の注意事項では、迷走電流防止のため、帰線は溶接作業近くの被溶接材に確実に取り付けると示されています。"},
+  {id:1203, category:"迷走電流", sourcePage:66, important:false, level:"中級",
+    question:"注意事項で、溶接作業の休止中や終了時の対応として示されているものはどれか。",
+    choices:[
+      "ホルダーから溶接棒を取り外し、電源を切る",
+      "溶接棒を付けたまま電源を入れておく",
+      "帰線の状態確認をせず作業を再開する",
+      "ホルダーを充電部に接触させたままにする"
+    ],
+    answer:0, explanation:"P.66の注意事項では、溶接作業の休止中や終了時はホルダーから溶接棒を取り外し、電源を切ると示されています。"},
+  {id:1204, category:"迷走電流", sourcePage:67, important:false, level:"初級",
+    question:"溶接機迷走電流防止啓蒙ポスターで、良い事例として示されているものはどれか。",
+    choices:[
+      "アースクランプが近く、適正な取付けになっている",
+      "アースクランプが遠く、接触不良がある",
+      "アースクランプを使わない",
+      "帰線を溶接箇所から離して取り付ける"
+    ],
+    answer:0, explanation:"P.67のポスターでは、良い事例として『アースクランプが近い』『適正な取付け』が示されています。"},
+  {id:1205, category:"迷走電流", sourcePage:67, important:true, level:"初級",
+    question:"溶接機迷走電流防止啓蒙ポスターで、悪い事例として示されているものはどれか。",
+    choices:[
+      "アースクランプが遠い、接触不良による加熱",
+      "アースクランプが近い、適正な取付け",
+      "帰線を近くに取り付ける",
+      "点検整備された溶接機を使う"
+    ],
+    answer:0, explanation:"P.67のポスターでは、悪い事例として『アースクランプが遠い』ことや『接触不良による加熱』が示されています。"},
+  {id:1206, category:"アーク溶接機の管理", sourcePage:68, important:false, level:"初級",
+    question:"交流アーク溶接機啓蒙ポスターで、溶接機について確認する例として示されているものはどれか。",
+    choices:[
+      "電撃防止装置が作動する、アースが接続されている、ケーブルやホルダーに損傷がない",
+      "電撃防止装置を外して使用する",
+      "アース線を外して使用する",
+      "ケーブルやホルダーの損傷は見ない"
+    ],
+    answer:0, explanation:"P.68のポスターでは、電撃防止装置が作動すること、アースが接続されていること、ケーブルやホルダーに損傷がないことなどを確認するよう示されています。"},
+  {id:1207, category:"アーク溶接機の管理", sourcePage:68, important:false, level:"初級",
+    question:"交流アーク溶接機啓蒙ポスターで、排除しようと示されている工具の例はどれか。",
+    choices:[
+      "ホルダーの破損、被覆のひび割れ、接続部の養生なし、アース線の外れがあるもの",
+      "3芯ケーブルを使用し、アースが接続されているもの",
+      "電撃防止装置が作動するもの",
+      "接続端子が養生されているもの"
+    ],
+    answer:0, explanation:"P.68のポスターでは、ホルダーの破損、被覆のひび割れ、接続部の養生なし、アース線の外れなどを『こんな工具は排除しよう』として示しています。"},
+  {id:1208, category:"アーク溶接機の管理", sourcePage:69, important:false, level:"初級",
+    question:"交流アーク溶接機啓蒙ポスターで、点検する箇所として示されているものはどれか。",
+    choices:[
+      "ホルダーの状態、ケーブルの損傷有無、接続部の養生、アース線の取付け",
+      "溶接棒の銘柄だけ",
+      "作業員の休憩時間だけ",
+      "発電機の燃料残量だけ"
+    ],
+    answer:0, explanation:"P.69のポスターでは、ホルダーの状態、ケーブルの損傷有無、接続部の養生、アース線の取付けなどを『ここをチェックしよう』として示しています。"},
+  {id:1209, category:"アーク溶接作業の安全管理", sourcePage:70, important:true, level:"初級",
+    question:"アーク溶接作業における安全管理の目的として示されているものはどれか。",
+    choices:[
+      "感電災害や火災を防止するため、不安全な作業とならないよう指導と管理を行う",
+      "溶接作業を速く終えるため、点検を省略する",
+      "有資格者を配置せず、経験だけで作業させる",
+      "帰線の取付け位置を現場任せにする"
+    ],
+    answer:0, explanation:"P.70では、アーク溶接作業において感電災害や火災を防止するため、不安全な作業とならないよう指導と管理を行うと示されています。"},
+  {id:1210, category:"アーク溶接作業の安全管理", sourcePage:70, important:true, level:"初級",
+    question:"アーク溶接作業に配置する作業者について示されているものはどれか。",
+    choices:[
+      "アーク溶接等の業務に係る特別教育の修了者でなければならない",
+      "特別教育を受けていない作業者でも短時間ならよい",
+      "溶接機の所有者なら誰でもよい",
+      "見張員だけが特別教育を受ければよい"
+    ],
+    answer:0, explanation:"P.70では、アーク溶接の業務に係るすべての作業者は、アーク溶接等の業務に係る特別教育の修了者でなければならないと示されています。"},
+  {id:1211, category:"アーク溶接作業の安全管理", sourcePage:70, important:true, level:"中級",
+    question:"溶接機が危険な装置である理由として示されているものはどれか。",
+    choices:[
+      "二次側は一次側の漏電しゃ断器では保護されず、アーク停止時から約1秒間は高い電圧が発生するため",
+      "二次側は一次側の漏電しゃ断器で常に完全に保護されるため",
+      "電撃防止装置が付いていれば高い電圧は一切発生しないため",
+      "溶接機の電圧は常に25V以下に固定されるため"
+    ],
+    answer:0, explanation:"P.70では、溶接機の二次側は一次側に設置されている漏電しゃ断器では保護されず、電撃防止装置が付いていてもアーク停止時から約1秒間は高い電圧が発生すると説明されています。"},
+  {id:1212, category:"アーク溶接作業の安全管理", sourcePage:70, important:true, level:"初級",
+    question:"溶接作業の休止中及び終了時に必ず行うこととして示されているものはどれか。",
+    choices:[
+      "溶接ホルダーから溶接棒を取り外す",
+      "溶接棒をホルダーに付けたままにする",
+      "溶接棒を被溶接材に接触させておく",
+      "電撃防止装置動作灯を確認せずに放置する"
+    ],
+    answer:0, explanation:"P.70では、溶接作業の休止中及び終了時には、溶接ホルダーから溶接棒を必ず取り外すと示されています。"},
+  {id:1213, category:"アーク溶接作業の安全管理", sourcePage:70, important:false, level:"中級",
+    question:"溶接棒が被溶接材に接触した瞬間の危険として示されているものはどれか。",
+    choices:[
+      "アーク起動前に電撃防止装置の機能が解除され、高い電圧が発生する",
+      "電撃防止装置の機能が強まり、電圧が完全にゼロになる",
+      "感電事故の可能性はなくなる",
+      "溶接機の電源が自動的に必ず切れる"
+    ],
+    answer:0, explanation:"P.70では、溶接棒を被溶接材に接触させた瞬間、アーク起動前に電撃防止装置の機能が解除され、高い電圧が発生すると説明されています。"},
+  {id:1214, category:"アーク溶接作業の安全管理", sourcePage:70, important:true, level:"初級",
+    question:"溶接作業の帰線側について示されているものはどれか。",
+    choices:[
+      "アースクランプは万力タイプを使用し、溶接作業の近くの被溶接材に確実に取り付ける",
+      "アースクランプは作業場所からできるだけ遠くに取り付ける",
+      "足場パイプや配線ラックを介して接続することを推奨する",
+      "帰線側は取り付けなくてもよい"
+    ],
+    answer:0, explanation:"P.70では、帰線側はアースクランプ＝万力タイプを使用し、溶接作業の近くの被溶接材に確実に取り付けると示されています。"},
+  {id:1215, category:"アーク溶接作業の安全管理", sourcePage:70, important:false, level:"中級",
+    question:"足場パイプや配線ラック等を介して帰線を接続した場合の危険として示されているものはどれか。",
+    choices:[
+      "火災や感電事故の原因となることが多い",
+      "迷走電流が発生しにくくなる",
+      "帰線の安全性が必ず高まる",
+      "溶接機の点検が不要になる"
+    ],
+    answer:0, explanation:"P.70では、足場パイプや配線ラック等を介して接続すると、火災や感電事故の原因となることが多い事例で示されていると説明されています。"},
+  {id:1216, category:"アーク溶接作業の安全管理", sourcePage:71, important:true, level:"初級",
+    question:"溶接機を使用する時に確認することとして示されているものはどれか。",
+    choices:[
+      "定期点検済みを確認し、使用前に自動電撃防止装置の作動点検を確実に実施する",
+      "定期点検の有無は確認しない",
+      "自動電撃防止装置の作動点検は不要である",
+      "型式検定証の確認は禁止されている"
+    ],
+    answer:0, explanation:"P.71では、溶接機は定期点検済みであることを確認し、使用前には始業前点検と自動電撃防止装置の作動チェックを行うと示されています。"},
+  {id:1217, category:"アーク溶接作業の安全管理", sourcePage:71, important:false, level:"中級",
+    question:"自動電撃防止装置について確認するよう示されているものはどれか。",
+    choices:[
+      "型式検定証が貼られていること",
+      "型式検定証をはがしていること",
+      "定格荷重表示があること",
+      "運転席があること"
+    ],
+    answer:0, explanation:"P.71では、電撃防止装置は型式検定証が貼られていることを確認するよう示されています。"},
+  {id:1218, category:"アーク溶接作業の安全管理", sourcePage:71, important:true, level:"初級",
+    question:"溶接ホルダーやアースクリップ等に破損や損傷を認めた時の対応として示されているものはどれか。",
+    choices:[
+      "直ちに補修または取り換える",
+      "そのまま使い続ける",
+      "テープで隠して点検済みにする",
+      "雨天時だけ使用を中止する"
+    ],
+    answer:0, explanation:"P.71では、溶接ホルダー、アースクリップ、キャブタイヤケーブル、しゃ光保護具等の破損や損傷を認めた時は、直ちに補修または取り換えると示されています。"},
+  {id:1219, category:"アーク溶接作業の安全管理", sourcePage:71, important:true, level:"初級",
+    question:"雨天時のアーク溶接作業について示されているものはどれか。",
+    choices:[
+      "原則として作業を中止し、やむを得ない場合は十分な雨養生を行う",
+      "雨天時ほど積極的に屋外で作業する",
+      "雨養生は不要である",
+      "ゴム手袋やゴム長靴などの絶縁保護具は着用しない"
+    ],
+    answer:0, explanation:"P.71では、雨天時は原則としてアーク溶接作業を中止し、やむを得ず作業する場合はシート等で雨水養生を行い、絶縁保護具を着用すると示されています。"},
+  {id:1220, category:"アーク溶接作業の安全管理", sourcePage:71, important:false, level:"中級",
+    question:"雨天時に溶接機を設置する際の注意として示されているものはどれか。",
+    choices:[
+      "水のはね返りによる絶縁低下防止のため、木板などの上に設置し車止めを掛ける",
+      "水たまりの中に直接設置する",
+      "車止めを外して自由に動くようにする",
+      "雨水養生をせず低い場所に置く"
+    ],
+    answer:0, explanation:"P.71では、溶接機は水のはね返りによる絶縁低下防止のため木板などの上に設置し、さらに車止めを掛けると示されています。"},
+  {id:1221, category:"アーク溶接作業の安全管理", sourcePage:71, important:false, level:"初級",
+    question:"囲み記事で、溶接ヒュームについて示されている内容はどれか。",
+    choices:[
+      "特化則の改正により特定化学物質に追加され、作業主任者の選任や全体換気等が必要になる",
+      "溶接ヒュームは安全管理の対象外になった",
+      "屋内作業場では換気をしてはならない",
+      "特定化学物質から除外された"
+    ],
+    answer:0, explanation:"P.71の囲み記事では、特化則の改正により溶接ヒュームが特定化学物質に追加され、作業主任者の選任や屋内作業場での動力による全体換気の実施等が必要になると示されています。"},
+  {id:1222, category:"移動用発電機の管理", sourcePage:72, important:true, level:"中級",
+    question:"主任技術者選任・保安規程届出の確認が必要とされる移動用発電機の出力はどれか。",
+    choices:[
+      "12.5kVA（10kW）以上",
+      "1kVA以上",
+      "100W以上",
+      "出力に関係なく不要"
+    ],
+    answer:0, explanation:"P.72では、出力が12.5kVA（10kW）以上の移動用発電機は、自家用電気工作物の扱いとなり、電気主任技術者の選任、保安規程の届出が必要と示されています。"},
+  {id:1223, category:"移動用発電機の管理", sourcePage:72, important:true, level:"中級",
+    question:"鹿島がリース・レンタル会社から借り受けて使用する12.5kVA以上の移動用発電機について示されている届出はどれか。",
+    choices:[
+      "鹿島で届出。統括主任技術者制度で届け出ているため確認不要",
+      "持込んだ協力会社ごとに選任・届出が必要",
+      "協力会社に確認する",
+      "届出も確認も不要"
+    ],
+    answer:0, explanation:"P.72の表では、鹿島がリース・レンタル会社から借り受けて使用する場合は鹿島で届出、確認方法は統括主任技術者制度で届け出ているため確認不要と示されています。"},
+  {id:1224, category:"移動用発電機の管理", sourcePage:72, important:true, level:"中級",
+    question:"協力会社が自社で現場に持込んで使用する12.5kVA以上の移動用発電機について示されている届出はどれか。",
+    choices:[
+      "持込んだ協力会社ごとに選任・届出が必要で、協力会社に確認する",
+      "鹿島で届出しているため確認不要",
+      "容量に関係なく届出は不要",
+      "支店への報告書提出だけで主任技術者選任は不要"
+    ],
+    answer:0, explanation:"P.72の表では、協力会社が自社で現場に持込んで使用する場合は、持込んだ協力会社ごとに選任・届出が必要で、協力会社に確認すると示されています。"},
+  {id:1225, category:"移動用発電機の管理", sourcePage:72, important:false, level:"初級",
+    question:"移動用発電機の持込時に確認する年次点検の実施状況として示されているものはどれか。",
+    choices:[
+      "定期点検済証ステッカー貼付または年次点検表",
+      "作業員名簿だけ",
+      "溶接ホルダーの状態だけ",
+      "足場の組立図だけ"
+    ],
+    answer:0, explanation:"P.72では、持込時に年次点検の実施状況を確認し、定期点検済証ステッカー貼付または年次点検表を確認すると示されています。"},
+  {id:1226, category:"移動用発電機の管理", sourcePage:72, important:true, level:"初級",
+    question:"鹿島がリース・レンタル会社から借り受けた発電機について支店へ提出する書類はどれか。",
+    choices:[
+      "移動用発電設備使用報告書",
+      "日常定期巡視点検表だけ",
+      "アーク溶接機定期点検表だけ",
+      "安全衛生協議会議事録だけ"
+    ],
+    answer:0, explanation:"P.72では、鹿島がリース・レンタル会社から借り受けた発電機のみ、支店の統括電気主任技術者宛に『移動用発電設備使用報告書』を提出すると示されています。"},
+  {id:1227, category:"移動用発電機の管理", sourcePage:73, important:true, level:"初級",
+    question:"移動用発電機の漏電遮断器（ELB）の設置について示されているものはどれか。",
+    choices:[
+      "感電災害防止のため、漏電遮断器を本体に設置した発電機を使用する",
+      "漏電遮断器は発電機には不要である",
+      "漏電遮断器を外して使用する",
+      "3kVA以下でも必ず本体ELB内蔵機だけを使用する"
+    ],
+    answer:0, explanation:"P.73では、感電災害防止のため、漏電遮断器を本体に設置した発電機を使用すると示されています。ただし3kVA以下は当面対象外とされています。"},
+  {id:1228, category:"移動用発電機の管理", sourcePage:73, important:false, level:"中級",
+    question:"漏電遮断器を内蔵していない3kVA以下の発電機を電源とする場合に望ましいとされているものはどれか。",
+    choices:[
+      "二重絶縁構造の電気機器を使用する",
+      "アース線を接続しない",
+      "外箱接地端子を取り外す",
+      "漏電リレー用接地端子をO端子に接続する"
+    ],
+    answer:0, explanation:"P.73では、漏電遮断器を内蔵していない3kVA以下の発電機を電源とする場合、二重絶縁構造の電気機器を使用することが望ましいと示されています。"},
+  {id:1229, category:"移動用発電機の管理", sourcePage:73, important:true, level:"中級",
+    question:"移動用発電機にある2種類のアース端子として示されている組合せはどれか。",
+    choices:[
+      "漏電リレー用接地端子と外箱接地端子",
+      "動力端子と照明端子",
+      "O端子とU端子だけ",
+      "入力端子と出力端子"
+    ],
+    answer:0, explanation:"P.73では、移動用発電機には『漏電リレー用接地端子』と『外箱接地端子』の2種類のアース端子があり、感電災害防止のためそれぞれを確実に接地する必要があると示されています。"},
+  {id:1230, category:"移動用発電機の管理", sourcePage:73, important:true, level:"中級",
+    question:"漏電リレー用接地端子の機能として示されているものはどれか。",
+    choices:[
+      "給電している電気機器やケーブルに漏電が発生した際、漏電遮断器を正常に動作させ感電を防止する",
+      "発電機本体の外形破損だけを検出する",
+      "電動工具の回転数を制御する",
+      "分電盤の行先表示を行う"
+    ],
+    answer:0, explanation:"P.73の表では、漏電リレー用接地端子は、発電機で給電している電気機器やケーブルに漏電が発生した際、漏電遮断器を正常に動作させ感電を防止すると示されています。"},
+  {id:1231, category:"移動用発電機の管理", sourcePage:73, important:true, level:"中級",
+    question:"外箱接地端子の機能として示されているものはどれか。",
+    choices:[
+      "発電機本体が漏電した場合に、漏電した本体に触れることによる感電を防止する",
+      "給電先の工具の回転部を停止する",
+      "ケーブルの行先を表示する",
+      "発電機の出力を12.5kVA以上にする"
+    ],
+    answer:0, explanation:"P.73の表では、外箱接地端子は損傷や異常により発電機本体が漏電した場合に、漏電した本体に触れることによる感電を防止すると示されています。"},
+  {id:1232, category:"移動用発電機の管理", sourcePage:73, important:true, level:"初級",
+    question:"2種類のアースの接地方法として示されているものはどれか。",
+    choices:[
+      "独立接地方式と共用接地方式",
+      "交流方式と直流方式",
+      "動力方式と電灯方式",
+      "屋内方式と屋外方式"
+    ],
+    answer:0, explanation:"P.73では、2種類のアースの接地方法として、それぞれからアース棒を設ける独立接地方式と、ひとまとめにしてアース棒を設ける共用接地方式が示されています。"},
+  {id:1233, category:"移動用発電機の管理", sourcePage:73, important:false, level:"中級",
+    question:"建設五社電気研究会の地絡保護指針が推奨している接地方式はどれか。",
+    choices:[
+      "共用接地方式",
+      "独立接地方式のみ",
+      "接地を省略する方式",
+      "O端子にアース線を接続する方式"
+    ],
+    answer:0, explanation:"P.73では、どちらの方式でも良いが2種類のアースを確実に接地するとしたうえで、建設五社電気研究会の指針では共用接地方式を推奨していると示されています。"},
+  {id:1234, category:"分電盤の管理", sourcePage:74, important:true, level:"初級",
+    question:"使用する負荷の種類により示されている分電盤の種類はどれか。",
+    choices:[
+      "動力分電盤、電灯分電盤、電灯・動力兼用分電盤",
+      "発電分電盤、受電分電盤、蓄電分電盤",
+      "屋内分電盤、屋外分電盤、仮設分電盤のみ",
+      "高圧分電盤、低圧分電盤、弱電分電盤のみ"
+    ],
+    answer:0, explanation:"P.74では、使用する負荷の種類により、動力分電盤、電灯分電盤、電灯・動力兼用分電盤があると示されています。"},
+  {id:1235, category:"分電盤の管理", sourcePage:74, important:false, level:"初級",
+    question:"動力分電盤の用途として示されているものはどれか。",
+    choices:[
+      "水中ポンプ、送風機、アーク溶接機など",
+      "照明と電動工具のみ",
+      "作業員休憩所の備品のみ",
+      "事務所の通信機器のみ"
+    ],
+    answer:0, explanation:"P.74の表では、動力分電盤の用途として、水中ポンプ、送風機、アーク溶接機などが示されています。"},
+  {id:1236, category:"分電盤の管理", sourcePage:74, important:false, level:"初級",
+    question:"電灯分電盤の用途として示されているものはどれか。",
+    choices:[
+      "照明、電動工具",
+      "水中ポンプ、送風機、アーク溶接機",
+      "発電機本体の外箱接地",
+      "受変電設備の耐圧試験"
+    ],
+    answer:0, explanation:"P.74の表では、電灯分電盤の用途として、照明、電動工具が示されています。"},
+  {id:1237, category:"分電盤の管理", sourcePage:74, important:true, level:"初級",
+    question:"分電盤に設置されている漏電遮断器（ELB）の役割として示されているものはどれか。",
+    choices:[
+      "漏電が発生した際に自動的に電源を瞬時に遮断し、感電災害を未然に防止する",
+      "行先表示を自動作成する",
+      "ケーブルをバインド線で固定する",
+      "動力分電盤を電灯分電盤に変換する"
+    ],
+    answer:0, explanation:"P.74では、分電盤には漏電遮断器が設置されており、漏電が発生した際に自動的に電源を瞬時に遮断し、感電災害を未然に防止すると示されています。"},
+  {id:1238, category:"分電盤の管理", sourcePage:74, important:true, level:"中級",
+    question:"分電盤に設置されている各種遮断器が防止するものとして示されているものはどれか。",
+    choices:[
+      "ケーブルの短絡や負荷のかけすぎによる異常電流を感知し、電気火傷や火災等を防止する",
+      "発電機の年次点検を省略する",
+      "溶接ヒュームを除去する",
+      "工具の型式検定証を発行する"
+    ],
+    answer:0, explanation:"P.74では、分電盤に設置されている各種遮断器は、ケーブルの短絡や負荷のかけすぎによる異常電流の発生を感知し、電源を自動的に遮断して電気火傷や火災等を防止すると示されています。"},
+  {id:1239, category:"分電盤の管理", sourcePage:75, important:false, level:"初級",
+    question:"分電盤取扱い啓蒙ポスターで、配線前に実施するよう示されている点検はどれか。",
+    choices:[
+      "ELBの始業前点検",
+      "発電機の燃料補給だけ",
+      "溶接棒の乾燥だけ",
+      "工具の型式検定証の貼付だけ"
+    ],
+    answer:0, explanation:"P.75のポスターでは、『配線前には、ELBの始業前点検』と示されています。"},
+  {id:1240, category:"分電盤の管理", sourcePage:75, important:true, level:"初級",
+    question:"分電盤取扱い啓蒙ポスターで、してはならない配線ケーブルの状態として示されているものはどれか。",
+    choices:[
+      "端子台の破損、ケーブルの差込み不足、アースがつながっていない、奥まで挟まっていない状態",
+      "行先表示が取り付けられている状態",
+      "アースが接続されている状態",
+      "バインド線で固定されている状態"
+    ],
+    answer:0, explanation:"P.75のポスターでは、端子台の破損、ケーブルの差込み不足、アースが繋がっていない、奥まで挟まっていないといった配線ケーブルを排除しようと示されています。"},
+  {id:1241, category:"分電盤の管理", sourcePage:76, important:false, level:"初級",
+    question:"分電盤取扱い啓蒙ポスターで、分電盤は何を見て点検すると示されているか。",
+    choices:[
+      "ここを見て点検する",
+      "外箱の色だけを見る",
+      "行先表示だけを見る",
+      "扉を閉めたまま音だけで判断する"
+    ],
+    answer:0, explanation:"P.76のポスターでは、『分電盤はココを見て！』『ここをチェックしよう！』として点検箇所が示されています。"},
+  {id:1242, category:"分電盤の管理", sourcePage:76, important:true, level:"初級",
+    question:"分電盤取扱い啓蒙ポスターで、良い点検状態として示されているものはどれか。",
+    choices:[
+      "始業前点検、ケーブルの差込み、行先表示、アースの接続を確認する",
+      "共バサミをする",
+      "締付不良のまま使用する",
+      "ケーブルを奥まで挟まない"
+    ],
+    answer:0, explanation:"P.76のポスターでは、始業前点検、ケーブルの差込み、行先表示、アースの接続などをチェックするよう示されています。"},
+  {id:1243, category:"電動工具の管理", sourcePage:77, important:true, level:"初級",
+    question:"電動工具について元請が協力会社及び作業員に行うべきこととして示されているものはどれか。",
+    choices:[
+      "法令に違反しないよう指導し、違反している場合は是正のために必要な指示を行う",
+      "協力会社の電動工具は点検対象外にする",
+      "違反があっても指示しない",
+      "使用前点検を禁止する"
+    ],
+    answer:0, explanation:"P.77では、電動工具は点検・検査が必要であり、元請は協力会社及び作業員に対し法令に違反しないよう指導し、違反している場合には是正のために必要な指示を行わなければならないと示されています。"},
+  {id:1244, category:"電動工具の管理", sourcePage:77, important:true, level:"初級",
+    question:"電動工具の点検として示されているものはどれか。",
+    choices:[
+      "持込時点検と使用前点検",
+      "年1回の外観確認だけ",
+      "故障後点検だけ",
+      "分電盤の点検だけ"
+    ],
+    answer:0, explanation:"P.77では、電動工具の点検・検査として『持込時点検』と『使用前点検』が示されています。"},
+  {id:1245, category:"電動工具の管理", sourcePage:77, important:true, level:"中級",
+    question:"持込時点検で、アースピンについて確認する内容はどれか。",
+    choices:[
+      "弛み、破損がないこと",
+      "取り外されていること",
+      "塗装されていること",
+      "行先表示があること"
+    ],
+    answer:0, explanation:"P.77の持込時点検表では、アースピンは『弛み、破損がないこと』を確認すると示されています。"},
+  {id:1246, category:"電動工具の管理", sourcePage:77, important:true, level:"中級",
+    question:"持込時点検で、回転部の囲いについて備考に示されているものはどれか。",
+    choices:[
+      "規格に合ったカバーの取付",
+      "カバーを外して使用すること",
+      "回転部の囲いは不要であること",
+      "電源側が2Pコンセントであること"
+    ],
+    answer:0, explanation:"P.77の持込時点検表では、回転部の囲いに異常がないかを確認し、備考として『規格に合ったカバーの取付』と示されています。"},
+  {id:1247, category:"電動工具の管理", sourcePage:77, important:false, level:"中級",
+    question:"使用前点検で確認する項目として示されているものはどれか。",
+    choices:[
+      "アースピン、ケーブル、外箱やプラグ、異音・異臭、回転部の囲い",
+      "燃料残量、発電機容量、受電日",
+      "溶接棒の乾燥、帰線位置、型式検定証",
+      "分電盤の扉の色、銘板の社名、鍵の形状"
+    ],
+    answer:0, explanation:"P.77の使用前点検表では、アースピン、ケーブル、外箱やプラグ、異音・異臭、回転部の囲いなどを確認すると示されています。"},
+  {id:1248, category:"電動工具の管理", sourcePage:78, important:true, level:"中級",
+    question:"現場側の電源が接地防水コネクターで、工具側がアースクリップ付き2Pプラグの場合の対応として示されているものはどれか。",
+    choices:[
+      "接地防水プラグに交換する",
+      "アースクリップ付き2Pプラグのまま接地しない",
+      "アース線を切断する",
+      "コンセント型漏電遮断器を外す"
+    ],
+    answer:0, explanation:"P.78では、アースクリップ付き2Pプラグではアースが接続できないため、接地防水プラグに交換すると示されています。"},
+  {id:1249, category:"電動工具の管理", sourcePage:78, important:true, level:"初級",
+    question:"電源側が2Pコンセントの場合に使用すると示されているものはどれか。",
+    choices:[
+      "コンセント型漏電遮断器",
+      "二重絶縁マーク",
+      "共用接地方式のアース棒",
+      "溶接機用帰線クランプ"
+    ],
+    answer:0, explanation:"P.78では、電源側が2Pコンセントの場合は、コンセント型漏電遮断器を使用すると示されています。"},
+  {id:1250, category:"電動工具の管理", sourcePage:78, important:false, level:"初級",
+    question:"折れるタイプや引込むタイプのアースピンについて示されている注意はどれか。",
+    choices:[
+      "確実に接続する",
+      "折りたたんだまま使用する",
+      "切断して使用する",
+      "接続確認を省略する"
+    ],
+    answer:0, explanation:"P.78では、折れるタイプや引込むタイプのアースピンは確実に接続すると示されています。"},
+  {id:1251, category:"電動工具の管理", sourcePage:78, important:true, level:"中級",
+    question:"電工ドラムの使用前点検として示されているものはどれか。",
+    choices:[
+      "電線・プラグ・コンセント・温度センサの外観損傷、有害な水や砂埃の侵入、漏電遮断器の動作を確認する",
+      "外箱の色だけを確認する",
+      "行先表示だけを確認する",
+      "発電機の年次点検表だけを確認する"
+    ],
+    answer:0, explanation:"P.78では、電工ドラムの使用前点検として、電線・プラグ・コンセント・温度センサの外観損傷、有害となり得る水や砂埃の侵入、漏電遮断器の正常動作を確認すると示されています。"},
+  {id:1252, category:"電動工具の管理", sourcePage:78, important:true, level:"初級",
+    question:"屋外型の電工ドラムを使用すると示されている場所はどれか。",
+    choices:[
+      "屋外、湿気の多い所、雨のかかる所、止水されていない地上階など",
+      "乾燥した屋内だけ",
+      "事務所内だけ",
+      "水や雨の影響がない場所だけ"
+    ],
+    answer:0, explanation:"P.78では、屋外・湿気の多い所・雨のかかる所・止水されていない地上階などでは屋外型を使用すると示されています。"},
+  {id:1253, category:"電動工具の管理", sourcePage:78, important:true, level:"初級",
+    question:"電工ドラムのケーブルを巻き出して使用する場合に禁止されていることはどれか。",
+    choices:[
+      "ケーブルを作業通路等に這わせて使用すること",
+      "保護カバーで養生すること",
+      "架空配線すること",
+      "被覆の損傷のおそれがない状態で使用すること"
+    ],
+    answer:0, explanation:"P.78では、電工ドラムのケーブルを巻き出して使用する場合、ケーブルを作業通路等に這わせて使用してはならないと示されています。やむを得ず横断する場合は保護カバーで養生するか架空配線します。"},
+  {id:1254, category:"電動工具の管理", sourcePage:79, important:true, level:"中級",
+    question:"二重絶縁工具の説明として示されているものはどれか。",
+    choices:[
+      "充電部と器体表面との間に基礎絶縁及び付加絶縁を施し、感電の危険性が低いもの",
+      "アース接続が必ず必要な工具",
+      "漏電遮断器が不要な発電機",
+      "分電盤専用の遮断器"
+    ],
+    answer:0, explanation:"P.79では、二重絶縁工具とは、充電部と器体の表面との間に基礎絶縁及び付加絶縁を施してあり、感電の危険性が低いものと示されています。"},
+  {id:1255, category:"電動工具の管理", sourcePage:79, important:false, level:"初級",
+    question:"二重絶縁マークのついた電動工具について示されているものはどれか。",
+    choices:[
+      "二重絶縁構造なので2芯コンセントで使用でき、アース接続を必要としない",
+      "必ずアース接続が必要である",
+      "使用前点検が不要である",
+      "屋外専用である"
+    ],
+    answer:0, explanation:"P.79では、二重絶縁マークのついた電動工具は二重絶縁構造なので2芯コンセントで使用でき、アース接続を必要としないと示されています。"},
+  {id:1256, category:"電動工具の管理", sourcePage:79, important:true, level:"初級",
+    question:"充電式電動工具について使用すると示されているものはどれか。",
+    choices:[
+      "充電器および充電バッテリーは純正品を使用する",
+      "非純正品を優先して使用する",
+      "充電器の点検は不要である",
+      "持込時点検と使用前点検を省略する"
+    ],
+    answer:0, explanation:"P.79では、充電器および充電バッテリーは純正品を使用すると示されています。非純正品を使用して火災を発生させた事例があるとも示されています。"},
+  {id:1257, category:"電動工具の管理", sourcePage:79, important:true, level:"初級",
+    question:"延長コードについて示されている基本事項はどれか。",
+    choices:[
+      "必ず3芯の延長コードを使用し、持込時点検・使用前点検を励行し、行先表示を取り付ける",
+      "2芯の延長コードを使用する",
+      "行先表示は不要である",
+      "ビニルコードの場合は屋外で使用する"
+    ],
+    answer:0, explanation:"P.79では、延長コードは必ず3芯の延長コードを使用し、持込時点検、使用前点検を励行し、また行先表示を取り付けて使用すると示されています。"},
+  {id:1258, category:"電動工具の管理", sourcePage:79, important:false, level:"初級",
+    question:"延長コードの注意で、2芯の延長コードについて示されているものはどれか。",
+    choices:[
+      "使用禁止",
+      "屋外でのみ使用可",
+      "水中ポンプ専用",
+      "二重絶縁工具以外にも常時使用可"
+    ],
+    answer:0, explanation:"P.79の写真では、『2芯の延長コードは使用禁止！』と示されています。"},
+  {id:1259, category:"電動工具の管理", sourcePage:80, important:true, level:"中級",
+    question:"ディスクグラインダーの研削といしの取り替え又は取り替え時の試運転を行う者として示されているものはどれか。",
+    choices:[
+      "特別教育修了者",
+      "誰でもよい",
+      "作業主任者だけ",
+      "電気管理責任者だけ"
+    ],
+    answer:0, explanation:"P.80では、研削といしの取り替え又は取り替え時の試運転の業務は特別教育修了者が行うと示されています。"},
+  {id:1260, category:"電動工具の管理", sourcePage:80, important:true, level:"中級",
+    question:"直径50mm以上の研削といしについて示されているものはどれか。",
+    choices:[
+      "覆いを設けなければならない",
+      "覆いを外して使用する",
+      "補助ハンドルを外して片手で使う",
+      "最高使用周速度を超えてよい"
+    ],
+    answer:0, explanation:"P.80では、直径50mm以上の研削といしには覆いを設けなければならないと示されています。"},
+  {id:1261, category:"電動工具の管理", sourcePage:80, important:true, level:"中級",
+    question:"研削といしの試運転時間として示されているものはどれか。",
+    choices:[
+      "作業開始前は1分間以上、研削といしを取り替えた時は3分間以上",
+      "作業開始前は10秒、取り替え時は不要",
+      "作業開始前も取り替え時も不要",
+      "作業終了後に1分間だけ"
+    ],
+    answer:0, explanation:"P.80では、作業開始前には1分間以上、研削といしを取り替えた時は3分間以上の試運転をしなければならないと示されています。"},
+  {id:1262, category:"電動工具の管理", sourcePage:80, important:true, level:"初級",
+    question:"ディスクグラインダー作業で、保護具等について示されているものはどれか。",
+    choices:[
+      "補助ハンドルを付け、両手で保持し、防塵マスク・保護メガネを着用する",
+      "片手で使用し、補助ハンドルは外す",
+      "防塵マスクや保護メガネは不要である",
+      "保護カバーは装着しない"
+    ],
+    answer:0, explanation:"P.80では、補助ハンドルを付け両手で確実に保持すること、防塵マスク・保護メガネを必ず着用すること、保護カバーを装着することが示されています。"},
+  {id:1263, category:"電動工具の管理", sourcePage:80, important:true, level:"初級",
+    question:"電動ドリル作業で、手袋について示されている禁止事項はどれか。",
+    choices:[
+      "巻き込まれるおそれのある手袋は使用しない",
+      "巻き込まれるおそれのある手袋を必ず着用する",
+      "片手で補助ハンドルなしで使用する",
+      "保護具は一切使用しない"
+    ],
+    answer:0, explanation:"P.80では、電動ドリル作業で『巻き込まれるおそれのある手袋は使用しない』と示されています。"},
+  {id:1264, category:"電動工具の管理", sourcePage:80, important:true, level:"初級",
+    question:"ハンマードリルの使用について示されているものはどれか。",
+    choices:[
+      "必ず補助ハンドルを付け、両手で確実に保持する",
+      "単体で片手使用する",
+      "補助ハンドルなしで使用する",
+      "防塵マスクや保護メガネを着用しない"
+    ],
+    answer:0, explanation:"P.80では、ハンマードリルは必ず補助ハンドルを付け、両手で確実に保持すると示されています。"},
+  {id:1265, category:"電動工具の管理", sourcePage:80, important:false, level:"中級",
+    question:"可搬式作業台上でハンマードリル作業を行う際の注意として示されているものはどれか。",
+    choices:[
+      "転倒、転落しないよう注意する",
+      "片手で作業してよい",
+      "補助ハンドルを外す",
+      "手袋の巻き込まれを気にしなくてよい"
+    ],
+    answer:0, explanation:"P.80では、可搬式作業台上でハンマードリルの作業を行う際は、転倒、転落しないよう注意すると示されています。"},
+  {id:1266, category:"別表・運転資格", sourcePage:90, important:true, level:"中級",
+    question:"解体用機械（機体重量3t以上）の運転資格確認フローで、平成25年7月1日現在の運転経験条件として示されているものはどれか。",
+    choices:[
+      "鉄骨切断機等の運転経験が6カ月以上あること",
+      "運転経験が1カ月以上あること",
+      "運転経験が3年以上あること",
+      "運転経験は不要である"
+    ],
+    answer:0, explanation:"P.90のフローでは、平成25年7月1日現在で鉄骨切断機等の運転経験が6カ月以上あることが条件として示されています。"},
+  {id:1267, category:"別表・運転資格", sourcePage:90, important:true, level:"中級",
+    question:"フローで、運転経験条件を満たす者が解体用機械を運転可能になるために必要と示されているものはどれか。",
+    choices:[
+      "技能特例講習を受講していること",
+      "健康診断の受診のみ",
+      "年次点検の立会いのみ",
+      "元請の口頭許可のみ"
+    ],
+    answer:0, explanation:"P.90では、運転経験条件を満たした後に技能特例講習を受講し、YESで運転可能となる流れが示されています。"},
+  {id:1268, category:"別表・運転資格", sourcePage:90, important:true, level:"初級",
+    question:"技能講習を未終了の場合の扱いとして示されているものはどれか。",
+    choices:[
+      "解体用機械の運転不可",
+      "経験年数に関係なく運転可能",
+      "現場代理人が同乗すれば運転可能",
+      "試運転だけは可能"
+    ],
+    answer:0, explanation:"P.90のフローでは、技能講習未終了または条件未達の場合は『解体用機械の運転不可』となる分岐が示されています。"},
+  {id:1269, category:"別表・必要資格", sourcePage:91, important:true, level:"中級",
+    question:"クライミングクレーンの組立・解体作業指揮者の資格として示されているものはどれか。",
+    choices:[
+      "クライミングクレーン組立解体作業指揮者安全教育修了者",
+      "玉掛け技能講習修了者のみ",
+      "移動式クレーン運転士免許のみ",
+      "フルハーネス特別教育修了者のみ"
+    ],
+    answer:0, explanation:"P.91の『クレーン等の設置に関する必要資格』では、クライミングクレーン組立・解体作業指揮者の資格として安全教育修了者が示されています。"},
+  {id:1270, category:"別表・必要資格", sourcePage:91, important:false, level:"中級",
+    question:"工事用エレベーターの組立・解体作業指揮者について示されているものはどれか。",
+    choices:[
+      "選任（推奨）で、工事用エレベーター組立・解体等作業指揮者安全教育終了者が望ましい",
+      "選任不要で資格不要",
+      "玉掛け資格のみで代替可能",
+      "有資格者の配置は禁止"
+    ],
+    answer:0, explanation:"P.91では、工事用エレベーターの組立・解体作業指揮者は選任（推奨）で、安全教育終了者が望ましいと示されています。"},
+  {id:1271, category:"別表・作業規制", sourcePage:92, important:true, level:"初級",
+    question:"強風の定義として示されているものはどれか。",
+    choices:[
+      "10分間の平均風速が毎秒10m以上の風",
+      "瞬間風速が毎秒5m以上の風",
+      "平均風速が毎秒3m以上の風",
+      "風向が一定でない風"
+    ],
+    answer:0, explanation:"P.92の『悪天候時の作業規制』では、強風を『10分間の平均風速が毎秒10m以上の風』と定義しています。"},
+  {id:1272, category:"別表・作業規制", sourcePage:92, important:true, level:"初級",
+    question:"大雨の定義として示されているものはどれか。",
+    choices:[
+      "1回の降雨量が50mm以上の雨",
+      "1時間雨量が10mm以上の雨",
+      "24時間雨量が20mm以上の雨",
+      "雷を伴う雨"
+    ],
+    answer:0, explanation:"P.92では、大雨を『1回の降雨量が50mm以上の雨』と示しています。"},
+  {id:1273, category:"別表・作業規制", sourcePage:92, important:true, level:"初級",
+    question:"大雪の定義として示されているものはどれか。",
+    choices:[
+      "1回の降雪量が25cm以上の雪",
+      "積雪深が5cm以上の雪",
+      "1時間降雪量が1cm以上の雪",
+      "気温0℃以下で降る雪"
+    ],
+    answer:0, explanation:"P.92では、大雪を『1回の降雪量が25cm以上の雪』と示しています。"},
+  {id:1274, category:"別表・作業規制", sourcePage:92, important:false, level:"中級",
+    question:"強風時のみ中止対象として示されているものはどれか。",
+    choices:[
+      "クレーン",
+      "型枠支保工の組立て等",
+      "鉄骨の組立て等（高さ5m以上）",
+      "つり足場の組立て等"
+    ],
+    answer:0, explanation:"P.92の表では、クレーンは『強風のみ中止対象』と示されています。"},
+  {id:1275, category:"別表・作業規制", sourcePage:93, important:true, level:"中級",
+    question:"暴風の定義として示されているものはどれか。",
+    choices:[
+      "瞬間風速が毎秒30mを超える風",
+      "10分平均風速が毎秒10m以上の風",
+      "平均風速が毎秒20m以上の風",
+      "突風を伴うすべての風"
+    ],
+    answer:0, explanation:"P.93の表では、暴風を『瞬間風速が毎秒30mを超える風』と示しています。"},
+  {id:1276, category:"別表・作業規制", sourcePage:93, important:false, level:"中級",
+    question:"暴風時の危険防止措置として示されているものはどれか。",
+    choices:[
+      "屋外走行クレーンの逸走防止装置の作用等",
+      "掘削面の勾配を緩くすることのみ",
+      "足場の解体のみ",
+      "電工ドラムの使用中止のみ"
+    ],
+    answer:0, explanation:"P.93の暴風欄には、危険防止措置として屋外走行クレーンの逸走防止装置の作用等が示されています。"},
+  {id:1277, category:"別表・作業前点検", sourcePage:94, important:true, level:"中級",
+    question:"クレーンの作業前・悪天候後点検項目として示されているものはどれか。",
+    choices:[
+      "巻過防止装置・ブレーキ・クラッチ・コントローラーの機能、レール状態、ワイヤロープ周辺の異常",
+      "燃料残量のみ",
+      "運転者の出勤状況のみ",
+      "工事写真の撮影状況のみ"
+    ],
+    answer:0, explanation:"P.94のクレーン欄では、巻過防止装置等の機能、レール状態、ワイヤロープが通る箇所の状態各部の異常有無などが点検項目として示されています。"},
+  {id:1278, category:"別表・作業前点検", sourcePage:94, important:false, level:"初級",
+    question:"簡易リフトのその日の作業開始前点検項目として示されているものはどれか。",
+    choices:[
+      "ブレーキの機能",
+      "ワイヤロープの張力のみ",
+      "油圧計の校正値のみ",
+      "作業床の塗装状態"
+    ],
+    answer:0, explanation:"P.94の簡易リフト欄には、その日の作業開始前点検項目としてブレーキの機能が示されています。"},
+  {id:1279, category:"別表・作業前点検", sourcePage:95, important:false, level:"中級",
+    question:"不整地運搬車のその日の作業開始前点検項目として示されているものはどれか。",
+    choices:[
+      "制動装置・操縦装置、荷役装置・油圧装置、車輪、前後照灯・方向指示器・警報装置の機能",
+      "巻過防止装置のみ",
+      "逸走防止装置のみ",
+      "ファイナルリミットスイッチのみ"
+    ],
+    answer:0, explanation:"P.95の不整地運搬車欄では、制動装置等、荷役装置等、車輪、前後照灯・方向指示器・警報装置の機能が示されています。"},
+  {id:1280, category:"別表・作業前点検", sourcePage:95, important:false, level:"初級",
+    question:"移動式クレーンのその日の作業開始前点検項目として示されているものはどれか。",
+    choices:[
+      "巻過防止装置・過負荷警報装置・ブレーキ・クラッチ及びコントローラーの機能",
+      "アーク溶接機の電撃防止装置のみ",
+      "送気管・排気管のみ",
+      "ヘッドガードのみ"
+    ],
+    answer:0, explanation:"P.95の移動式クレーン欄には、巻過防止装置・過負荷警報装置・ブレーキ・クラッチ及びコントローラーの機能が示されています。"},
+  {id:1281, category:"別表・作業前点検", sourcePage:96, important:true, level:"初級",
+    question:"研削といしの点検時試運転として示されているものはどれか。",
+    choices:[
+      "1分間以上試運転する、またはといし交換時に3分間以上試運転する",
+      "10秒だけ試運転する",
+      "試運転は不要である",
+      "作業終了後に1回だけ試運転する"
+    ],
+    answer:0, explanation:"P.96の研削といし欄では、1分間以上の試運転、または交換時に3分間以上の試運転が示されています。"},
+  {id:1282, category:"別表・作業前点検", sourcePage:96, important:false, level:"中級",
+    question:"電気機械器具等のその日の使用開始前点検項目に含まれるものはどれか。",
+    choices:[
+      "感電防止用漏電遮断器の作動状態",
+      "作業員名簿の更新",
+      "安全帯の保管場所表示",
+      "作業写真の保存先"
+    ],
+    answer:0, explanation:"P.96の電気機械器具等欄には、感電防止用漏電遮断器の作動状態を含む複数項目が示されています。"},
+  {id:1283, category:"別表・定期自主検査", sourcePage:97, important:true, level:"中級",
+    question:"つり上げ荷重0.5t以上のクレーンの定期自主検査時期として示されているものはどれか。",
+    choices:[
+      "月例1回/月、年次1回/年",
+      "年次のみ1回/3年",
+      "月例のみ1回/6カ月",
+      "定期自主検査は不要"
+    ],
+    answer:0, explanation:"P.97のクレーン欄では、定期自主検査の時期として月例1回/月、年次1回/年が示されています。"},
+  {id:1284, category:"別表・定期自主検査", sourcePage:97, important:false, level:"中級",
+    question:"積載荷重0.25t以上の工事用エレベーターの定期自主検査時期として示されているものはどれか。",
+    choices:[
+      "月例1回/月、年次1回/年",
+      "月例1回/年のみ",
+      "年次1回/3年のみ",
+      "6カ月ごとに1回のみ"
+    ],
+    answer:0, explanation:"P.97の工事用エレベーター欄では、定期自主検査の時期として月例1回/月、年次1回/年が示されています。"},
+  {id:1285, category:"別表・定期自主検査", sourcePage:98, important:false, level:"中級",
+    question:"高所作業車（作業床高さ2m以上）の定期自主検査時期として示されているものはどれか。",
+    choices:[
+      "定期自主検査1回/月、特定自主検査1回/年",
+      "定期自主検査1回/年のみ",
+      "特定自主検査1回/3年のみ",
+      "6カ月に1回のみ"
+    ],
+    answer:0, explanation:"P.98の高所作業車欄では、定期自主検査1回/月、特定自主検査1回/年が示されています。"},
+  {id:1286, category:"別表・定期自主検査", sourcePage:99, important:false, level:"初級",
+    question:"絶縁用保護具等の定期検査時期として示されているものはどれか。",
+    choices:[
+      "1回/6カ月",
+      "1回/月",
+      "1回/年",
+      "1回/3年"
+    ],
+    answer:0, explanation:"P.99の絶縁用保護具等欄では、定期検査時期は1回/6カ月と示されています。"},
+  {id:1287, category:"別表・定期自主検査", sourcePage:99, important:true, level:"初級",
+    question:"ELB（漏電遮断器）の定期検査として示されているものはどれか。",
+    choices:[
+      "外観、動作、感度電流測定（1回/年）、動作時間測定（1回/年）",
+      "外観のみ",
+      "感度電流測定のみ",
+      "動作時間測定のみ"
+    ],
+    answer:0, explanation:"P.99のELB欄では、外観、動作、感度電流測定（1回/年）、動作時間測定（1回/年）が示されています。"},
+  {id:1288, category:"別表・作業主任者", sourcePage:100, important:true, level:"中級",
+    question:"作業主任者を選任すべき作業として示されているものはどれか。",
+    choices:[
+      "掘削面の高さが2m以上となる地山の掘削",
+      "一般的な事務作業",
+      "現場巡視のみ",
+      "軽微な清掃作業"
+    ],
+    answer:0, explanation:"P.100の表では、作業主任者を選任すべき作業の一つとして、掘削面の高さが2m以上となる地山の掘削が示されています。"},
+  {id:1289, category:"別表・作業主任者", sourcePage:100, important:true, level:"中級",
+    question:"作業主任者を選任すべき『足場の組立て等』の条件として示されているものはどれか。",
+    choices:[
+      "つり足場、張出し足場、又は高さが5m以上の構造の足場の組立て・解体・変更の作業",
+      "高さ2m以上のすべての足場作業",
+      "高さに関係なく足場材の運搬作業",
+      "屋内足場の点検作業のみ"
+    ],
+    answer:0, explanation:"P.100では、つり足場、張出し足場、又は高さが5m以上の構造の足場の組立て・解体・変更の作業が示されています。"},
+  {id:1290, category:"別表・作業主任者", sourcePage:100, important:false, level:"中級",
+    question:"作業主任者を選任すべき『建築物等の鉄骨の組立て等』の条件として示されているものはどれか。",
+    choices:[
+      "建築物の骨組み又は塔で、金属製部材で構成されるもの（高さ5m以上）の組立て・解体・変更の作業",
+      "木造建築物の内装仕上げ作業",
+      "高さ3m未満の鉄骨仮置き作業",
+      "鉄骨材の搬入のみ"
+    ],
+    answer:0, explanation:"P.100の表では、建築物の骨組み又は塔で金属製部材で構成されるもの（高さ5m以上）の組立て・解体・変更作業が示されています。"},
+  {id:1291, category:"別表・作業主任者", sourcePage:100, important:false, level:"中級",
+    question:"作業主任者を選任すべき『鋼橋架設等』の条件として示されているものはどれか。",
+    choices:[
+      "橋梁の上部構造で金属製部材で構成されるもの（高さ5m以上又は橋梁支間30m以上）の架設・解体・変更の作業",
+      "橋台周辺の草刈り作業",
+      "鋼橋の塗装作業のみ",
+      "橋梁点検車による点検のみ"
+    ],
+    answer:0, explanation:"P.100の表では、橋梁上部構造で金属製部材で構成されるもの（高さ5m以上又は支間30m以上）の架設・解体・変更作業が示されています。"},
+  {id:1292, category:"別表・作業主任者", sourcePage:100, important:true, level:"初級",
+    question:"作業主任者を選任すべき作業として示されている『ガス溶接』の内容はどれか。",
+    choices:[
+      "アセチレン溶接装置等を用いて行う金属の溶接・溶断・加熱",
+      "電動工具の外観点検",
+      "ELBの感度電流測定",
+      "クレーンの玉掛けのみ"
+    ],
+    answer:0, explanation:"P.100の表では、ガス溶接作業主任者に関する作業として、アセチレン溶接装置等を用いて行う金属の溶接・溶断・加熱が示されています。"},
+  {id:1293, category:"電動工具の管理", sourcePage:81, important:true, level:"初級",
+    question:"不良電動工具排除啓蒙ポスター（電動ドリル）で、良い状態として示されているものはどれか。",
+    choices:[
+      "本体・プラグの変形や破損がなく、ケーブルにひび割れがなく、アースピンがある",
+      "アースピンが折れていても使用する",
+      "プラグカバーが破損していても使用する",
+      "本体が破損していても短時間なら使用する"
+    ],
+    answer:0, explanation:"P.81では、電動ドリルの点検として本体・プラグの変形破損なし、ケーブルの損傷なし、アースピンありが示され、不良工具は排除するよう示されています。"},
+  {id:1294, category:"電動工具の管理", sourcePage:81, important:false, level:"初級",
+    question:"二重絶縁マークのある電動ドリルについて示されているものはどれか。",
+    choices:[
+      "2芯プラグで使用可能",
+      "必ず3芯プラグでしか使用できない",
+      "アースピンを折って使用する",
+      "点検は不要になる"
+    ],
+    answer:0, explanation:"P.81のポスターでは、二重絶縁マークの場合は2芯プラグで使用可能と示されています。"},
+  {id:1295, category:"電動工具の管理", sourcePage:82, important:true, level:"初級",
+    question:"不良電動工具排除啓蒙ポスター（グラインダー）で、排除すべき状態として示されているものはどれか。",
+    choices:[
+      "回転部のカバーなし",
+      "本体やプラグに変形・破損がない",
+      "ケーブルに損傷がない",
+      "アースピンがある"
+    ],
+    answer:0, explanation:"P.82では、グラインダーの『回転部のカバーなし』は不良状態として示され、『こんな工具は排除しよう』と示されています。"},
+  {id:1296, category:"電動工具の管理", sourcePage:82, important:false, level:"初級",
+    question:"グラインダーの不良例として示されているものはどれか。",
+    choices:[
+      "アースピンの折れ",
+      "アースピンがある",
+      "本体に変形・破損がない",
+      "ケーブルにひび割れがない"
+    ],
+    answer:0, explanation:"P.82の不良例には『アースピンの折れ』が示されています。"},
+  {id:1297, category:"電動工具の管理", sourcePage:83, important:true, level:"初級",
+    question:"不良電動工具排除啓蒙ポスター（電工ドラム）で、屋外使用時に示されているものはどれか。",
+    choices:[
+      "防雨型を使用している",
+      "2芯プラグ用ドラムを優先する",
+      "芯線の露出があっても使用する",
+      "発熱の恐れがあっても使用する"
+    ],
+    answer:0, explanation:"P.83の電工ドラムのポスターでは、屋外では防雨型を使用していることが示されています。"},
+  {id:1298, category:"電動工具の管理", sourcePage:83, important:false, level:"初級",
+    question:"電工ドラムの不良例として示されているものはどれか。",
+    choices:[
+      "芯線の露出",
+      "アースピンがある",
+      "本体・プラグに破損・変形がない",
+      "ケーブルに損傷がない"
+    ],
+    answer:0, explanation:"P.83の不良例には『芯線の露出』が示されています。"},
+  {id:1299, category:"電気安全十則", sourcePage:84, important:true, level:"初級",
+    question:"電気安全十則の第1項として示されているものはどれか。",
+    choices:[
+      "電気の知識を身につけ、感電事故を防ごう。",
+      "電気工事は資格をもった係員にまかせよう。",
+      "架空電線や分電盤の近くに物を置かないようにしよう。",
+      "アースは重要な安全設備なので大切に扱おう。"
+    ],
+    answer:0, explanation:"P.84の電気安全十則では、第1項に『電気の知識を身につけ、感電事故を防ごう。』と示されています。"},
+  {id:1300, category:"電気安全十則", sourcePage:84, important:true, level:"初級",
+    question:"電気安全十則で、第2項として示されているものはどれか。",
+    choices:[
+      "電気工事は資格をもった係員にまかせよう。",
+      "持ち込み機器は自主検査し、不良機械を持ち込まないようにしよう。",
+      "漏電遮断器や電撃防止装置は使用前に作動を確かめよう。",
+      "スイッチの入・切は周囲の安全を確かめてからにしよう。"
+    ],
+    answer:0, explanation:"P.84では、第2項として『電気工事は資格をもった係員にまかせよう。』と示されています。"},
+  {id:1301, category:"電気安全十則", sourcePage:85, important:true, level:"初級",
+    question:"電気安全十則で、第7項として示されているものはどれか。",
+    choices:[
+      "漏電遮断器や電撃防止装置は、使用前に作動を確かめよう。",
+      "持ち込み機器は自主検査し、不良機械を持ち込まないようにしよう。",
+      "電気機器の移動はスイッチを切ってからにしよう。",
+      "架空電線に接近する作業はとくに気をつけよう。"
+    ],
+    answer:0, explanation:"P.85の電気安全十則では、第7項として漏電遮断器や電撃防止装置の使用前作動確認が示されています。"},
+  {id:1302, category:"電気安全十則", sourcePage:85, important:true, level:"中級",
+    question:"スイッチの入・切に関する十則の内容として示されているものはどれか。",
+    choices:[
+      "周囲の安全を確かめてから行う",
+      "作業効率を優先して周囲確認を省略する",
+      "点検中表示は不要である",
+      "スイッチ操作は一人で黙って行う"
+    ],
+    answer:0, explanation:"P.85の第8項では、スイッチの入・切は周囲の安全を確かめてから行い、点検時は『点検中』等を明示すると示されています。"},
+  {id:1303, category:"電気安全十則", sourcePage:85, important:false, level:"初級",
+    question:"電気安全十則で、電気機器の移動について示されているものはどれか。",
+    choices:[
+      "電気機器の移動はスイッチを切ってからにしよう。",
+      "回転中でもすぐ移動してよい",
+      "元スイッチは切らなくてよい",
+      "移動時に刃物の向きは気にしなくてよい"
+    ],
+    answer:0, explanation:"P.85の第9項では、電気機器の移動は元スイッチを切ってから行うよう示されています。"},
+  {id:1304, category:"電気安全十則", sourcePage:85, important:true, level:"初級",
+    question:"電気安全十則で、架空電線に接近する作業について示されているものはどれか。",
+    choices:[
+      "とくに気をつけ、必要に応じて電線防護や監視員配置を行う",
+      "多少接近しても問題ない",
+      "電線防護は不要である",
+      "監視員は配置しない"
+    ],
+    answer:0, explanation:"P.85の第10項では、架空電線に接近する作業は特に注意し、必要に応じて電線防護や監視員配置を行うよう示されています。"},
+  {id:1305, category:"別表・作業指揮者", sourcePage:101, important:true, level:"初級",
+    question:"作業指揮者を選任すべき作業として示されているものはどれか。",
+    choices:[
+      "車両系荷役運搬機械等を用いて行う作業",
+      "事務所内の書類整理作業",
+      "昼休憩中の清掃作業",
+      "構内掲示板の貼替え作業"
+    ],
+    answer:0, explanation:"P.101の『作業指揮者を選任すべき作業』では、車両系荷役運搬機械等を用いて行う作業が示されています。"},
+  {id:1306, category:"別表・作業指揮者", sourcePage:101, important:true, level:"中級",
+    question:"1つの荷の重量が100kg以上のものを不整地運搬車に積卸しする作業の準拠条項として示されているものはどれか。",
+    choices:[
+      "安衛則151の48",
+      "安衛則151の9",
+      "安衛則194の10",
+      "クレーン則33"
+    ],
+    answer:0, explanation:"P.101では、1つの荷の重量が100kg以上のものを不整地運搬車に積卸しする作業の準拠条項として安衛則151の48が示されています。"},
+  {id:1307, category:"別表・作業指揮者", sourcePage:101, important:false, level:"中級",
+    question:"電気発破作業の準拠条項として示されているものはどれか。",
+    choices:[
+      "安衛則320",
+      "安衛則319",
+      "安衛則350",
+      "安衛則362"
+    ],
+    answer:0, explanation:"P.101の表では、電気発破作業の準拠条項として安衛則320が示されています。"},
+  {id:1308, category:"別表・作業指揮者", sourcePage:101, important:true, level:"中級",
+    question:"クレーンの組立て・解体作業の準拠条項として示されているものはどれか。",
+    choices:[
+      "クレーン則33",
+      "クレーン則75の2",
+      "クレーン則118",
+      "クレーン則153"
+    ],
+    answer:0, explanation:"P.101の表では、クレーンの組立て・解体作業に対する準拠条項としてクレーン則33が示されています。"},
+  {id:1309, category:"別表・監視人等", sourcePage:102, important:true, level:"初級",
+    question:"停電作業を行う場合に配置すべき人として示されているものはどれか。",
+    choices:[
+      "監視人",
+      "連絡員",
+      "作業主任者",
+      "安全衛生推進者"
+    ],
+    answer:0, explanation:"P.102の『監視人等を配置すべき作業』では、停電作業を行う場合に監視人の配置が示されています。"},
+  {id:1310, category:"別表・監視人等", sourcePage:102, important:true, level:"中級",
+    question:"路肩・傾斜地等で車両系建設機械が転倒・転落するおそれのある場合に配置すべき人として示されているものはどれか。",
+    choices:[
+      "誘導者",
+      "監視人",
+      "連絡員",
+      "作業指揮者"
+    ],
+    answer:0, explanation:"P.102の表では、路肩・傾斜地等で車両系建設機械が転倒・転落するおそれのある場合は誘導者を配置すべきと示されています。"},
+  {id:1311, category:"別表・監視人等", sourcePage:102, important:false, level:"中級",
+    question:"高圧室内業務を行うときに配置すべき人として示されているものはどれか。",
+    choices:[
+      "連絡員",
+      "監視人",
+      "誘導者",
+      "安全衛生推進者"
+    ],
+    answer:0, explanation:"P.102の表では、高圧室内業務を行うときは連絡員を配置すべきと示されています。"},
+  {id:1312, category:"別表・表示", sourcePage:103, important:true, level:"初級",
+    question:"『運転停止』の表示板を取り付ける場合として示されているものはどれか。",
+    choices:[
+      "機械のそうじ、給油、検査、修理の作業を行うため運転を停止したとき",
+      "昼休憩に入るとき",
+      "作業者交代時",
+      "始業前点検の前"
+    ],
+    answer:0, explanation:"P.103の『表示の設置が必要な箇所』では、機械のそうじ、給油、検査、修理のため運転を停止したとき、当該機械に表示板を取り付けると示されています。"},
+  {id:1313, category:"別表・表示", sourcePage:103, important:false, level:"中級",
+    question:"『検査標章（特定自主検査）』の表示について示されているものはどれか。",
+    choices:[
+      "車両系建設機械の特定自主検査を行ったとき、当該機械の見やすい箇所に表示する",
+      "月例点検時に配電盤へ表示する",
+      "受電前点検時にキュービクルへ表示する",
+      "溶接機の使用前点検時にのみ表示する"
+    ],
+    answer:0, explanation:"P.103では、車両系建設機械の特定自主検査を行ったときは、当該機械の見やすい箇所に検査標章を表示すると示されています。"},
+  {id:1314, category:"別表・表示", sourcePage:103, important:true, level:"初級",
+    question:"火災又は爆発の危険場所に対する表示として示されているものはどれか。",
+    choices:[
+      "火気使用禁止",
+      "運転停止",
+      "最大積載荷重",
+      "接近限界距離"
+    ],
+    answer:0, explanation:"P.103では、火災又は爆発の危険場所に対する表示として『火気使用禁止』が示されています。"},
+  {id:1315, category:"別表・表示", sourcePage:103, important:false, level:"中級",
+    question:"再圧室の入口に掲示する表示として示されているものはどれか。",
+    choices:[
+      "危険物等の持込禁止",
+      "最大積載荷重",
+      "作業主任者の氏名等",
+      "運搬機械等の運行注意"
+    ],
+    answer:0, explanation:"P.103の表では、再圧室の入口に掲示する表示として『危険物等の持込禁止』が示されています。"},
+  {id:1316, category:"別表・表示", sourcePage:104, important:true, level:"中級",
+    question:"『巻過ぎ防止』の表示が必要とされる箇所として示されているものはどれか。",
+    choices:[
+      "巻過防止装置を具備しないクレーン、デリック、建設用リフトの巻上げ用ワイヤロープ",
+      "分電盤の分岐回路",
+      "移動用発電機の外箱接地端子",
+      "電工ドラムの温度センサ"
+    ],
+    answer:0, explanation:"P.104では、巻過ぎ防止の表示が必要な箇所として、巻過防止装置を具備しないクレーン等の巻上げ用ワイヤロープが示されています。"},
+  {id:1317, category:"別表・表示", sourcePage:104, important:true, level:"初級",
+    question:"天井クレーン等の点検や近接建物等の点検・補修・塗装等作業を行うときに操作部分へ表示するものはどれか。",
+    choices:[
+      "運転禁止",
+      "火気厳禁",
+      "連絡方法",
+      "接近限界距離"
+    ],
+    answer:0, explanation:"P.104の表では、天井クレーン等の点検等を行うとき、操作部分に『運転禁止』を表示することが示されています。"},
+  {id:1318, category:"別表・立入禁止措置", sourcePage:105, important:true, level:"初級",
+    question:"フォーク、ショベル、アーム等及びそれらにより支持されている荷の下に必要な措置として示されているものはどれか。",
+    choices:[
+      "立入禁止",
+      "監視人配置のみ",
+      "行先表示の掲示のみ",
+      "照度測定のみ"
+    ],
+    answer:0, explanation:"P.105の『立入禁止の措置等が必要な場所』では、車両系荷役運搬機械の荷の下は必要な措置として立入禁止が示されています。"},
+  {id:1319, category:"別表・立入禁止措置", sourcePage:105, important:false, level:"中級",
+    question:"建設中坑内の動力車による後押し運転区間の準拠条文として示されているものはどれか。",
+    choices:[
+      "安衛則224",
+      "安衛則151の9",
+      "安衛則171の2",
+      "安衛則420"
+    ],
+    answer:0, explanation:"P.105の表では、建設中坑内の動力車による後押し運転区間の準拠条文として安衛則224が示されています。"},
+  {id:1320, category:"別表・立入禁止措置", sourcePage:106, important:true, level:"中級",
+    question:"足場の組立等（つり足場、張出し足場、高さ2m以上の足場の組立・解体・変更作業区域）に必要な措置として示されているものはどれか。",
+    choices:[
+      "関係者以外立入禁止",
+      "作業指揮者の選任のみ",
+      "最大積載荷重の表示のみ",
+      "照度の測定のみ"
+    ],
+    answer:0, explanation:"P.106の表では、足場の組立等の作業区域に対する必要な措置として関係者以外立入禁止が示されています。"},
+  {id:1321, category:"別表・立入禁止措置", sourcePage:106, important:true, level:"中級",
+    question:"配電盤室・変電室等区画された場所の必要な措置として示されているものはどれか。",
+    choices:[
+      "電気取扱者以外立入禁止",
+      "火気使用禁止の表示のみ",
+      "連絡員配置のみ",
+      "運転停止表示のみ"
+    ],
+    answer:0, explanation:"P.106の表では、電気取扱い（配電盤室、変電室等区画された場所）の必要な措置として電気取扱者以外立入禁止が示されています。"},
+  {id:1322, category:"別表・立入禁止措置", sourcePage:107, important:false, level:"中級",
+    question:"ケーブルクレーンの巻上・横行用ワイヤロープの内角側に対する必要な措置として示されているものはどれか。",
+    choices:[
+      "立入禁止",
+      "関係者以外立入禁止並びに表示",
+      "防網設備",
+      "連絡方法の掲示"
+    ],
+    answer:0, explanation:"P.107の表では、ケーブルクレーンの巻上・横行用ワイヤロープの内角側について、必要な措置として立入禁止が示されています。"},
+  {id:1323, category:"別表・立入禁止措置", sourcePage:107, important:true, level:"中級",
+    question:"クレーンの組立・解体の作業区域に対する必要な措置として示されているものはどれか。",
+    choices:[
+      "関係者以外立入禁止並びに表示",
+      "電気取扱者以外立入禁止",
+      "防網設備と立入区域の設定",
+      "係員以外立入禁止並びに表示"
+    ],
+    answer:0, explanation:"P.107の表では、クレーンの組立・解体の作業区域には関係者以外立入禁止並びに表示が必要と示されています。"},
+  {id:1324, category:"別表・照度", sourcePage:108, important:true, level:"中級",
+    question:"常時就業させる場所の照度として示されている組合せはどれか。",
+    choices:[
+      "精密な作業300ルクス以上、普通の作業150ルクス以上、粗な作業70ルクス以上",
+      "精密な作業150ルクス以上、普通の作業70ルクス以上、粗な作業30ルクス以上",
+      "精密な作業500ルクス以上、普通の作業300ルクス以上、粗な作業150ルクス以上",
+      "すべて20ルクス以上"
+    ],
+    answer:0, explanation:"P.108の『作業場所の照度』では、常時就業させる場所について精密な作業300ルクス以上、普通の作業150ルクス以上、粗な作業70ルクス以上と示されています。"},
+  {id:1325, category:"別表・照度", sourcePage:108, important:false, level:"初級",
+    question:"気こう室の床面に必要な照度として示されているものはどれか。",
+    choices:[
+      "20ルクス以上",
+      "5ルクス以上",
+      "70ルクス以上",
+      "150ルクス以上"
+    ],
+    answer:0, explanation:"P.108の表では、気こう室の床面の照度は20ルクス以上と示されています。"},
+  {id:1326, category:"別表・報告", sourcePage:109, important:true, level:"中級",
+    question:"報告が必要な事故として示されているものはどれか。",
+    choices:[
+      "火災又は爆発の事故",
+      "軽微な物損のみの社内トラブル",
+      "作業日報の記載漏れ",
+      "工程会議の遅刻"
+    ],
+    answer:0, explanation:"P.109の『報告が必要な事故』では、事業場又はその附属建設物内で火災又は爆発の事故が発生したときに報告が必要と示されています。"},
+  {id:1327, category:"別表・報告", sourcePage:109, important:true, level:"中級",
+    question:"クレーン（つり上げ荷重0.5t未満を除く）で報告対象として示されている事故はどれか。",
+    choices:[
+      "逸走、倒壊、落下又はジブの折損、ワイヤロープ又はつりチェーンの切断",
+      "塗装の剥がれ",
+      "照明不足",
+      "始業前点検の未実施"
+    ],
+    answer:0, explanation:"P.109では、クレーンで報告対象となる事故として、逸走、倒壊、落下又はジブの折損、ワイヤロープ又はつりチェーンの切断が示されています。"},
+  {id:1328, category:"別表・報告", sourcePage:109, important:true, level:"中級",
+    question:"電気事故の報告方法として示されているものはどれか。",
+    choices:[
+      "速報（24時間以内）及び詳報（30日以内）の2通りで産業保安監督部に報告する",
+      "年1回まとめて報告する",
+      "社内記録のみで外部報告は不要",
+      "30日以内の詳報のみ提出する"
+    ],
+    answer:0, explanation:"P.109では、電気事故は速報（24時間以内）及び詳報（30日以内）の2通りの方式で産業保安監督部に報告すると示されています。"},
+  {id:1329, category:"機械部ホームページ", sourcePage:110, important:false, level:"初級",
+    question:"工事用機械を使用して作業を行う場合に事前に行うこととして示されているものはどれか。",
+    choices:[
+      "作業計画書を作成して事前検討会を開催し、危険を予測・対策してから作業を行う",
+      "作業計画書を作らず、作業後に危険を確認する",
+      "点検表を使わず、経験だけで作業を始める",
+      "ホームページの情報は使用しない"
+    ],
+    answer:0, explanation:"P.110では、現場で工事用機械を使用する場合、事前に作業計画書を作成して事前検討会を開催し、作業の危険を予測・対策してから作業を行うと示されています。"},
+  {id:1330, category:"機械部ホームページ", sourcePage:110, important:false, level:"初級",
+    question:"機械部ホームページからダウンロードできる帳票として示されているものはどれか。",
+    choices:[
+      "機械・電気器具の定期点検表および作業開始前点検表",
+      "労働者の給与明細",
+      "社内旅費精算書",
+      "工事写真のアルバム"
+    ],
+    answer:0, explanation:"P.110の『安全』の帳票欄では、機械・電気器具の定期点検表および作業開始前点検表をダウンロードできると示されています。"},
+  {id:1331, category:"機械部ホームページ", sourcePage:110, important:false, level:"初級",
+    question:"建設機械作業計画・作業指示書について示されている内容はどれか。",
+    choices:[
+      "車両系建設機械や移動式クレーン等の作業計画・作業指示書をダウンロードできる",
+      "作業計画・作業指示書は閲覧だけでダウンロードできない",
+      "建設機械ではなく事務用品の注文書だけを扱う",
+      "作業計画書は現場で使用しない"
+    ],
+    answer:0, explanation:"P.110の表では、建設機械作業計画・作業指示書として、車両系建設機械や移動式クレーン等の作業計画・作業指示書をダウンロードできると示されています。"},
+  {id:1332, category:"機械部ホームページ", sourcePage:110, important:false, level:"初級",
+    question:"『情報、安全管理』で、災害情報について示されているものはどれか。",
+    choices:[
+      "直近から過去のものまで、機械電気に関連した災害情報を確認できる",
+      "災害情報は掲載しない",
+      "環境情報だけを確認できる",
+      "電気事故だけを非公開で扱う"
+    ],
+    answer:0, explanation:"P.110の『情報、安全管理』の表では、災害情報として、直近から過去のものまで機械電気に関連した災害情報を確認できると示されています。"},
+  {id:1333, category:"機械部ホームページ", sourcePage:110, important:false, level:"初級",
+    question:"『環境』で確認できる内容として示されているものはどれか。",
+    choices:[
+      "PCBの処分方法、省燃費運転のチェックポイント、騒音振動対策など",
+      "作業主任者の選任一覧だけ",
+      "クレーン事故報告だけ",
+      "工事用電力受電手続だけ"
+    ],
+    answer:0, explanation:"P.110の『環境』では、PCBの処分方法や省燃費運転のチェックポイント、騒音振動対策などを確認できると示されています。"},
+  {id:1334, category:"機械部ホームページ", sourcePage:110, important:false, level:"初級",
+    question:"『電気』で確認できる内容として示されているものはどれか。",
+    choices:[
+      "統括電気主任技術者の一覧、工事用電力受電時の注意ポイント、無線局運用の手引きなど",
+      "移動式クレーンの定格総荷重表だけ",
+      "建設機械の燃料消費量だけ",
+      "作業員の出退勤記録だけ"
+    ],
+    answer:0, explanation:"P.110の『電気』では、統括電気主任技術者の一覧、工事用電力受電にあたって注意するポイント、無線局運用の手引きなどを確認できると示されています。"},
+];
+
+/* =========================================================
+  機電安全必携 PDF 参考ページ
+  既存問題はAI生成の一般学習問題を含むため、本文引用とは扱わない。
+  PDF本文準拠問題へ差し替えるまでは「参考 P.xx」としてのみ表示する。
+   ========================================================= */
+const REFERENCE_PAGE_REFS = {
+  1:1, 5:91, 8:19, 9:7,
+  11:9, 15:19, 16:27, 19:27,
+  21:15, 22:15, 23:35, 24:44, 25:97, 27:80, 28:72, 29:79,
+  31:27, 32:27, 33:27, 34:27, 35:27,
+  36:30, 37:30, 38:109, 39:109, 41:32, 43:103,
+  44:100, 45:100, 46:100, 47:100, 48:97, 50:100, 51:102,
+  52:60, 53:60, 56:60, 57:60, 58:103, 61:30,
+  64:82, 65:58, 66:72, 67:48,
+  70:65, 71:91, 72:84, 73:65, 74:65, 76:91, 77:102, 79:63,
+  80:84, 81:84, 82:84, 83:84, 84:85, 85:79, 86:84, 87:84, 88:84, 89:85,
+  90:91, 91:103, 92:99, 93:91,
+  95:106, 96:106, 97:106, 98:106,
+  99:109, 100:109, 101:109, 102:109,
+  
+  2:1, 3:1, 4:60, 6:1, 7:109,
+  12:25, 13:21, 17:9, 18:47, 20:27,
+  26:32, 30:72,
+  40:91, 49:32,
+  54:60, 55:60, 59:60, 60:60,
+  62:59, 63:35, 68:55,
+  75:65, 78:65,
+};
+
+const NO_PAGE_REFS = new Set([10, 14, 42, 69, 94]);
+
+function getPageRef(q) {
+  const id = Number(q && q.id);
+  if (q && q.sourcePage) {
+    const page = Number(q.sourcePage);
+    return { page, kind: "reference", label: `本文 P.${page}`, clickable: true };
+  }
+  if (NO_PAGE_REFS.has(id)) return null;
+  if (REFERENCE_PAGE_REFS[id]) {
+    const page = REFERENCE_PAGE_REFS[id];
+    return { page, kind: "reference", label: `参考 P.${page}`, clickable: true };
+  }
+  const fallback = parseInt(String(q && q.page || "").replace(/[^0-9]/g, ""), 10);
+  return fallback ? { page: fallback, kind: "reference", label: `参考 P.${fallback}`, clickable: true } : null;
+}
+
+/* =========================================================
+   状態
+   ========================================================= */
+const state = {
+  pool: [],
+  index: 0,
+  answers: [],   // {q, picked, correct}
+  config: null,  // {level, count, mode, examMode, source:"setup"|"category"|"wrong"}
+  answered: false,
+  timerId: null,
+  remainingSeconds: 0,
+  timedOut: false,
+};
+
+const $ = (sel) => document.querySelector(sel);
+const setupEl = $("#setup");
+const quizEl = $("#quiz");
+const resultEl = $("#result");
+
+/* =========================================================
+   ユーティリティ
+   ========================================================= */
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// 選択肢順を毎回ランダム化し、正解位置からの推測を不可能にする
+function withShuffledChoices(q) {
+  const indices = shuffle([0, 1, 2, 3]);
+  const newChoices = indices.map(i => q.choices[i]);
+  const newAnswer = indices.indexOf(q.answer);
+  return { ...q, choices: newChoices, answer: newAnswer };
+}
+
+function prepareQuestions(arr) {
+  return arr.map(withShuffledChoices);
+}
+
+function listCategories() {
+  const seen = new Map();
+  for (const q of QUESTIONS) {
+    seen.set(q.category, (seen.get(q.category) || 0) + 1);
+  }
+  return Array.from(seen.entries()); // [name, count]
+}
+
+const EXPERT_PASS_RATE = 90;
+const EXPERT_SECONDS_PER_QUESTION = 45;
+const EXPERT_MIN_SECONDS = 300;
+const EXPERT_KEYWORDS = [
+  "資格", "点検", "検査", "検定", "届出", "報告", "選任", "禁止", "中止", "異常",
+  "漏電", "感電", "接地", "ELB", "遮断", "規制", "法令", "別表", "主任者",
+  "指揮者", "監視人", "誘導者", "立入禁止", "暴風", "大雨", "強風", "定期"
+];
+
+function isExpertConfig(cfg) {
+  return cfg && cfg.examMode === "expert";
+}
+
+function isExpertQuestion(q) {
+  if (q.level === "超上級" || q.level === "上級" || q.important) return true;
+  const text = `${q.category} ${q.question} ${q.explanation}`;
+  return q.level === "中級" && EXPERT_KEYWORDS.some(word => text.includes(word));
+}
+
+function buildPool(cfg) {
+  let base = QUESTIONS.slice();
+  if (isExpertConfig(cfg)) {
+    base = base.filter(isExpertQuestion);
+  } else if (cfg.level && cfg.level !== "all") {
+    base = base.filter(q => q.level === cfg.level);
+  }
+  let ordered;
+  if (cfg.mode === "category") {
+    const byCat = new Map();
+    for (const q of base) {
+      if (!byCat.has(q.category)) byCat.set(q.category, []);
+      byCat.get(q.category).push(q);
+    }
+    ordered = [];
+    for (const [, arr] of byCat) {
+      for (const q of shuffle(arr)) ordered.push(q);
+    }
+  } else {
+    ordered = shuffle(base);
+  }
+  let n;
+  if (cfg.count === "all") n = ordered.length;
+  else {
+    n = parseInt(cfg.count, 10);
+    if (!Number.isFinite(n) || n <= 0) n = ordered.length;
+  }
+  return ordered.slice(0, Math.min(n, ordered.length));
+}
+
+function updatePoolInfo() {
+  const cfg = readSetupConfig();
+  const pool = buildPool(cfg);
+  const label = isExpertConfig(cfg) ? "超上級出題予定" : "出題予定";
+  $("#pool-info").textContent = `${label}：${pool.length} 問（総問題数 ${QUESTIONS.length}）`;
+}
+
+function readSetupConfig() {
+  return {
+    level: $("#f-level").value,
+    count: $("#f-count").value,
+    mode: $("#f-mode").value,
+    examMode: $("#f-exam-mode").value,
+    source: "setup",
+  };
+}
+
+function stopExamTimer() {
+  if (state.timerId) clearInterval(state.timerId);
+  state.timerId = null;
+}
+
+function formatTime(seconds) {
+  const safe = Math.max(0, seconds);
+  const m = Math.floor(safe / 60);
+  const s = safe % 60;
+  return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+}
+
+function updateTimerPill() {
+  const pill = $("#timer-pill");
+  if (!isExpertConfig(state.config)) {
+    pill.classList.add("hidden");
+    return;
+  }
+  pill.classList.remove("hidden");
+  pill.textContent = `残り ${formatTime(state.remainingSeconds)}`;
+}
+
+function startExamTimer() {
+  stopExamTimer();
+  state.timedOut = false;
+  if (!isExpertConfig(state.config)) {
+    state.remainingSeconds = 0;
+    updateTimerPill();
+    return;
+  }
+  state.remainingSeconds = Math.max(EXPERT_MIN_SECONDS, state.pool.length * EXPERT_SECONDS_PER_QUESTION);
+  updateTimerPill();
+  state.timerId = setInterval(() => {
+    state.remainingSeconds -= 1;
+    updateTimerPill();
+    if (state.remainingSeconds <= 0) {
+      state.timedOut = true;
+      finishQuiz();
+    }
+  }, 1000);
+}
+
+function fillUnansweredAsWrong() {
+  for (let i = state.answers.length; i < state.pool.length; i++) {
+    state.answers.push({ q: state.pool[i], picked: -1, correct: false, timedOut: state.timedOut });
+  }
+}
+
+/* =========================================================
+   画面表示
+   ========================================================= */
+function showSetup() {
+  stopExamTimer();
+  setupEl.classList.remove("hidden");
+  quizEl.classList.add("hidden");
+  resultEl.classList.add("hidden");
+  updateTimerPill();
+  updatePoolInfo();
+}
+
+function showQuiz() {
+  setupEl.classList.add("hidden");
+  quizEl.classList.remove("hidden");
+  resultEl.classList.add("hidden");
+}
+
+function showResult() {
+  stopExamTimer();
+  setupEl.classList.add("hidden");
+  quizEl.classList.add("hidden");
+  resultEl.classList.remove("hidden");
+  updateTimerPill();
+}
+
+/* =========================================================
+   カテゴリミニテスト
+   ========================================================= */
+function renderCategoryButtons() {
+  const grid = $("#cat-grid");
+  grid.innerHTML = "";
+  for (const [name, count] of listCategories()) {
+    const btn = document.createElement("button");
+    btn.className = "cat-btn";
+    btn.innerHTML = `<span class="cat-name">${name}</span><span class="cat-meta">登録 ${count} 問 / 出題 ${Math.min(5, count)} 問</span>`;
+    btn.addEventListener("click", () => startCategoryMini(name));
+    grid.appendChild(btn);
+  }
+}
+
+function startCategoryMini(category) {
+  const items = QUESTIONS.filter(q => q.category === category);
+  const pool = shuffle(items).slice(0, Math.min(5, items.length));
+  state.config = { level: "all", count: String(pool.length), mode: "random", source: "category", category };
+  state.pool = prepareQuestions(pool);
+  state.index = 0;
+  state.answers = [];
+  state.answered = false;
+  state.timedOut = false;
+  stopExamTimer();
+  showQuiz();
+  renderQuestion();
+}
+
+/* =========================================================
+   クイズ進行
+   ========================================================= */
+function startQuiz() {
+  const cfg = readSetupConfig();
+  const pool = buildPool(cfg);
+  if (pool.length === 0) {
+    alert("条件に合致する問題がありません。フィルターを変更してください。");
+    return;
+  }
+  state.config = cfg;
+  state.pool = prepareQuestions(pool);
+  state.index = 0;
+  state.answers = [];
+  state.answered = false;
+  state.timedOut = false;
+  showQuiz();
+  startExamTimer();
+  renderQuestion();
+}
+
+function renderQuestion() {
+  state.answered = false;
+  const q = state.pool[state.index];
+  const total = state.pool.length;
+  const cur = state.index + 1;
+
+  $("#bar").style.width = `${((cur - 1) / total) * 100}%`;
+  $("#prog-text").textContent = `${cur} / ${total}`;
+  const modeLabel =
+    state.config.source === "category" ? `カテゴリミニテスト：${state.config.category}` :
+    state.config.source === "wrong" ? "誤答のみ再出題" :
+    `${state.config.mode === "category" ? "カテゴリ順" : "ランダム"} / 難易度 ${state.config.level === "all" ? "すべて" : state.config.level}${isExpertConfig(state.config) ? " / 超上級" : ""}`;
+  $("#mode-text").textContent = modeLabel;
+
+  updateScorePill();
+
+  const badges = $("#badges");
+  badges.innerHTML = "";
+  badges.appendChild(makeBadge(q.category, "cat"));
+  badges.appendChild(makeBadge(q.level, "level-" + q.level));
+  if (q.important) badges.appendChild(makeBadge("重要", "important"));
+
+  $("#q-text").textContent = `Q${cur}. ${q.question}`;
+
+  const choicesEl = $("#choices");
+  choicesEl.innerHTML = "";
+  const letters = ["A", "B", "C", "D"];
+  q.choices.forEach((c, i) => {
+    const btn = document.createElement("button");
+    btn.className = "choice";
+    btn.innerHTML = `<span class="idx">${letters[i]}</span><span>${c}</span>`;
+    btn.addEventListener("click", () => onChoose(i));
+    choicesEl.appendChild(btn);
+  });
+
+  const fb = $("#feedback");
+  fb.classList.add("hidden");
+  fb.classList.remove("ok", "ng");
+  fb.innerHTML = "";
+  $("#btn-next").classList.add("hidden");
+}
+
+function makeBadge(text, cls) {
+  const span = document.createElement("span");
+  span.className = "badge " + cls;
+  span.textContent = text;
+  return span;
+}
+
+function makePageBadge(q) {
+  const ref = getPageRef(q);
+  if (!ref) return null;
+  if (!ref.clickable) return makeBadge(ref.label, `page ${ref.kind}`);
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = `badge page ${ref.kind} clickable`;
+  btn.textContent = ref.label;
+  btn.title = `機電安全必携の該当箇所 P.${ref.page} を開く`;
+  btn.addEventListener("click", () => window.openQuestionSource(q));
+  return btn;
+}
+
+function appendFeedbackSourceLink(container, q) {
+  const pageBadge = makePageBadge(q);
+  if (!pageBadge) return;
+  const wrap = document.createElement("div");
+  wrap.className = "feedback-source";
+  const label = document.createElement("span");
+  label.className = "feedback-source-label";
+  label.textContent = "本文確認：";
+  wrap.appendChild(label);
+  wrap.appendChild(pageBadge);
+  container.appendChild(wrap);
+}
+
+function onChoose(picked) {
+  if (state.answered) return;
+  state.answered = true;
+  const q = state.pool[state.index];
+  const correct = picked === q.answer;
+  state.answers.push({ q, picked, correct });
+
+  const buttons = $("#choices").querySelectorAll(".choice");
+  buttons.forEach((b, i) => {
+    b.disabled = true;
+    if (isExpertConfig(state.config)) {
+      if (i === picked) b.classList.add("selected");
+    } else {
+      if (i === q.answer) b.classList.add("correct");
+      if (i === picked && !correct) b.classList.add("wrong");
+    }
+  });
+
+  const fb = $("#feedback");
+  fb.classList.remove("hidden", "ok", "ng");
+  if (isExpertConfig(state.config)) {
+    fb.innerHTML = `<div><span class="label">解答記録</span>結果と解説は終了後に表示します。</div>`;
+  } else {
+    fb.classList.add(correct ? "ok" : "ng");
+    fb.innerHTML = `
+      <div><span class="label">${correct ? "正解！" : "不正解"}</span>正解：${["A","B","C","D"][q.answer]}. ${escapeHtml(q.choices[q.answer])}</div>
+      <div class="explain"><strong>解説：</strong>${escapeHtml(q.explanation)}</div>
+    `;
+    appendFeedbackSourceLink(fb, q);
+  }
+  $("#btn-next").classList.remove("hidden");
+  $("#btn-next").textContent = state.index + 1 >= state.pool.length ? "結果を見る" : "次の問題へ";
+  updateScorePill();
+}
+
+function onNext() {
+  if (state.index + 1 >= state.pool.length) {
+    finishQuiz();
+    return;
+  }
+  state.index++;
+  renderQuestion();
+}
+
+function updateScorePill() {
+  const total = state.pool.length;
+  const correct = state.answers.filter(a => a.correct).length;
+  if (isExpertConfig(state.config)) {
+    $("#score-pill").textContent = `解答済 ${state.answers.length} / ${total}`;
+  } else {
+    $("#score-pill").textContent = `スコア ${correct} / ${total}`;
+  }
+}
+
+/* =========================================================
+   結果
+   ========================================================= */
+function finishQuiz() {
+  stopExamTimer();
+  if (isExpertConfig(state.config)) fillUnansweredAsWrong();
+  const total = isExpertConfig(state.config) ? state.pool.length : state.answers.length;
+  const correct = state.answers.filter(a => a.correct).length;
+  const rate = total === 0 ? 0 : Math.round((correct / total) * 1000) / 10;
+
+  $("#r-correct").textContent = correct;
+  $("#r-total").textContent = total;
+  $("#r-rate").textContent = rate + "%";
+
+  const examResult = $("#exam-result");
+  if (isExpertConfig(state.config)) {
+    const passed = rate >= EXPERT_PASS_RATE;
+    examResult.classList.remove("hidden", "ok", "ng");
+    examResult.classList.add(passed ? "ok" : "ng");
+    examResult.textContent = `${state.timedOut ? "時間切れ / " : ""}超上級判定：${passed ? "合格" : "未達"}（合格ライン ${EXPERT_PASS_RATE}%）`;
+  } else {
+    examResult.classList.add("hidden");
+    examResult.classList.remove("ok", "ng");
+    examResult.textContent = "";
+  }
+
+  // 誤答が多いカテゴリ
+  const byCat = new Map();
+  for (const a of state.answers) {
+    const cat = a.q.category;
+    if (!byCat.has(cat)) byCat.set(cat, { total: 0, wrong: 0 });
+    const o = byCat.get(cat);
+    o.total++;
+    if (!a.correct) o.wrong++;
+  }
+  const rows = Array.from(byCat.entries())
+    .map(([cat, o]) => ({ cat, total: o.total, wrong: o.wrong, rate: o.total ? Math.round((o.total - o.wrong) / o.total * 100) : 0 }))
+    .filter(r => r.wrong > 0)
+    .sort((a, b) => b.wrong - a.wrong || a.rate - b.rate)
+    .slice(0, 5);
+
+  const tbody = $("#weak-body");
+  tbody.innerHTML = "";
+  if (rows.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="4" class="center">誤答はありません。素晴らしいです。</td></tr>`;
+  } else {
+    for (const r of rows) {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td>${escapeHtml(r.cat)}</td><td class="num">${r.wrong}</td><td class="num">${r.total}</td><td class="num">${r.rate}%</td>`;
+      tbody.appendChild(tr);
+    }
+  }
+
+  // 全問レビュー
+  const review = $("#review");
+  review.innerHTML = "<h3>解答レビュー</h3>";
+  state.answers.forEach((a, i) => {
+    const letters = ["A","B","C","D"];
+    const item = document.createElement("div");
+    item.className = "review-item";
+    const ref = getPageRef(a.q);
+    const pageHtml = !ref ? "根拠ページ未設定" : ref.clickable
+      ? `<button type="button" class="page-link" data-page="${ref.page}" data-question-id="${a.q.id}">${escapeHtml(ref.label)}</button>`
+      : `<span class="page-ref-reference">${escapeHtml(ref.label)}</span>`;
+    item.innerHTML = `
+      <div class="q">Q${i+1}. ${escapeHtml(a.q.question)}</div>
+      <div class="meta">${escapeHtml(a.q.category)} / ${pageHtml} / ${escapeHtml(a.q.level)}${a.q.important ? " / 重要" : ""}</div>
+      <div class="a-line">
+        あなたの解答：<span class="${a.correct ? "ok" : "ng"}">${a.picked >= 0 ? `${letters[a.picked]}. ${escapeHtml(a.q.choices[a.picked])}` : "未回答"}</span>
+        ／ 正解：<span class="ok">${letters[a.q.answer]}. ${escapeHtml(a.q.choices[a.q.answer])}</span>
+      </div>
+      <div class="a-line"><strong>解説：</strong>${escapeHtml(a.q.explanation)}</div>
+    `;
+    review.appendChild(item);
+  });
+  review.querySelectorAll(".page-link[data-page]").forEach((el) => {
+    el.addEventListener("click", () => {
+      const q = QUESTIONS.find(item => String(item.id) === el.dataset.questionId);
+      window.openQuestionSource(q || el.dataset.page);
+    });
+  });
+
+  showResult();
+}
+
+function redoWrong() {
+  const wrong = state.answers.filter(a => !a.correct).map(a => a.q);
+  if (wrong.length === 0) {
+    alert("誤答がありません。お疲れさまでした。");
+    return;
+  }
+  state.pool = prepareQuestions(shuffle(wrong));
+  state.index = 0;
+  state.answers = [];
+  state.answered = false;
+  state.config = { ...state.config, source: "wrong" };
+  showQuiz();
+  startExamTimer();
+  renderQuestion();
+}
+
+function redoSame() {
+  if (!state.config) return;
+  if (state.config.source === "category") {
+    startCategoryMini(state.config.category);
+    return;
+  }
+  const pool = buildPool(state.config);
+  if (pool.length === 0) {
+    alert("条件に合致する問題がありません。");
+    return;
+  }
+  state.pool = prepareQuestions(pool);
+  state.index = 0;
+  state.answers = [];
+  state.answered = false;
+  showQuiz();
+  startExamTimer();
+  renderQuestion();
+}
+
+function redoConfig() {
+  showSetup();
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  }[c]));
+}
+
+/* =========================================================
+   初期化
+   ========================================================= */
+document.addEventListener("DOMContentLoaded", () => {
+  renderCategoryButtons();
+  updatePoolInfo();
+  $("#f-level").addEventListener("change", updatePoolInfo);
+  $("#f-count").addEventListener("change", updatePoolInfo);
+  $("#f-mode").addEventListener("change", updatePoolInfo);
+  $("#f-exam-mode").addEventListener("change", updatePoolInfo);
+
+  $("#btn-start").addEventListener("click", startQuiz);
+  $("#btn-next").addEventListener("click", onNext);
+  $("#btn-abort").addEventListener("click", () => {
+    if (confirm("中断して設定画面に戻りますか？")) showSetup();
+  });
+  $("#btn-redo-wrong").addEventListener("click", redoWrong);
+  $("#btn-redo-same").addEventListener("click", redoSame);
+  $("#btn-redo-config").addEventListener("click", redoConfig);
+});
+</script>
+
+<!-- PDF 表示モーダル -->
+<div id="pdf-modal" class="pdf-modal hidden" role="dialog" aria-modal="true" aria-labelledby="pdf-modal-title">
+  <div class="pdf-modal__panel">
+    <div class="pdf-modal__head">
+      <div class="pdf-modal__title" id="pdf-modal-title">機電安全必携</div>
+      <a id="pdf-open-newtab" href="#" target="_blank" rel="noopener">新しいタブで開く</a>
+      <button type="button" class="pdf-modal__close" id="pdf-modal-close" aria-label="閉じる">閉じる ✕</button>
+    </div>
+    <div class="pdf-modal__body">
+      <iframe id="pdf-modal-frame" title="機電安全必携 PDF" src="about:blank"></iframe>
+      <div id="pdf-source-viewer" class="pdf-source-viewer hidden" aria-label="本文該当箇所">
+        <div class="pdf-source-page" id="pdf-source-page">
+          <img id="pdf-source-image" alt="機電安全必携の本文ページ" />
+          <div id="pdf-source-highlights"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  const PDF_FILE = "機電安全必携_web.pdf";
+  const PDF_PAGE_OFFSETS = [
+    { from: 86, offset: 8 },
+    { from: 61, offset: 7 },
+    { from: 35, offset: 6 },
+    { from: 1, offset: 5 },
+  ];
+  const SOURCE_HIGHLIGHTS = {
+    1001:{rects:[{x:13,y:17,w:76,h:9}]},
+    1002:{rects:[{x:13,y:28,w:76,h:17}]},
+    1003:{rects:[{x:12,y:48,w:79,h:19}]},
+    1173:{rects:[{x:8,y:13,w:84,h:15}]}, 1174:{rects:[{x:8,y:28,w:84,h:12}]},
+    1175:{rects:[{x:8,y:42,w:84,h:10}]}, 1176:{rects:[{x:8,y:52,w:84,h:10}]},
+    1177:{rects:[{x:8,y:62,w:84,h:12}]}, 1178:{rects:[{x:8,y:73,w:84,h:11}]},
+    1179:{rects:[{x:8,y:84,w:84,h:9}]},
+    1180:{rects:[{x:8,y:8,w:84,h:12}]}, 1181:{rects:[{x:8,y:20,w:84,h:10}]},
+    1182:{rects:[{x:8,y:30,w:84,h:14}]}, 1183:{rects:[{x:8,y:45,w:84,h:17}]},
+    1184:{rects:[{x:8,y:62,w:84,h:18}]},
+    1185:{rects:[{x:8,y:8,w:84,h:18}]}, 1186:{rects:[{x:8,y:29,w:40,h:28}]},
+    1187:{rects:[{x:52,y:29,w:40,h:28}]}, 1188:{rects:[{x:8,y:61,w:84,h:27}]},
+    1189:{rects:[{x:8,y:8,w:84,h:14}]}, 1190:{rects:[{x:8,y:24,w:84,h:12}]},
+    1191:{rects:[{x:8,y:36,w:84,h:18}]}, 1192:{rects:[{x:8,y:54,w:84,h:14}]},
+    1193:{rects:[{x:8,y:69,w:84,h:9}]}, 1194:{rects:[{x:8,y:78,w:84,h:14}]},
+    1195:{rects:[{x:8,y:8,w:84,h:18}]}, 1196:{rects:[{x:8,y:26,w:84,h:11}]},
+    1197:{rects:[{x:8,y:35,w:84,h:11}]}, 1198:{rects:[{x:8,y:52,w:84,h:10}]},
+    1199:{rects:[{x:8,y:65,w:84,h:14}]},
+    1200:{rects:[{x:8,y:8,w:84,h:16}]}, 1201:{rects:[{x:8,y:20,w:84,h:15}]},
+    1202:{rects:[{x:8,y:35,w:84,h:28}]}, 1203:{rects:[{x:8,y:74,w:84,h:12}]},
+    1204:{rects:[{x:8,y:20,w:39,h:44}]}, 1205:{rects:[{x:53,y:20,w:39,h:55}]},
+    1206:{rects:[{x:8,y:12,w:84,h:43}]}, 1207:{rects:[{x:8,y:56,w:84,h:34}]},
+    1208:{rects:[{x:8,y:10,w:84,h:80}]},
+    1209:{rects:[{x:8,y:8,w:84,h:9}]}, 1210:{rects:[{x:8,y:16,w:84,h:8}]},
+    1211:{rects:[{x:8,y:24,w:84,h:18}]}, 1212:{rects:[{x:8,y:42,w:84,h:12}]},
+    1213:{rects:[{x:8,y:54,w:84,h:11}]}, 1214:{rects:[{x:8,y:65,w:84,h:12}]},
+    1215:{rects:[{x:8,y:77,w:84,h:12}]},
+    1216:{rects:[{x:8,y:8,w:84,h:17}]}, 1217:{rects:[{x:8,y:24,w:84,h:11}]},
+    1218:{rects:[{x:8,y:35,w:84,h:14}]}, 1219:{rects:[{x:8,y:50,w:84,h:18}]},
+    1220:{rects:[{x:8,y:68,w:84,h:12}]}, 1221:{rects:[{x:8,y:81,w:84,h:12}]},
+    1222:{rects:[{x:8,y:8,w:84,h:20}]}, 1223:{rects:[{x:8,y:26,w:84,h:12}]},
+    1224:{rects:[{x:8,y:38,w:84,h:12}]}, 1225:{rects:[{x:8,y:50,w:84,h:16}]},
+    1226:{rects:[{x:8,y:66,w:84,h:18}]},
+  };
+  const SOURCE_PAGE_HIGHLIGHTS = {
+    101:{rects:[{x:6,y:7,w:88,h:82}]},
+    102:{rects:[{x:6,y:7,w:88,h:82}]},
+    103:{rects:[{x:6,y:7,w:88,h:82}]},
+    104:{rects:[{x:6,y:7,w:88,h:82}]},
+    105:{rects:[{x:6,y:7,w:88,h:82}]},
+    106:{rects:[{x:6,y:7,w:88,h:82}]},
+    107:{rects:[{x:6,y:7,w:88,h:82}]},
+    108:{rects:[{x:6,y:7,w:88,h:82}]},
+    109:{rects:[{x:6,y:7,w:88,h:82}]},
+    110:{rects:[{x:6,y:7,w:88,h:86}]},
+  };
+  const modal = document.getElementById("pdf-modal");
+  const frame = document.getElementById("pdf-modal-frame");
+  const sourceViewer = document.getElementById("pdf-source-viewer");
+  const sourcePage = document.getElementById("pdf-source-page");
+  const sourceImage = document.getElementById("pdf-source-image");
+  const sourceHighlights = document.getElementById("pdf-source-highlights");
+  const title = document.getElementById("pdf-modal-title");
+  const newtab = document.getElementById("pdf-open-newtab");
+  const closeBtn = document.getElementById("pdf-modal-close");
+
+  function pdfPageNumber(page) {
+    const mapping = PDF_PAGE_OFFSETS.find(item => page >= item.from);
+    const offset = mapping ? mapping.offset : 5;
+    return page + offset;
+  }
+
+  function pad3(n) {
+    return String(n).padStart(3, "0");
+  }
+
+  function buildUrl(page) {
+    const base = encodeURI(PDF_FILE);
+    return `${base}#page=${pdfPageNumber(page)}&zoom=page-fit`;
+  }
+
+  function buildImageUrl(page) {
+    return `source_pages/paper_${pad3(page)}_pdf_${pad3(pdfPageNumber(page))}.png`;
+  }
+
+  function showPdf(url) {
+    sourceViewer.classList.add("hidden");
+    sourceImage.removeAttribute("src");
+    sourceHighlights.innerHTML = "";
+    frame.classList.remove("hidden");
+    frame.src = url;
+  }
+
+  function drawHighlights(highlight) {
+    sourceHighlights.innerHTML = "";
+    const rects = Array.isArray(highlight && highlight.rects) ? highlight.rects : [];
+    for (const rect of rects) {
+      const el = document.createElement("div");
+      el.className = "source-highlight";
+      el.style.left = `${rect.x}%`;
+      el.style.top = `${rect.y}%`;
+      el.style.width = `${rect.w}%`;
+      el.style.height = `${rect.h}%`;
+      sourceHighlights.appendChild(el);
+    }
+    return rects;
+  }
+
+  function showSourceImage(page, pdfUrl, highlight) {
+    frame.classList.add("hidden");
+    frame.src = "about:blank";
+    sourceViewer.classList.remove("hidden");
+    const rects = drawHighlights(highlight);
+    sourceImage.onerror = () => showPdf(pdfUrl);
+    sourceImage.onload = () => {
+      const first = rects[0];
+      if (!first) return;
+      requestAnimationFrame(() => {
+        const targetTop = sourcePage.clientHeight * (first.y / 100);
+        sourceViewer.scrollTop = Math.max(0, targetTop - sourceViewer.clientHeight * 0.25);
+      });
+    };
+    sourceImage.src = buildImageUrl(page);
+  }
+
+  window.openPdfPage = function (page, question) {
+    const n = parseInt(String(page).replace(/[^0-9]/g, ""), 10);
+    if (!n || n < 1) return;
+    const url = buildUrl(n);
+    newtab.href = url;
+    title.textContent = `機電安全必携 — P.${n}`;
+    const highlight = question && (
+      SOURCE_HIGHLIGHTS[question.id] || SOURCE_PAGE_HIGHLIGHTS[Number(question.sourcePage)]
+    );
+    if (highlight) showSourceImage(n, url, highlight);
+    else showPdf(url);
+    modal.classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+  };
+
+  window.openQuestionSource = function (questionOrPage) {
+    if (typeof questionOrPage === "object" && questionOrPage) {
+      const ref = getPageRef(questionOrPage);
+      if (ref) window.openPdfPage(ref.page, questionOrPage);
+      return;
+    }
+    window.openPdfPage(questionOrPage);
+  };
+
+  function closeModal() {
+    modal.classList.add("hidden");
+    frame.src = "about:blank";
+    sourceImage.removeAttribute("src");
+    sourceHighlights.innerHTML = "";
+    document.body.style.overflow = "";
+  }
+
+  closeBtn.addEventListener("click", closeModal);
+  modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !modal.classList.contains("hidden")) closeModal();
+  });
+})();
+</script>
+</body>
+</html>
+
